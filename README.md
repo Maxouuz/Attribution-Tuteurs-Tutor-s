@@ -1,3 +1,3 @@
 > Maxence STIEVENARD
-> Rémi Vautier
-> Nathan Hallez
+> Rémi VAUTIER
+> Nathan HALLEZ
