@@ -3,13 +3,13 @@ package sae_101_02;
 public enum Subject {
 	R101("Initiation au développement");
 	
-	public final String nom_mat;
+	public final String NOM_MAT;
 	
-	Subject(String nom_mat) {
-		this.nom_mat = nom_mat;
+	Subject(String NOM_MAT) {
+		this.NOM_MAT = NOM_MAT;
 	}
 	
 	public String toString() {
-		return this + " - " + this.nom_mat;
+		return this + " - " + this.NOM_MAT;
 	}
 }
