@@ -17,7 +17,10 @@ public abstract class Person {
 	 * Nom de la personne
 	 */
 	private final String NAME;
-	private static int id = 0;
+	/**
+	 * Numéro automatique pour générer les identifiants
+	 */
+	private static int loginCounter = 0;
 	
 	/**
 	 * Constructeur de la classe personne
@@ -31,14 +34,21 @@ public abstract class Person {
 		this.NAME = NAME;
 		
 		
-		String tmpLogin = FORENAME + "." + NAME + id;
-		id++;
+		String tmpLogin = FORENAME + "." + NAME + loginCounter;
+		this.loginCounterIncrement();
 		
 		// On peut ajouter une extension à la fin d'un login (comme .etu)
 		if (extension != null && !extension.equals(""))
 			tmpLogin += "." + extension;
 		
 		this.LOGIN = tmpLogin;
+	}
+	
+	/**
+	 * Méthode qui incrémente le compteur pour générer les logins
+	 */
+	private void loginCounterIncrement() {
+		loginCounter++;
 	}
 	
 	/**

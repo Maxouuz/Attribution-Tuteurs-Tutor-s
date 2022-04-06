@@ -49,4 +49,11 @@ public class Tutor extends Student {
 	public void setSubjectTeached(Subject subjectTeached) {
 		this.subjectTeached = subjectTeached;
 	}
+	
+	/**
+	 * Retourne l'année de la promo de l'étudiant
+	 */
+	public int getPromo() {
+		return this.PROMO;
+	}
 }
