@@ -50,3 +50,4 @@ public class Teacher extends Person {
 		return new LinkedHashSet<Subject>(subjectsTeached);
 	}
 }
+

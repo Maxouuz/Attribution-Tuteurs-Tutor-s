@@ -17,6 +17,7 @@ public abstract class Person {
 	 * Nom de la personne
 	 */
 	private final String NAME;
+	private static int id = 0;
 	
 	/**
 	 * Constructeur de la classe personne
@@ -29,8 +30,9 @@ public abstract class Person {
 		this.FORENAME = FORENAME;
 		this.NAME = NAME;
 		
-		// TODO: vérifier si le nom et prénom n'existe pas déjà!
-		String tmpLogin = FORENAME + "." + NAME;
+		
+		String tmpLogin = FORENAME + "." + NAME + id;
+		id++;
 		
 		// On peut ajouter une extension à la fin d'un login (comme .etu)
 		if (extension != null && !extension.equals(""))
