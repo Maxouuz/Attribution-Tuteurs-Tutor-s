@@ -2,12 +2,10 @@ package sae_101_02;
 
 public abstract class Student extends Person {
 	private double moyenne;
-	private final int PROMO;
 	
-	public Student(String FORENAME, String NAME, double moyenne, int PROMO) {
+	public Student(String FORENAME, String NAME, double moyenne) {
 		super(FORENAME, NAME, "etu");
 		this.moyenne = moyenne;
-		this.PROMO= PROMO;
 	}
 
 	public double getMoyenne() {
@@ -18,7 +16,4 @@ public abstract class Student extends Person {
 		this.moyenne = moyenne;
 	}
 
-	public int getPromo() {
-		return PROMO;
-	}
 }

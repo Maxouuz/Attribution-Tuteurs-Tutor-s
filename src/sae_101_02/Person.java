@@ -4,19 +4,21 @@ public abstract class Person {
 	private final String LOGIN;
 	private final String FORENAME;
 	private final String NAME;
+	private static int id = 0;
 	
 	public Person(String FORENAME, String NAME, String extension) {
 		this.FORENAME = FORENAME;
 		this.NAME = NAME;
 		
-		// TODO: vérifier si le nom et prénom n'existe pas déjà!
-		String tmpLogin = FORENAME + "." + NAME;
+		
+		String tmpLogin = FORENAME + "." + NAME + id;
+		id++;
 		
 		// On peut ajouter une extension à la fin d'un login (comme .etu)
 		if (extension != null && !extension.equals(""))
 			tmpLogin += "." + extension;
 		
-		this.login = tmpLogin;
+		this.LOGIN = tmpLogin;
 	}
 	
 	public Person(String FORENAME, String NAME) {
@@ -24,7 +26,7 @@ public abstract class Person {
 	}
 
 	public String getLogin() {
-		return login;
+		return LOGIN;
 	}
 
 	public String getForename() {
