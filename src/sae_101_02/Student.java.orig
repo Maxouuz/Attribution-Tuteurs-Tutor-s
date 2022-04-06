@@ -11,6 +11,7 @@ public abstract class Student extends Person {
 	 */
 	private double moyenne;
 	
+<<<<<<< HEAD
 	/**
 	 * Constructeur de la classe Student
 	 * @param FORENAME
@@ -18,6 +19,8 @@ public abstract class Student extends Person {
 	 * @param moyenne
 	 * @param PROMO
 	 */
+=======
+>>>>>>> e73f8fc6a9c6253a39571e6c969b9f67d9740a32
 	public Student(String FORENAME, String NAME, double moyenne) {
 		super(FORENAME, NAME, "etu");
 		this.moyenne = moyenne;
@@ -38,4 +41,8 @@ public abstract class Student extends Person {
 	public void setMoyenne(double moyenne) {
 		this.moyenne = moyenne;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> e73f8fc6a9c6253a39571e6c969b9f67d9740a32
 }

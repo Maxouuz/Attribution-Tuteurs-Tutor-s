@@ -10,10 +10,14 @@ public class Tutor extends Student {
 	 * Sujet que l'élève veut tutorer
 	 */
 	private Subject subjectTeached;
+<<<<<<< HEAD
 	/**
 	 * Année de promo de l'étudiant (2e ou 3e année)
 	 */
 	private final int PROMO;
+=======
+	protected int promo;
+>>>>>>> e73f8fc6a9c6253a39571e6c969b9f67d9740a32
 	
 	/**
 	 * Constructeur de la classe Tutor
@@ -25,6 +29,7 @@ public class Tutor extends Student {
 	 */
 	public Tutor(String FORENAME, String NAME, double moyenne, int PROMO, Subject subjectTeached) {
 		// TODO: Prévoir le fait que la variable promo soit inférieur à 2 ou supérieur à 3
+<<<<<<< HEAD
 		super(FORENAME, NAME, moyenne);
 		if (PROMO == 2 || PROMO == 3) {
 			this.PROMO = PROMO;
@@ -38,6 +43,16 @@ public class Tutor extends Student {
 	 * Retourne la ressource que l'élève veut tutorer
 	 * @return
 	 */
+=======
+		
+		super(FORENAME, NAME, moyenne);
+		this.subjectTeached = subjectTeached; 
+		if(this.promo < 2 || this.promo > 3) {
+			this.promo = 2;
+		}
+	}
+	
+>>>>>>> e73f8fc6a9c6253a39571e6c969b9f67d9740a32
 	public Subject getSubjectTeached() {
 		return subjectTeached;
 	}
@@ -49,4 +64,21 @@ public class Tutor extends Student {
 	public void setSubjectTeached(Subject subjectTeached) {
 		this.subjectTeached = subjectTeached;
 	}
+<<<<<<< HEAD
+	
+	/**
+	 * Retourne l'année de promo de l'étudiant
+	 * @return
+	 */
+	public int getPromo() {
+		return PROMO;
+	}
+=======
+
+	public int getPromo() {
+		return promo;
+	}	
+	
+	
+>>>>>>> e73f8fc6a9c6253a39571e6c969b9f67d9740a32
 }

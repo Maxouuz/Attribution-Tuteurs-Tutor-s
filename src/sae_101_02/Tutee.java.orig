@@ -24,7 +24,11 @@ public class Tutee extends Student {
 	 */
 	public Tutee(String FORENAME, String NAME, double moyenne, Collection<? extends Subject> hardSubjects) {
 		super(FORENAME, NAME, moyenne);
+<<<<<<< HEAD
 		this.hardSubjects = new LinkedHashSet<>();
+=======
+		this.hardSubjects = new ArrayList<Subject>();
+>>>>>>> e73f8fc6a9c6253a39571e6c969b9f67d9740a32
 		this.hardSubjects.addAll(hardSubjects);
 	}
 	
@@ -44,3 +48,4 @@ public class Tutee extends Student {
 		hardSubjects.remove(student);
 	}
 }
+
