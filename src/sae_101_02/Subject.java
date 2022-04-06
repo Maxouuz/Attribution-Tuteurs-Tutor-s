@@ -1,36 +1,45 @@
 package sae_101_02;
 
 /**
- *  Colors that can be used
- *  {@link #R101}
- *  {@link #R102}
- *  {@link #R104}
- *  {@link #R105}
+ * Liste des matières pour lesquelles le soutien est disponible.
+ * 
+ * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  */
 public enum Subject {
 	/**
-     * R101 Subject, Initiation au développement
-     */
-	R101("Initiation au développement");
+	 * Sujet R101, Initiation au développement.
+	 */
+	R101("Initiation au développement"),
 	/**
-     * R102 Subject, Interface Web
-     */
-	R102("Interface Web");
+	 * Sujet R102, Interface Web.
+	 */
+	R102("Interface Web"),
 	/**
-     * R104 Subject, Introduction aux systèmes d'exploitation et leur fonctionnement.
-     */
-	R104("Introduction aux systèmes d'exploitation et leur fonctionnement");
+	 * Sujet R104, Introduction aux systèmes d'exploitation et leur fonctionnement.
+	 */
+	R104("Introduction aux systèmes d'exploitation et leur fonctionnement"),
 	/**
-     * R105 Subject, Bases de données
-     */
+	 * Sujet R105, Bases de données.
+	 */
 	R105("Bases de données");
-	
+
+	/**
+	 * Représente l'intitulé d'une matière
+	 * 
+	 * @param NOM_MAT
+	 */
 	public final String NOM_MAT;
-	
+
+	/** 
+	 * @param NOM_MAT
+	 */
 	Subject(String NOM_MAT) {
 		this.NOM_MAT = NOM_MAT;
 	}
-	
+
+	/**
+	 * Affiche l'identifiant de la matière suivi de son intitulé.
+	 */
 	public String toString() {
 		return this + " - " + this.NOM_MAT;
 	}
