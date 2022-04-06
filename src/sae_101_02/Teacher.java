@@ -1,15 +1,52 @@
 package sae_101_02;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+/**
+ * Classe qui représente un professeur
+ * @author nathan.hallez.etu
+ *
+ */
 public class Teacher extends Person {
-	private ArrayList<Subject> subjectsTeached;
+	/**
+	 * Liste des matières que le professeur enseigne
+	 */
+	private final Set<Subject> subjectsTeached;
 	
+	/**
+	 * Constructeur de la classe Teacher
+	 * @param FORENAME
+	 * @param NAME
+	 * @param subjectsTeached
+	 */
 	public Teacher(String FORENAME, String NAME, Collection<? extends Subject> subjectsTeached) {
 		super(FORENAME, NAME);
-		this.subjectsTeached = new ArrayList<Subject>();
-		this.subjectsTeached.addAll(subjectsTeached);
+		this.subjectsTeached = new LinkedHashSet<>(subjectsTeached);
 	}
 	
+	/**
+	 * Ajoute une matière enseigné par le professeur
+	 * @param subject
+	 */
+	public void addSubjectTeached(Subject subject) {
+		this.subjectsTeached.add(subject);
+	}
+	
+	/**
+	 * Retire une matière enseigné par le professeur
+	 * @param subject
+	 */
+	public void removeSubjectTeached(Subject subject) {
+		this.subjectsTeached.remove(subject);
+	}
+
+	/**
+	 * Retourne une copie des matières enseignées par le professeur
+	 * @return
+	 */
+	public Set<Subject> getSubjectTeached() {
+		return new LinkedHashSet<Subject>(subjectsTeached);
+	}
 }
