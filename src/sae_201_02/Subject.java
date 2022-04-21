@@ -1,4 +1,4 @@
-package sae_101_02;
+package sae_201_02;
 
 /**
  * Liste des matières pour lesquelles le soutien est disponible.
@@ -6,21 +6,13 @@ package sae_101_02;
  * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  */
 public enum Subject {
-	/**
-	 * Sujet R101, Initiation au développement.
-	 */
+	/** Sujet R101, Initiation au développement. */
 	R101("Initiation au développement"),
-	/**
-	 * Sujet R102, Interface Web.
-	 */
+	/** Sujet R102, Interface Web. */
 	R102("Interface Web"),
-	/**
-	 * Sujet R104, Introduction aux systèmes d'exploitation et leur fonctionnement.
-	 */
+	/** Sujet R104, Introduction aux systèmes d'exploitation et leur fonctionnement. */
 	R104("Introduction aux systèmes d'exploitation et leur fonctionnement"),
-	/**
-	 * Sujet R105, Bases de données.
-	 */
+	/** Sujet R105, Bases de données. */
 	R105("Bases de données");
 
 	/**
@@ -31,6 +23,7 @@ public enum Subject {
 	public final String NOM_MAT;
 
 	/** 
+	 * Constructeur de l'enum comportant l'initialisation de l'intitulé d'une matière
 	 * @param NOM_MAT
 	 */
 	Subject(String NOM_MAT) {

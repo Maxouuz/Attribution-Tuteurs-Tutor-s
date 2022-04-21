@@ -1,4 +1,4 @@
-package sae_101_02;
+package sae_201_02;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -6,13 +6,11 @@ import java.util.Set;
 
 /**
  * Classe qui représente un professeur
- * @author nathan.hallez.etu
+ * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  *
  */
 public class Teacher extends Person {
-	/**
-	 * Liste des matières que le professeur enseigne
-	 */
+	/** Liste des matières que le professeur enseigne */
 	private final Set<Subject> subjectsTeached;
 	
 	/**
