@@ -68,7 +68,7 @@ public abstract class Person {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(FORENAME, NAME);
+		return Objects.hash(INE);
 	}
 
 	@Override
@@ -79,11 +79,16 @@ public abstract class Person {
 		else if (obj == null)
 			res = false;
 		else if (getClass() != obj.getClass())
-			res = false;
+			res =  false;
 		else {
 			Person other = (Person) obj;
-			res = Objects.equals(FORENAME, other.FORENAME) && Objects.equals(NAME, other.NAME);
+			res = INE == other.INE;
 		}
 		return res;
+	}
+	
+	@Override
+	public String toString() {
+		return this.INE + ": " + this.FORENAME + " " + this.NAME;
 	}
 }

@@ -1,10 +1,17 @@
 package sae_201_02;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Classe de test pour la classe Student
+ * @author lezlon
+ *
+ */
 class StudentTest {
 	/** Instances de la classe Student pour faire les tests */
 	private Student s1, s2, s3, s4, s5;
@@ -13,6 +20,7 @@ class StudentTest {
 	/**
 	 * Utilise les données exemples de DonneesPourTester
 	 */
+	@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 	public void initialization() {
 		s1 = new Student("Jean","Dupont",6.9,1);
 		s2 = new Student("Jean","Dupont",6.9,1);

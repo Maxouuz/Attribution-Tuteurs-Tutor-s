@@ -1,7 +1,5 @@
 package sae_201_02;
 
-import java.util.Objects;
-
 /**
  * Classe abstraite qui représente un étudiant avec une moyenne et une promo
  * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
@@ -52,28 +50,6 @@ public class Student extends Person {
 	public void setMoyenne(double moyenne) {
 		this.moyenne = moyenne;
 	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(PROMO, moyenne);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		boolean res;
-		/* Pas de vérification pour les objets null ou de classe différente
-		   car cette vérification est faite dans la classe Person */
-		if (!super.equals(obj))
-			res = false;
-		else {
-			Student other = (Student) obj;
-			res = PROMO == other.PROMO && Double.doubleToLongBits(moyenne) == Double.doubleToLongBits(other.moyenne);
-		}
-		return res;
-	}
 
 	/**
 	 * Retourne l'année de la promo d'un étudiant
@@ -97,5 +73,10 @@ public class Student extends Person {
 	 */
 	public boolean canBeTutee() {
 		return ! this.canBeTutor();
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString() + " (moyenne: " + this.moyenne + ", promo: " + this.PROMO + ")";
 	}
 }
