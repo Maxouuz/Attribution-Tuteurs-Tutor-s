@@ -1,7 +1,7 @@
 package sae_201_02;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe représentant un tutorat pour une matière.
@@ -10,24 +10,24 @@ import java.util.Set;
  */
 public class Tutoring {
 	/** Liste des tutorés */
-	private final Set<Student> tutees;
+	private final List<Student> tutees;
 	/** Liste des tuteurs */
-	private final Set<Student> tutors;
+	private final List<Student> tutors;
 
 	/**
 	 * Constructeur de la classe Tutoring
 	 */
 	public Tutoring() {
-		this.tutees = new LinkedHashSet<>();
-		this.tutors = new LinkedHashSet<>();
+		this.tutees = new ArrayList<>();
+		this.tutors = new ArrayList<>();
 	}
 	
 	/**
 	 * Retourne une copie de la liste des tutorés
 	 * @return
 	 */
-	public Set<Student> getTutees() {
-		Set<Student> copy = new LinkedHashSet<>();
+	public List<Student> getTutees() {
+		List<Student> copy = new ArrayList<>();
 		copy.addAll(tutees);
 		return copy;
 	}
@@ -36,8 +36,8 @@ public class Tutoring {
 	 * Retourne une copie de la liste des tuteurs
 	 * @return
 	 */
-	public Set<Student> getTutors() {
-		Set<Student> copy = new LinkedHashSet<>();
+	public List<Student> getTutors() {
+		List<Student> copy = new ArrayList<>();
 		copy.addAll(tutors);
 		return copy;
 	}

@@ -12,7 +12,7 @@ public abstract class Person {
 	/** Nom de la personne */
 	private final String NAME;
 	/** Identifiant unique de la personne */
-	private final int NUM_ETU;
+	private final int INE;
 	/** Numéro automatique pour générer les identifiants */
 	private static int loginCounter = 0;
 	
@@ -24,7 +24,7 @@ public abstract class Person {
 	public Person(String FORENAME, String NAME) {
 		this.FORENAME = FORENAME;
 		this.NAME = NAME;
-		this.NUM_ETU = loginCounter;
+		this.INE = loginCounter;
 		this.loginCounterIncrement();
 	}
 	
@@ -36,11 +36,18 @@ public abstract class Person {
 	}
 	
 	/**
+	 * Retourne l'identifiant unique de l'étudiant
+	 */
+	public int getINE() {
+		return INE;
+	}
+	
+	/**
 	 * Retourne le login de la personne
 	 * @return
 	 */
 	public String getLogin() {
-		return FORENAME + "." + NAME + NUM_ETU;
+		return FORENAME + "." + NAME + INE;
 	}
 
 	/**
