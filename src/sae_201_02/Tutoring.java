@@ -16,6 +16,14 @@ public class Tutoring {
 	private final List<Student> tutees;
 	/** Liste des tuteurs */
 	private final List<Student> tutors;
+	/** */
+	public final static double POIDS_MAXIMAL_ARETE;
+	
+	static {
+		Student st1 = new Student("Best", "Tutor", 20.0, 3);
+		Student st2 = new Student("Best", "Tutee", 20.0, 1);
+		POIDS_MAXIMAL_ARETE = Tutoring.getWidthArete(st1, st2);
+	}
 
 	/**
 	 * Constructeur de la classe Tutoring
@@ -62,6 +70,13 @@ public class Tutoring {
 	}
 	
 	/**
+	 * Retourne le poids d'une arête pour un tuteur et un tutoré
+	 */
+	public static double getWidthArete(Student tutor, Student tutee) {
+		return (tutor.getPROMO() * 2 + tutor.getMoyenne()) * tutee.getMoyenne();
+	}
+	
+	/**
 	 * Méthode qui résout le problème d'affectation
 	 * @return
 	 */
@@ -75,18 +90,18 @@ public class Tutoring {
 		// Ajout des arêtes
 		for (Student tutee: tutees) {
 			for (Student tutor: tutors) {
-				graphe.ajouterArete(tutor, tutee, (tutor.getPROMO() * 2 + tutor.getMoyenne()) * tutee.getMoyenne());
+				graphe.ajouterArete(tutee, tutor, Tutoring.getWidthArete(tutor, tutee));
 			}
 		}
 		
 		// Ajoute les tuteurs manquants
 		int tutorsMissing = tutees.size() - tutors.size();
 		for (int i = 0; i < tutorsMissing; i++) {
-			Student fakeStudent = new Student(null, null, 0, 2);
+			Student fakeStudent = new Student("", "", 0, 2);
 			this.addStudent(fakeStudent);
 			graphe.ajouterSommet(fakeStudent);
 			for (Student tutee: tutees) {
-				graphe.ajouterArete(fakeStudent, tutee, 10000);
+				graphe.ajouterArete(tutee, fakeStudent, POIDS_MAXIMAL_ARETE + 1);
 			}
 		}
 		

@@ -1,5 +1,11 @@
 package sae_201_02;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import fr.ulille.but.sae2_02.donnees.DonneesPourTester;
 import fr.ulille.but.sae2_02.graphes.Arete;
 import fr.ulille.but.sae2_02.graphes.CalculAffectation;
 
@@ -9,6 +15,16 @@ import fr.ulille.but.sae2_02.graphes.CalculAffectation;
  *
  */
 public abstract class Assignment {
+	public static Map<Student, Student> CalculAffectationToMap(CalculAffectation<Student> calcul) {
+		Map<Student, Student> assignment = new HashMap<Student, Student>();
+		
+		for (Arete<Student> arete: calcul.getAffectation()) {
+			assignment.put(arete.getExtremite1(), arete.getExtremite2());
+		}
+		
+		return assignment;
+	}
+	
 	@SuppressWarnings("PMD.SystemPrintln")
 	public static void main(String[] args) {
 		Tutoring tutoring = new Tutoring();
@@ -16,7 +32,7 @@ public abstract class Assignment {
 		/**
 		 * Ajout de tous les élèves dans l'instance de Tutoring
 		 */
-		tutoring.addStudent(new Student("Sophie", "Vallee", 15.5, 2));
+		/*tutoring.addStudent(new Student("Sophie", "Vallee", 15.5, 2));
 		tutoring.addStudent(new Student("Nicolas", "Roche", 16.5, 3));
 		tutoring.addStudent(new Student("Maurice", "Fernandez", 14.5, 3));
 		tutoring.addStudent(new Student("William", "Letellier", 18.5, 2));
@@ -28,12 +44,22 @@ public abstract class Assignment {
 		tutoring.addStudent(new Student("Sabine", "Leleu", 5.5, 1));
 		tutoring.addStudent(new Student("Gabriel", "Marin", 9, 1));
 		tutoring.addStudent(new Student("Juliette", "Traore", 12, 1));
-		tutoring.addStudent(new Student("Franck", "Hebert", 2.5, 1));
+		tutoring.addStudent(new Student("Franck", "Hebert", 2.5, 1));*/
 		
-		CalculAffectation<Student> assignment = tutoring.computeAssignment();
+		for (String[] student: DonneesPourTester.studentData) {
+			Student s = new Student(student[0], student[1], Double.valueOf(student[2]), Integer.parseInt(student[3]));
+			tutoring.addStudent(s);
+		}
+
 		
-		for (Arete<Student> association: assignment.getAffectation()) {
-			System.out.println(association.getExtremite1() + " --> " + association.getExtremite2());
-		}	
+		CalculAffectation<Student> calcul = tutoring.computeAssignment();
+		
+		Map<Student, Student> assignment = Assignment.CalculAffectationToMap(calcul);
+		
+		List<Student> sortedTutees = tutoring.getTutees();
+		Collections.sort(sortedTutees, new MoyenneComparator());
+		for (Student tutee: sortedTutees) {
+			System.out.println(tutee + " --> " + assignment.get(tutee));
+		}
 	}
 }

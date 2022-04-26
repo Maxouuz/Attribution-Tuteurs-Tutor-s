@@ -6,7 +6,7 @@ import java.util.Objects;
  * Classe abstraite qui représente une personne avec un identifiant unique.
  * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  */
-public abstract class Person {
+public abstract class Person implements Comparable<Person> {
 	/** Prénom de la personne */
 	private final String FORENAME;
 	/** Nom de la personne */
@@ -91,4 +91,14 @@ public abstract class Person {
 	public String toString() {
 		return this.INE + ": " + this.FORENAME + " " + this.NAME;
 	}
+
+	@Override
+	public int compareTo(Person otherPerson) {
+		int diff = this.FORENAME.compareTo(otherPerson.getForename());
+		if (diff == 0) {
+			diff = this.NAME.compareTo(otherPerson.getName());
+		}
+		return diff;
+	}
+	
 }
