@@ -2,6 +2,11 @@ package sae_201_02;
 
 import java.util.Comparator;
 
+/**
+ * Comparateur supplémentaire pour la classe Student qui compare la moyenne
+ * @author lezlon
+ *
+ */
 public class MoyenneComparator implements Comparator<Student> {
 
 	@Override
