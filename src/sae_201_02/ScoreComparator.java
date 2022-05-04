@@ -3,7 +3,7 @@ package sae_201_02;
 import java.util.Comparator;
 
 /**
- * Comparateur supplémentaire pour la classe Student qui compare le score (poids des arêtes)
+ * Comparateur pour la classe Student qui compare le score (poids des arêtes)
  * @author lezlon
  *
  */

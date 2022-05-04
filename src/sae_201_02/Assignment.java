@@ -1,14 +1,5 @@
 package sae_201_02;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import fr.ulille.but.sae2_02.donnees.DonneesPourTester;
-import fr.ulille.but.sae2_02.graphes.Arete;
-import fr.ulille.but.sae2_02.graphes.CalculAffectation;
-
 /**
  * Classe qui règle le problème d'affectation
  * @author lezlon
@@ -16,7 +7,6 @@ import fr.ulille.but.sae2_02.graphes.CalculAffectation;
  */
 public abstract class Assignment {
 	
-	@SuppressWarnings("PMD.SystemPrintln")
 	public static void main(String[] args) {
 		Tutoring tutoring = new Tutoring();
 		
@@ -42,7 +32,7 @@ public abstract class Assignment {
 			tutoring.addStudent(s);
 		} */
 		
-		tutoring.updateAssignment();
+		tutoring.createAssignments();
 		
 		System.out.println(tutoring.toStringTutors());
 	}

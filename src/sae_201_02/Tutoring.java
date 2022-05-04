@@ -31,7 +31,7 @@ public class Tutoring {
 	/** Variable qui donne le poids maximal que peut avoir une arête */
 	public final static double POIDS_MAXIMAL;
 	/** Variable qui définit combien de tutorés un tuteur peut gérer */
-	public final static int MAX_TUTEE_FOR_ONE_TUTOR = 2;
+	public final static int MAX_TUTEES_FOR_TUTOR = 2;
 	
 	static {
 		Student st1 = new Student("Best", "Tutor", 20.0, 3, 0);
@@ -176,10 +176,10 @@ public class Tutoring {
 	}
 	
 	/**
-	 * Méthode qui résout le problème d'affectation
+	 * Méthode qui résout le problème d'affectation (ne crée que des couples)
 	 * @return
 	 */
-	private CalculAffectation<Student> computeAssignment() {
+	private CalculAffectation<Student> computeCoupleTutorTutee() {
 		GrapheNonOrienteValue<Student> graphe = new GrapheNonOrienteValue<>();
 		
 		List<Student> eligibleTutors = getEligibleTutors();
@@ -211,18 +211,68 @@ public class Tutoring {
 		return new CalculAffectation<>(graphe, tutees, tutors);
 	}
 	
-	public void updateAssignment() {
-		for (Arete<Student> arete : computeAssignment().getAffectation()) {
-			Student tutor = arete.getExtremite1();
-			Student tutee = arete.getExtremite2();
-			tuteeToTutor.put(tutee, tutor);
-			if (!tutorToTutees.containsKey(tutor)) {
-				tutorToTutees.put(tutor, new LinkedHashSet<>());
+	/**
+	 * Méthode qui associe plusieurs tutorés aux tuteurs de troisième année
+	 */
+	private void addMultipleTuteeToTutors() {
+		int nbRepetitions = 0;
+		int nbAssociations = 0;
+		List<Student> eligibleTutors = getEligibleTutors();
+		List<Student> eligibleTutees = getEligibleTuteesWithNoTutors();
+		/* Répète tant que tous les tutorés n'ont pas été associé
+		   ou que le nombre maximal d'associations a été atteint */
+		while (nbAssociations < eligibleTutees.size() && nbRepetitions < 2) {
+			int i = 0;
+			while (nbAssociations < eligibleTutees.size() && i < eligibleTutors.size()) {
+				addAssignment(eligibleTutees.get(i), eligibleTutors.get(i));
+				i++;
+				nbAssociations++;
 			}
-			tutorToTutees.get(tutor).add(tutee);
+			nbRepetitions++;
 		}
 	}
 	
+	/**
+	 * Retourne tous les tutorés qui ne sont pas associé à un tuteur
+	 * @return
+	 */
+	private List<Student> getEligibleTuteesWithNoTutors() {
+		List<Student> res = new ArrayList<>();
+		for (Student tutee: getEligibleTutees()) {
+			if (!tutors.contains(tuteeToTutor.get(tutee))) {
+				res.add(tutee);
+			}
+		}
+		return res;
+	}
+	
+	/**
+	 * Méthode qui ajoute une association dans les deux maps
+	 */
+	public void addAssignment(Student tutee, Student tutor) {
+		tuteeToTutor.put(tutee, tutor);
+		if (!tutorToTutees.containsKey(tutor)) {
+			tutorToTutees.put(tutor, new LinkedHashSet<>());
+		}
+		tutorToTutees.get(tutor).add(tutee);
+	}
+	
+	/**
+	 * Méthode qui actualise les deux maps d'affectations
+	 */
+	public void createAssignments() {
+		for (Arete<Student> arete : computeCoupleTutorTutee().getAffectation()) {
+			Student tutor = arete.getExtremite1();
+			Student tutee = arete.getExtremite2();
+			addAssignment(tutee, tutor);
+		}
+		addMultipleTuteeToTutors();
+	}
+	
+	/**
+	 * Chaîne de caractère donnant pour chaque tutoré le tuteur associé
+	 * @return
+	 */
 	public String toStringTutees() {
 		StringBuilder res = new StringBuilder();
 		List<Student> sortedTutees = tutees;
@@ -236,6 +286,10 @@ public class Tutoring {
 		return res.toString();
 	}
 	
+	/**
+	 * Chaîne de caractère donnant pour chaque tuteur le/les tutoré(s) associé(s)
+	 * @return
+	 */
 	public String toStringTutors() {
 		StringBuilder res = new StringBuilder();
 		List<Student> sortedTutors = tutors;

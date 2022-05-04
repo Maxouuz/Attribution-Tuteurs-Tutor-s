@@ -14,32 +14,31 @@ import org.junit.jupiter.api.Test;
  */
 class StudentTest {
 	/** Instances de la classe Student pour faire les tests */
-	private Student s1, s2, s3, s4, s5;
+	private Student st1, st2, st3, st4, st5;
 	
-	@BeforeEach
 	/**
 	 * Utilise les données exemples de DonneesPourTester
 	 */
-	@SuppressWarnings("PMD.AvoidDuplicateLiterals")
+	@BeforeEach
 	public void initialization() {
-		s1 = new Student("Jean","Dupont",6.9,1);
-		s2 = new Student("Jean","Dupont",6.9,1);
-		s3 = new Student("Jean","Dupont",12.7,1);
-		s4 = new Student("Jean","Dupont",6.9,2);
-		s5 = new Student("Hugues","Bigot",6.9,1);
+		st1 = new Student("Jean","Dupont",6.9,1);
+		st2 = new Student("Jean","Dupont",6.9,1);
+		st3 = new Student("Jean","Dupont",12.7,1);
+		st4 = new Student("Jean","Dupont",6.9,2);
+		st5 = new Student("Hugues","Bigot",6.9,1);
 	}
 
 	@Test
 	void equalsTest() {
 		// Même instance
-		assertEquals(s1, s1);
+		assertEquals(st1, st1);
 		// Même attributs
-		assertEquals(s1, s2);
+		assertEquals(st1, st2);
 		// Note différente
-		assertFalse(s1.equals(s3));
+		assertFalse(st1.equals(st3));
 		// Promo différente
-		assertFalse(s1.equals(s4));
+		assertFalse(st1.equals(st4));
 		// Nom différent
-		assertFalse(s1.equals(s5));
+		assertFalse(st1.equals(st5));
 	}
 }
