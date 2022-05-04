@@ -34,8 +34,8 @@ public class Tutoring {
 	public final static int MAX_TUTEE_FOR_ONE_TUTOR = 2;
 	
 	static {
-		Student st1 = new Student("Best", "Tutor", 20.0, 3);
-		Student st2 = new Student("Best", "Tutee", 20.0, 1);
+		Student st1 = new Student("Best", "Tutor", 20.0, 3, 0);
+		Student st2 = new Student("Best", "Tutee", 20.0, 1, 0);
 		POIDS_MAXIMAL = Tutoring.getWidthArete(st1, st2);
 	}
 
@@ -143,6 +143,7 @@ public class Tutoring {
 		return res;
 	}
 	
+	
 	/**
 	 * Retourne la liste de tous les tuteurs qui ont une moyenne suffisante
 	 * @return
@@ -199,7 +200,7 @@ public class Tutoring {
 		// Ajoute les tuteurs manquants
 		int tutorsMissing = tutees.size() - tutors.size();
 		for (int i = 0; i < tutorsMissing; i++) {
-			Student fakeStudent = new Student("", "", 0, 2);
+			Student fakeStudent = new Student("", "", 0, 2, 0);
 			this.addStudent(fakeStudent);
 			graphe.ajouterSommet(fakeStudent);
 			for (Student tutee: tutees) {

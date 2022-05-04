@@ -10,6 +10,8 @@ public class Student extends Person {
 	private double moyenne;
 	/** Année de promo de l'étudiant */
 	private final int PROMO;
+	/**Nombre abscences de l'etudiant */
+	private int absence;
 	
 	/**
 	 * Constructeur de la classe Student
@@ -17,10 +19,12 @@ public class Student extends Person {
 	 * @param NAME
 	 * @param moyenne
 	 * @param PROMO
+	 * @param absence
 	 */
-	public Student(String FORENAME, String NAME, double moyenne, int PROMO) {
+	public Student(String FORENAME, String NAME, double moyenne, int PROMO, int absence) {
 		super(FORENAME, NAME);
 		this.moyenne = moyenne;
+		this.absence = absence;
 		if (PROMO < 1 || PROMO > 3) {
 			throw new ArithmeticException("La promo de l'étudiant doit être compris entre 1 et 3!");
 		}
@@ -82,5 +86,43 @@ public class Student extends Person {
 	
 	public double getScore() {
 		return PROMO * 2 + moyenne;
+	}
+
+	/**
+	 * Retourne le nombre d'absence d'un etudiant
+	 * @return
+	 */
+	public int getAbsence() {
+		return absence;
+	}
+
+	/**
+	 * Change le nombre d'absence d'un étudiant
+	 * @param absence
+	 */
+	public void setAbsence(int absence) {
+		this.absence = absence;
+	}
+	
+	/**
+	 * Compte le nombre d'absence d'un étudiant
+	 * @param student
+	 * @return
+	 */
+	public int numberAbsences(Student student) {
+		return student.getAbsence();
+	}
+
+	/**
+	 * Retourne vrai si le tutoré/tuteur a au moins une absence 
+	 * @param student
+	 * @return
+	 */
+	public boolean haveAbsences(Student student) {
+		if(student.numberAbsences(student) > 0) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 }
