@@ -79,4 +79,8 @@ public class Student extends Person {
 	public String toString() {
 		return super.toString() + " (moyenne: " + this.moyenne + ", promo: " + this.PROMO + ")";
 	}
+	
+	public double getScore() {
+		return PROMO * 2 + moyenne;
+	}
 }

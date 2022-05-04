@@ -15,15 +15,6 @@ import fr.ulille.but.sae2_02.graphes.CalculAffectation;
  *
  */
 public abstract class Assignment {
-	public static Map<Student, Student> CalculAffectationToMap(CalculAffectation<Student> calcul) {
-		Map<Student, Student> assignment = new HashMap<>();
-		
-		for (Arete<Student> arete: calcul.getAffectation()) {
-			assignment.put(arete.getExtremite1(), arete.getExtremite2());
-		}
-		
-		return assignment;
-	}
 	
 	@SuppressWarnings("PMD.SystemPrintln")
 	public static void main(String[] args) {
@@ -53,6 +44,6 @@ public abstract class Assignment {
 		
 		tutoring.updateAssignment();
 		
-		System.out.println(tutoring.toString());
+		System.out.println(tutoring.toStringTutors());
 	}
 }

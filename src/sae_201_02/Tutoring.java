@@ -3,8 +3,10 @@ package sae_201_02;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import fr.ulille.but.sae2_02.graphes.Arete;
 import fr.ulille.but.sae2_02.graphes.CalculAffectation;
@@ -22,10 +24,14 @@ public class Tutoring {
 	private final List<Student> tutors;
 	/** Variables pour filtrer les étudiants qui n'ont pas une moyenne suffisante */
 	private Double moyenneMaxTutee, moyenneMinTutor;
-	/** Map qui lie les tuteurs et les tutorés (dans les deux sens) */
-	private final Map<Student, Student> assignment;
+	/** Map qui donne le tuteur associé au tutoré */
+	private final Map<Student, Student> tuteeToTutor;
+	/** Map qui donne le/les tutoré(s) associé au tuteur */
+	private final Map<Student, Set<Student>> tutorToTutees;
 	/** Variable qui donne le poids maximal que peut avoir une arête */
 	public final static double POIDS_MAXIMAL;
+	/** Variable qui définit combien de tutorés un tuteur peut gérer */
+	public final static int MAX_TUTEE_FOR_ONE_TUTOR = 2;
 	
 	static {
 		Student st1 = new Student("Best", "Tutor", 20.0, 3);
@@ -37,7 +43,8 @@ public class Tutoring {
 	 * Constructeur de la classe Tutoring
 	 */
 	public Tutoring() {
-		this.assignment = new HashMap<>();
+		this.tuteeToTutor = new HashMap<>();
+		this.tutorToTutees = new HashMap<>();
 		this.tutees = new ArrayList<>();
 		this.tutors = new ArrayList<>();
 	}
@@ -68,7 +75,7 @@ public class Tutoring {
 	 */
 	public Map<Student, Student> getAssignment() {
 		Map<Student, Student> copy = new HashMap<>();
-		copy.putAll(assignment);
+		copy.putAll(tuteeToTutor);
 		return copy;
 	}
 
@@ -164,7 +171,7 @@ public class Tutoring {
 	 * Retourne le poids d'une arête pour un tuteur et un tutoré
 	 */
 	public static double getWidthArete(Student tutor, Student tutee) {
-		return (tutor.getPROMO() * 2 + tutor.getMoyenne()) * tutee.getMoyenne();
+		return tutor.getScore() * tutee.getScore();
 	}
 	
 	/**
@@ -175,6 +182,7 @@ public class Tutoring {
 		GrapheNonOrienteValue<Student> graphe = new GrapheNonOrienteValue<>();
 		
 		List<Student> eligibleTutors = getEligibleTutors();
+		Collections.sort(eligibleTutors);
 		List<Student> eligibleTutees = getEligibleTutees();
 		
 		// Ajout de tous les sommets
@@ -182,8 +190,8 @@ public class Tutoring {
 		for (Student student: eligibleTutors) graphe.ajouterSommet(student);
 		
 		// Ajout des arêtes
-		for (Student tutee: eligibleTutees) {
-			for (Student tutor: eligibleTutors) {
+		for (Student tutee: eligibleTutors) {
+			for (Student tutor: eligibleTutees) {
 				graphe.ajouterArete(tutee, tutor, Tutoring.getWidthArete(tutor, tutee));
 			}
 		}
@@ -204,19 +212,37 @@ public class Tutoring {
 	
 	public void updateAssignment() {
 		for (Arete<Student> arete : computeAssignment().getAffectation()) {
-			assignment.put(arete.getExtremite1(), arete.getExtremite2());
-			assignment.put(arete.getExtremite2(), arete.getExtremite1());
+			Student tutor = arete.getExtremite1();
+			Student tutee = arete.getExtremite2();
+			tuteeToTutor.put(tutee, tutor);
+			if (!tutorToTutees.containsKey(tutor)) {
+				tutorToTutees.put(tutor, new LinkedHashSet<>());
+			}
+			tutorToTutees.get(tutor).add(tutee);
 		}
 	}
 	
-	public String toString() {
+	public String toStringTutees() {
 		StringBuilder res = new StringBuilder();
 		List<Student> sortedTutees = tutees;
-		Collections.sort(sortedTutees, new MoyenneComparator());
+		Collections.sort(sortedTutees, new ScoreComparator());
 		
 		for (Student tutee: sortedTutees) {
-			if (assignment.containsKey(tutee)) {
-				res.append(tutee + " --> " + assignment.get(tutee) + "\n");
+			if (tuteeToTutor.containsKey(tutee)) {
+				res.append(tutee + " --> " + tuteeToTutor.get(tutee) + "\n");
+			}
+		}
+		return res.toString();
+	}
+	
+	public String toStringTutors() {
+		StringBuilder res = new StringBuilder();
+		List<Student> sortedTutors = tutors;
+		Collections.sort(sortedTutors, new ScoreComparator());
+		
+		for (Student tutor: sortedTutors) {
+			if (tutorToTutees.containsKey(tutor)) {
+				res.append(tutor + " --> " + tutorToTutees.get(tutor) + "\n");
 			}
 		}
 		return res.toString();
