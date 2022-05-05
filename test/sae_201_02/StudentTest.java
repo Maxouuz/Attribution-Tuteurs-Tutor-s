@@ -20,12 +20,13 @@ class StudentTest {
 	 * Utilise les données exemples de DonneesPourTester
 	 */
 	@BeforeEach
+	@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 	public void initialization() {
-		st1 = new Student("Jean","Dupont",6.9,1);
-		st2 = new Student("Jean","Dupont",6.9,1);
-		st3 = new Student("Jean","Dupont",12.7,1);
-		st4 = new Student("Jean","Dupont",6.9,2);
-		st5 = new Student("Hugues","Bigot",6.9,1);
+		st1 = new Student("Jean","Dupont",6.9,1,0);
+		st2 = new Student("Jean","Dupont",6.9,1,0);
+		st3 = new Student("Jean","Dupont",12.7,1,0);
+		st4 = new Student("Jean","Dupont",6.9,2,0);
+		st5 = new Student("Hugues","Bigot",6.9,1,0);
 	}
 
 	@Test

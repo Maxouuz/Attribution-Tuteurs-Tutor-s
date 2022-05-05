@@ -143,7 +143,6 @@ public class Tutoring {
 		return res;
 	}
 	
-	
 	/**
 	 * Retourne la liste de tous les tuteurs qui ont une moyenne suffisante
 	 * @return
@@ -171,7 +170,7 @@ public class Tutoring {
 	/**
 	 * Retourne le poids d'une arête pour un tuteur et un tutoré
 	 */
-	public static double getWidthArete(Student tutor, Student tutee) {
+	public static double getWidthArete(Student tutee, Student tutor) {
 		return tutor.getScore() * tutee.getScore();
 	}
 	
@@ -179,71 +178,31 @@ public class Tutoring {
 	 * Méthode qui résout le problème d'affectation (ne crée que des couples)
 	 * @return
 	 */
-	private CalculAffectation<Student> computeCoupleTutorTutee() {
+	private static GrapheNonOrienteValue<Student> getGrapheTutorTutee(List<Student> tuteesList, List<Student> tutorsList) {
 		GrapheNonOrienteValue<Student> graphe = new GrapheNonOrienteValue<>();
 		
-		List<Student> eligibleTutors = getEligibleTutors();
-		Collections.sort(eligibleTutors);
-		List<Student> eligibleTutees = getEligibleTutees();
-		
 		// Ajout de tous les sommets
-		for (Student student: eligibleTutees) graphe.ajouterSommet(student);
-		for (Student student: eligibleTutors) graphe.ajouterSommet(student);
+		for (Student student: tuteesList) graphe.ajouterSommet(student);
+		for (Student student: tutorsList) graphe.ajouterSommet(student);
 		
 		// Ajout des arêtes
-		for (Student tutee: eligibleTutors) {
-			for (Student tutor: eligibleTutees) {
-				graphe.ajouterArete(tutee, tutor, Tutoring.getWidthArete(tutor, tutee));
+		for (Student tutee: tuteesList) {
+			for (Student tutor: tutorsList) {
+				graphe.ajouterArete(tutee, tutor, Tutoring.getWidthArete(tutee, tutor));
 			}
 		}
 		
 		// Ajoute les tuteurs manquants
-		int tutorsMissing = tutees.size() - tutors.size();
-		for (int i = 0; i < tutorsMissing; i++) {
+		for (int i = 0; i <= (tuteesList.size() - tutorsList.size()); i++) {
 			Student fakeStudent = new Student("", "", 0, 2, 0);
-			this.addStudent(fakeStudent);
+			tutorsList.add(fakeStudent);
 			graphe.ajouterSommet(fakeStudent);
-			for (Student tutee: tutees) {
+			for (Student tutee: tuteesList) {
 				graphe.ajouterArete(tutee, fakeStudent, POIDS_MAXIMAL + 1);
 			}
 		}
 		
-		return new CalculAffectation<>(graphe, tutees, tutors);
-	}
-	
-	/**
-	 * Méthode qui associe plusieurs tutorés aux tuteurs de troisième année
-	 */
-	private void addMultipleTuteeToTutors() {
-		int nbRepetitions = 0;
-		int nbAssociations = 0;
-		List<Student> eligibleTutors = getEligibleTutors();
-		List<Student> eligibleTutees = getEligibleTuteesWithNoTutors();
-		/* Répète tant que tous les tutorés n'ont pas été associé
-		   ou que le nombre maximal d'associations a été atteint */
-		while (nbAssociations < eligibleTutees.size() && nbRepetitions < 2) {
-			int i = 0;
-			while (nbAssociations < eligibleTutees.size() && i < eligibleTutors.size()) {
-				addAssignment(eligibleTutees.get(i), eligibleTutors.get(i));
-				i++;
-				nbAssociations++;
-			}
-			nbRepetitions++;
-		}
-	}
-	
-	/**
-	 * Retourne tous les tutorés qui ne sont pas associé à un tuteur
-	 * @return
-	 */
-	private List<Student> getEligibleTuteesWithNoTutors() {
-		List<Student> res = new ArrayList<>();
-		for (Student tutee: getEligibleTutees()) {
-			if (!tutors.contains(tuteeToTutor.get(tutee))) {
-				res.add(tutee);
-			}
-		}
-		return res;
+		return graphe;
 	}
 	
 	/**
@@ -261,12 +220,23 @@ public class Tutoring {
 	 * Méthode qui actualise les deux maps d'affectations
 	 */
 	public void createAssignments() {
-		for (Arete<Student> arete : computeCoupleTutorTutee().getAffectation()) {
-			Student tutor = arete.getExtremite1();
-			Student tutee = arete.getExtremite2();
-			addAssignment(tutee, tutor);
+		List<Student> eligibleTutees = getEligibleTutees();
+		List<Student> eligibleTutors = getEligibleTutors();
+		while (eligibleTutees.size() != 2) {
+			GrapheNonOrienteValue<Student> graphe = getGrapheTutorTutee(eligibleTutees, eligibleTutors);
+			CalculAffectation<Student> calcul = new CalculAffectation<>(graphe, eligibleTutees, eligibleTutors);
+			for (Arete<Student> arete : calcul.getAffectation()) {
+				Student tutee = arete.getExtremite1();
+				Student tutor = arete.getExtremite2();
+				if (graphe.getPoids(tutee, tutor) <= POIDS_MAXIMAL) {
+					System.out.println(tutor + " -> " + tutee);
+					addAssignment(tutee, tutor);
+					eligibleTutees.remove(tutee);
+				} else {
+					eligibleTutors.remove(tutor);
+				}
+			}
 		}
-		addMultipleTuteeToTutors();
 	}
 	
 	/**

@@ -27,7 +27,7 @@ public class TutoringTest {
 		tutoring = new Tutoring();
 		String[][] data = DonneesPourTester.studentData;
 		for (String[] student: data) {
-			Student tmp = new Student(student[0], student[1], Double.valueOf(student[2]), Integer.valueOf(student[3]));
+			Student tmp = new Student(student[0], student[1], Double.valueOf(student[2]), Integer.valueOf(student[3]), 0);
 			tutoring.addStudent(tmp);
 		}
 	}

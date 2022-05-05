@@ -34,6 +34,6 @@ public abstract class Assignment {
 		
 		tutoring.createAssignments();
 		
-		System.out.println(tutoring.toStringTutors());
+		System.out.println(tutoring.toStringTutees());
 	}
 }
