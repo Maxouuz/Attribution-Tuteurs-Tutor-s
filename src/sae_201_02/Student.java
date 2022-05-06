@@ -81,11 +81,20 @@ public class Student extends Person {
 	
 	@Override
 	public String toString() {
-		return super.toString() + " (moyenne: " + this.moyenne + ", promo: " + this.PROMO + ")";
+		return super.toString() + " (moyenne: " + this.moyenne + ", promo: " + this.PROMO + ", absences: " + this.nbAbsences + ")";
 	}
 	
+	/**
+	 * Méthode qui calcule un score pour l'étudiant
+	 * Plus le score est grand, plus l'étudiant est considéré comme meilleur
+	 * Les critères pris en compte sont:
+	 * - La promo
+	 * - La moyenne
+	 * - Le nombre d'absences
+	 * @return
+	 */
 	public double getScore() {
-		return PROMO * 2 + moyenne;
+		return PROMO * 2 + moyenne - (nbAbsences / 5.0);
 	}
 
 	/**
@@ -107,5 +116,35 @@ public class Student extends Person {
 			res = true;
 		}
 		return res;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + PROMO;
+		long temp;
+		temp = Double.doubleToLongBits(moyenne);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + nbAbsences;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Student other = (Student) obj;
+		if (PROMO != other.PROMO)
+			return false;
+		if (Double.doubleToLongBits(moyenne) != Double.doubleToLongBits(other.moyenne))
+			return false;
+		if (nbAbsences != other.nbAbsences)
+			return false;
+		return true;
 	}
 }

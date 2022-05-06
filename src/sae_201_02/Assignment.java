@@ -1,5 +1,7 @@
 package sae_201_02;
 
+import fr.ulille.but.sae2_02.donnees.DonneesPourTester;
+
 /**
  * Classe qui règle le problème d'affectation
  * @author lezlon
@@ -27,13 +29,16 @@ public abstract class Assignment {
 		tutoring.addStudent(new Student("Juliette", "Traore", 12, 1, 0));
 		tutoring.addStudent(new Student("Franck", "Hebert", 2.5, 1, 0));
 		
-		/** for (String[] student: DonneesPourTester.studentData) {
-			Student s = new Student(student[0], student[1], Double.valueOf(student[2]), Integer.parseInt(student[3]));
+		/**for (String[] student: DonneesPourTester.studentData) {
+			Student s = new Student(student[0], student[1], Double.valueOf(student[2]), Integer.parseInt(student[3]), 0);
 			tutoring.addStudent(s);
-		} */
+		}*/
+		
+		// tutoring.setMoyenneMaxTutee(13.0);
+		// tutoring.setMoyenneMinTutor(13.0);
 		
 		tutoring.createAssignments();
 		
-		System.out.println(tutoring.toStringTutees());
+		System.out.println(tutoring.toStringTutors() + "\n" + tutoring.toStringTutees());
 	}
 }

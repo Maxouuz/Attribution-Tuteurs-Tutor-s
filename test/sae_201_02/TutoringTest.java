@@ -1,6 +1,8 @@
 package sae_201_02;
 
 import fr.ulille.but.sae2_02.donnees.DonneesPourTester;
+import sae_201_02.Student;
+import sae_201_02.Tutoring;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

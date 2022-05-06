@@ -155,6 +155,19 @@ public class Tutoring {
 		return eligibleTutors;
 	}
 	
+	public List<Student> getEligibleTutorsThirdYear() {
+		List<Student> eligibleTutors = getEligibleTutors();
+		List<Student> eligibleTutors3y = new ArrayList<>();
+		
+		for (Student tutor : eligibleTutors) {
+			if (tutor.getPROMO() == 3) {
+				eligibleTutors3y.add(tutor);
+			}
+		}
+		
+		return eligibleTutors3y;
+	}
+	
 	/**
 	 * Retourne la liste de tous les tutorés qui ont une moyenne suffisante
 	 * @return
@@ -193,12 +206,22 @@ public class Tutoring {
 		}
 		
 		// Ajoute les tuteurs manquants
-		for (int i = 0; i <= (tuteesList.size() - tutorsList.size()); i++) {
+		while (tuteesList.size() > tutorsList.size()) {
 			Student fakeStudent = new Student("", "", 0, 2, 0);
 			tutorsList.add(fakeStudent);
 			graphe.ajouterSommet(fakeStudent);
 			for (Student tutee: tuteesList) {
 				graphe.ajouterArete(tutee, fakeStudent, POIDS_MAXIMAL + 1);
+			}
+		}
+		
+		// Ajoute les tutorés manquants
+		while (tutorsList.size() > tuteesList.size()) {
+			Student fakeStudent = new Student("", "", 0, 1, 0);
+			tuteesList.add(fakeStudent);
+			graphe.ajouterSommet(fakeStudent);
+			for (Student tutor: tutorsList) {
+				graphe.ajouterArete(fakeStudent, tutor, POIDS_MAXIMAL + 1);
 			}
 		}
 		
@@ -222,20 +245,27 @@ public class Tutoring {
 	public void createAssignments() {
 		List<Student> eligibleTutees = getEligibleTutees();
 		List<Student> eligibleTutors = getEligibleTutors();
-		while (eligibleTutees.size() != 2) {
+		int nbRepetitions = 0;
+		while (eligibleTutees.size() != 0 && nbRepetitions < MAX_TUTEES_FOR_TUTOR) {
+			boolean fakeStudentsAreTutees = false;
+			if (eligibleTutors.size() > eligibleTutees.size()) fakeStudentsAreTutees = true;
+			
 			GrapheNonOrienteValue<Student> graphe = getGrapheTutorTutee(eligibleTutees, eligibleTutors);
 			CalculAffectation<Student> calcul = new CalculAffectation<>(graphe, eligibleTutees, eligibleTutors);
 			for (Arete<Student> arete : calcul.getAffectation()) {
 				Student tutee = arete.getExtremite1();
 				Student tutor = arete.getExtremite2();
+				
 				if (graphe.getPoids(tutee, tutor) <= POIDS_MAXIMAL) {
-					System.out.println(tutor + " -> " + tutee);
 					addAssignment(tutee, tutor);
 					eligibleTutees.remove(tutee);
 				} else {
-					eligibleTutors.remove(tutor);
+					if (fakeStudentsAreTutees) eligibleTutees.remove(tutee);
+					else eligibleTutors.remove(tutor);
 				}
+				eligibleTutors = getEligibleTutorsThirdYear();
 			}
+			nbRepetitions++;
 		}
 	}
 	
