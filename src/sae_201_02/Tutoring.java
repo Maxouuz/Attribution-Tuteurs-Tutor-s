@@ -22,8 +22,12 @@ public class Tutoring {
 	private final List<Student> tutees;
 	/** Liste des tuteurs */
 	private final List<Student> tutors;
+	/** Map de motivation des élèves */
+	private final Map<Student, Motivation> motivations;
 	/** Variables pour filtrer les étudiants qui n'ont pas une moyenne suffisante */
 	private Double moyenneMaxTutee, moyenneMinTutor;
+	/** Variable pour filtrer les étudiants qui ont trop d'absences */
+	private Integer nbAbsencesMax;
 	/** Map qui donne le tuteur associé au tutoré */
 	private final Map<Student, Student> tuteeToTutor;
 	/** Map qui donne le/les tutoré(s) associé au tuteur */
@@ -34,9 +38,17 @@ public class Tutoring {
 	public final static int MAX_TUTEES_FOR_TUTOR = 2;
 	
 	static {
-		Student st1 = new Student("Best", "Tutor", 20.0, 3, 0);
-		Student st2 = new Student("Best", "Tutee", 20.0, 1, 0);
-		POIDS_MAXIMAL = Tutoring.getWidthArete(st1, st2);
+		Student st1;
+		double poids_maximal;
+		try {
+			st1 = new Student("Best", "Tutor", 20.0, 3, 0);
+			Student st2 = new Student("Best", "Tutee", 20.0, 1, 0);
+			poids_maximal = Tutoring.getWidthArete(st1, st2);
+		} catch (Exception_Promo e) {
+			poids_maximal = Double.MAX_VALUE;
+			e.printStackTrace();
+		}
+		POIDS_MAXIMAL = poids_maximal;
 	}
 
 	/**
@@ -45,6 +57,7 @@ public class Tutoring {
 	public Tutoring() {
 		this.tuteeToTutor = new HashMap<>();
 		this.tutorToTutees = new HashMap<>();
+		this.motivations = new HashMap<>();
 		this.tutees = new ArrayList<>();
 		this.tutors = new ArrayList<>();
 	}
@@ -110,6 +123,31 @@ public class Tutoring {
 	public void setMoyenneMinTutor(Double moyenneMinTutor) {
 		this.moyenneMinTutor = moyenneMinTutor;
 	}
+	
+	/**
+	 * Retourne le filtre du nombre d'absences
+	 * @return
+	 */
+	public Integer getNbAbsencesMax() {
+		return nbAbsencesMax;
+	}
+
+	public void setNbAbsencesMax(Integer nbAbsencesMax) {
+		this.nbAbsencesMax = nbAbsencesMax;
+	}
+	
+	public void addStudentMotivation(Student student, Motivation motivation) {
+		this.motivations.put(student, motivation);
+	}
+	
+	public double getBonusPoints(Student student) {
+		Motivation motivation = this.motivations.get(student);
+		double bonusPoints = Motivation.NEUTRAL.getBonusPoints();
+		if (motivation != null) {
+			bonusPoints = motivation.getBonusPoints();
+		}
+		return bonusPoints;
+	}
 
 	/**
 	 * Ajoute un étudiant dans la liste des tutorées ou des tuteurs
@@ -136,10 +174,11 @@ public class Tutoring {
 		boolean res;
 		// Retourne true si il n'y a pas de filtre ou si l'étudiant a une bonne moyenne
 		if (student.canBeTutee()) {
-			res = moyenneMaxTutee == null || student.getMoyenne() <= moyenneMaxTutee;
+			res = (moyenneMaxTutee == null || student.getMoyenne() <= moyenneMaxTutee);
 		} else {
 			res = moyenneMinTutor == null || student.getMoyenne() >= moyenneMinTutor;
 		}
+		res = res && (nbAbsencesMax == null || student.getNbAbsences() <= nbAbsencesMax);
 		return res;
 	}
 	
@@ -183,15 +222,16 @@ public class Tutoring {
 	/**
 	 * Retourne le poids d'une arête pour un tuteur et un tutoré
 	 */
-	public static double getWidthArete(Student tutee, Student tutor) {
-		return tutor.getScore() * tutee.getScore();
+	public double getWidthArete(Student tutee, Student tutor) {
+		return (tutor.getScore() + getBonusPoints(tutor)) * (tutee.getScore() - getBonusPoints(tutee));
 	}
 	
 	/**
 	 * Méthode qui résout le problème d'affectation (ne crée que des couples)
 	 * @return
+	 * @throws Exception_Promo 
 	 */
-	private static GrapheNonOrienteValue<Student> getGrapheTutorTutee(List<Student> tuteesList, List<Student> tutorsList) {
+	private GrapheNonOrienteValue<Student> getGrapheTutorTutee(List<Student> tuteesList, List<Student> tutorsList) throws Exception_Promo {
 		GrapheNonOrienteValue<Student> graphe = new GrapheNonOrienteValue<>();
 		
 		// Ajout de tous les sommets
@@ -201,7 +241,7 @@ public class Tutoring {
 		// Ajout des arêtes
 		for (Student tutee: tuteesList) {
 			for (Student tutor: tutorsList) {
-				graphe.ajouterArete(tutee, tutor, Tutoring.getWidthArete(tutee, tutor));
+				graphe.ajouterArete(tutee, tutor, this.getWidthArete(tutee, tutor));
 			}
 		}
 		
@@ -241,8 +281,9 @@ public class Tutoring {
 	
 	/**
 	 * Méthode qui actualise les deux maps d'affectations
+	 * @throws Exception_Promo 
 	 */
-	public void createAssignments() {
+	public void createAssignments() throws Exception_Promo {
 		List<Student> eligibleTutees = getEligibleTutees();
 		List<Student> eligibleTutors = getEligibleTutors();
 		int nbRepetitions = 0;

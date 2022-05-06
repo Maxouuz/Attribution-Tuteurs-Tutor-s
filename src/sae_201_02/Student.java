@@ -20,13 +20,14 @@ public class Student extends Person {
 	 * @param moyenne
 	 * @param PROMO
 	 * @param absence
+	 * @throws Exception_Promo 
 	 */
-	public Student(String FORENAME, String NAME, double moyenne, int PROMO, int nbAbsences) {
+	public Student(String FORENAME, String NAME, double moyenne, int PROMO, int nbAbsences) throws Exception_Promo {
 		super(FORENAME, NAME);
 		this.moyenne = moyenne;
 		this.nbAbsences = nbAbsences;
 		if (PROMO < 1 || PROMO > 3) {
-			throw new ArithmeticException("La promo de l'étudiant doit être compris entre 1 et 3!");
+			throw new Exception_Promo("La promo de l'étudiant doit être compris entre 1 et 3!");
 		}
 		this.PROMO = PROMO;
 	}

@@ -5,10 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import sae_201_02.Student;
 
 /**
  * Classe de test pour la classe Student
@@ -31,7 +28,7 @@ class StudentTest {
 	}*/
 
 	@Test
-	void equalsTest() {
+	void equalsTest() throws Exception_Promo {
 		st1 = new Student("Jean","Dupont",6.9,1,0);
 		st2 = new Student("Jean","Dupont",6.9,1,0);
 		st3 = new Student("Jean","Dupont",12.7,1,0);
@@ -54,7 +51,7 @@ class StudentTest {
 	}
 	
 	@Test
-	void scoreTest() {
+	void scoreTest() throws Exception_Promo {
 		/**
 		 * Rappel: Plus le score est haut, plus l'étudiant est considéré comme meilleur
 		 */
@@ -72,5 +69,37 @@ class StudentTest {
 		assertTrue(st4.getScore() > st3.getScore());
 		// Moins bon score pour un étudiant ayant des absences
 		assertTrue(st5.getScore() < st1.getScore());
+	}
+	
+	@Test
+	void errorWithWrongPromoTest() {
+		// Promo inférieur à 1
+		boolean res = false;
+		try {
+			new Student("Jean", "Dupont", 10, 0, 0);
+		} catch (Exception_Promo e) {
+			res = true;
+		}
+		assertTrue(res);
+		
+		// Promo supérieur à 3
+		res = false;
+		try {
+			new Student("Jean", "Dupont", 10, 4, 0);
+		} catch (Exception_Promo e) {
+			res = true;
+		}
+		assertTrue(res);
+		
+		// Promo entre 1 et 3
+		res = false;
+		try {
+			new Student("Jean", "Dupont", 10, 1, 0);
+			new Student("Hugues","Bigot", 10, 2, 0);
+			new Student("Franck","Hebert", 10, 3, 0);
+		} catch (Exception_Promo e) {
+			res = true;
+		}
+		assertFalse(res);
 	}
 }
