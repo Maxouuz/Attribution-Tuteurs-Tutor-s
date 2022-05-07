@@ -12,6 +12,12 @@ public class Student extends Person {
 	private final int PROMO;
 	/**Nombre abscences de l'etudiant */
 	private int nbAbsences;
+	/** Variable qui représente le nombre d'absences qu'il faut pour perdre un point de score */
+	private final static double NB_ABSENCES_SCORE_DIVISOR = 3;
+	/** Variable qui représente la limite du nombre d'absences pris en compte dans le calcul du score*/
+	private final static double SCORE_MAX_ABSENCES = 365;
+	/** Variable qui représente l'écart des scores entre les différentes promos */
+	private final static double PROMO_SCORE_GAP = (SCORE_MAX_ABSENCES / NB_ABSENCES_SCORE_DIVISOR) + 21;
 	
 	/**
 	 * Constructeur de la classe Student
@@ -95,7 +101,11 @@ public class Student extends Person {
 	 * @return
 	 */
 	public double getScore() {
-		return PROMO * 2 + moyenne - (nbAbsences / 5.0);
+		double nbAbsencesCopy = nbAbsences;
+		if (nbAbsencesCopy > SCORE_MAX_ABSENCES) {
+			nbAbsencesCopy = SCORE_MAX_ABSENCES;
+		}
+		return PROMO * PROMO_SCORE_GAP + moyenne - (nbAbsencesCopy / NB_ABSENCES_SCORE_DIVISOR);
 	}
 
 	/**

@@ -43,7 +43,8 @@ public class Tutoring {
 		try {
 			st1 = new Student("Best", "Tutor", 20.0, 3, 0);
 			Student st2 = new Student("Best", "Tutee", 20.0, 1, 0);
-			poids_maximal = Tutoring.getWidthArete(st1, st2);
+			Tutoring tutoring = new Tutoring();
+			poids_maximal = tutoring.getWidthArete(st1, st2);
 		} catch (Exception_Promo e) {
 			poids_maximal = Double.MAX_VALUE;
 			e.printStackTrace();

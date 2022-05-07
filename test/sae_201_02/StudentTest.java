@@ -51,24 +51,19 @@ class StudentTest {
 	}
 	
 	@Test
-	void scoreTest() throws Exception_Promo {
+	void scoreSameYearTest() throws Exception_Promo {
 		/**
 		 * Rappel: Plus le score est haut, plus l'étudiant est considéré comme meilleur
 		 */
 		
-		st1 = new Student("Jean","Dupont",10,2,0);
-		st2 = new Student("Hugues","Bigot",9.6,2,0);
-		st3 = new Student("Franck","Hebert",8,3,0);
-		st4 = new Student("Sabine", "Leleu", 10.5,2,0);
-		st5 = new Student("Nicolas", "Roche", 10,2,3);
+		st1 = new Student("Jean","Dupont",10,3,0);
+		st2 = new Student("Hugues","Bigot",9,3,0);
+		st3 = new Student("Franck","Hebert",10,3,1);
+		
 		// Note supérieure
 		assertTrue(st1.getScore() > st2.getScore());
-		// Même score pour une année d'écart avec deux points de différence
-		assertTrue(st1.getScore() == st3.getScore());
-		// Meilleur score pour un étudiant de deuxième année avec 2.5 points de plus
-		assertTrue(st4.getScore() > st3.getScore());
-		// Moins bon score pour un étudiant ayant des absences
-		assertTrue(st5.getScore() < st1.getScore());
+		// Score moins bon pour un étudiant ayant des absences
+		assertTrue(st3.getScore() < st1.getScore());
 	}
 	
 	@Test
@@ -101,5 +96,21 @@ class StudentTest {
 			res = true;
 		}
 		assertFalse(res);
+	}
+	
+	@Test
+	void youngerStudentAlwaysLowerScoreTest() throws Exception_Promo  {
+		// Étudiant de 1ère année avec le score le plus haut possible
+		st1 = new Student("Jean","Dupont",20,1,0);
+		// Étudiant de 2ème année avec le score le plus mauvais possible
+		st2 = new Student("Hugues","Bigot",0,2,Integer.MAX_VALUE);
+		
+		assertTrue(st1.getScore() < st2.getScore());
+		
+		// Étudiant de 2ème année avec le score le plus haut possible
+		st3 = new Student("Charles", "Letellier",20,2,0);
+		// Étudiant de 3èle année avec le score le plus mauvais possible
+		st4 = new Student("Franck","Hebert",0,3,Integer.MAX_VALUE);
+		assertTrue(st3.getScore() < st4.getScore());
 	}
 }
