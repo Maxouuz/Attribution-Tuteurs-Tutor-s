@@ -37,19 +37,22 @@ public class Tutoring {
 	/** Variable qui définit combien de tutorés un tuteur peut gérer */
 	public final static int MAX_TUTEES_FOR_TUTOR = 2;
 	
+	/**
+	 * Initialise la variable POIDS_MAXIMAL
+	 */
 	static {
 		Student st1;
-		double poids_maximal;
+		double poidsMaximal;
 		try {
 			st1 = new Student("Best", "Tutor", 20.0, 3, 0);
 			Student st2 = new Student("Best", "Tutee", 20.0, 1, 0);
 			Tutoring tutoring = new Tutoring();
-			poids_maximal = tutoring.getWidthArete(st1, st2);
-		} catch (Exception_Promo e) {
-			poids_maximal = Double.MAX_VALUE;
+			poidsMaximal = tutoring.getWidthArete(st1, st2);
+		} catch (ExceptionPromo e) {
+			poidsMaximal = Double.MAX_VALUE;
 			e.printStackTrace();
 		}
-		POIDS_MAXIMAL = poids_maximal;
+		POIDS_MAXIMAL = poidsMaximal;
 	}
 
 	/**
@@ -133,14 +136,28 @@ public class Tutoring {
 		return nbAbsencesMax;
 	}
 
+	/**
+	 * Méthode pour changer le nombre d'absences maximum pour les étudiants
+	 * @return
+	 */
 	public void setNbAbsencesMax(Integer nbAbsencesMax) {
 		this.nbAbsencesMax = nbAbsencesMax;
 	}
 	
+	/**
+	 * Méthode pour informer la motivation d'un étudiant pour ce tutorat
+	 * @param student
+	 * @param motivation
+	 */
 	public void addStudentMotivation(Student student, Motivation motivation) {
 		this.motivations.put(student, motivation);
 	}
 	
+	/**
+	 * Méthode pour avoir les points bonus de motivation d'un étudiant.
+	 * @param student
+	 * @return
+	 */
 	public double getBonusPoints(Student student) {
 		Motivation motivation = this.motivations.get(student);
 		double bonusPoints = Motivation.NEUTRAL.getBonusPoints();
@@ -195,13 +212,17 @@ public class Tutoring {
 		return eligibleTutors;
 	}
 	
+	/**
+	 * Retourne la liste de tous les tuteurs de troisième année
+	 * @return
+	 */
 	public List<Student> getEligibleTutorsThirdYear() {
 		List<Student> eligibleTutors = getEligibleTutors();
 		List<Student> eligibleTutors3y = new ArrayList<>();
 		
-		for (Student tutor : eligibleTutors) {
-			if (tutor.getPROMO() == 3) {
-				eligibleTutors3y.add(tutor);
+		for (Student student : eligibleTutors) {
+			if (student.canBeTutor()) {
+				eligibleTutors3y.add(student);
 			}
 		}
 		
@@ -230,9 +251,9 @@ public class Tutoring {
 	/**
 	 * Méthode qui résout le problème d'affectation (ne crée que des couples)
 	 * @return
-	 * @throws Exception_Promo 
+	 * @throws ExceptionPromo 
 	 */
-	private GrapheNonOrienteValue<Student> getGrapheTutorTutee(List<Student> tuteesList, List<Student> tutorsList) throws Exception_Promo {
+	private GrapheNonOrienteValue<Student> getGrapheTutorTutee(List<Student> tuteesList, List<Student> tutorsList) throws ExceptionPromo {
 		GrapheNonOrienteValue<Student> graphe = new GrapheNonOrienteValue<>();
 		
 		// Ajout de tous les sommets
@@ -282,13 +303,13 @@ public class Tutoring {
 	
 	/**
 	 * Méthode qui actualise les deux maps d'affectations
-	 * @throws Exception_Promo 
+	 * @throws ExceptionPromo 
 	 */
-	public void createAssignments() throws Exception_Promo {
+	public void createAssignments() throws ExceptionPromo {
 		List<Student> eligibleTutees = getEligibleTutees();
 		List<Student> eligibleTutors = getEligibleTutors();
 		int nbRepetitions = 0;
-		while (eligibleTutees.size() != 0 && nbRepetitions < MAX_TUTEES_FOR_TUTOR) {
+		while (!eligibleTutees.isEmpty() && nbRepetitions < MAX_TUTEES_FOR_TUTOR) {
 			boolean fakeStudentsAreTutees = false;
 			if (eligibleTutors.size() > eligibleTutees.size()) fakeStudentsAreTutees = true;
 			

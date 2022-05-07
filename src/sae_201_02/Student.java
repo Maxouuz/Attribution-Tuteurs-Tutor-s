@@ -12,12 +12,17 @@ public class Student extends Person {
 	private final int PROMO;
 	/**Nombre abscences de l'etudiant */
 	private int nbAbsences;
-	/** Variable qui représente le nombre d'absences qu'il faut pour perdre un point de score */
-	private final static double NB_ABSENCES_SCORE_DIVISOR = 3;
-	/** Variable qui représente la limite du nombre d'absences pris en compte dans le calcul du score*/
+	/** 
+	 * Variable qui représente le nombre d'absences
+	 * qu'il faut pour perdre un point de score
+	 */
+	private final static double ABSENCE_SCORE_DIVISOR = 3;
+	/** Variable qui représente la limite du nombre d'absences
+	 * pris en compte dans le calcul du score
+	 */
 	private final static double SCORE_MAX_ABSENCES = 365;
 	/** Variable qui représente l'écart des scores entre les différentes promos */
-	private final static double PROMO_SCORE_GAP = (SCORE_MAX_ABSENCES / NB_ABSENCES_SCORE_DIVISOR) + 21;
+	private final static double PROMO_SCORE_GAP = (SCORE_MAX_ABSENCES / ABSENCE_SCORE_DIVISOR) + 21;
 	
 	/**
 	 * Constructeur de la classe Student
@@ -26,14 +31,14 @@ public class Student extends Person {
 	 * @param moyenne
 	 * @param PROMO
 	 * @param absence
-	 * @throws Exception_Promo 
+	 * @throws ExceptionPromo 
 	 */
-	public Student(String FORENAME, String NAME, double moyenne, int PROMO, int nbAbsences) throws Exception_Promo {
+	public Student(String FORENAME, String NAME, double moyenne, int PROMO, int nbAbsences) throws ExceptionPromo {
 		super(FORENAME, NAME);
 		this.moyenne = moyenne;
 		this.nbAbsences = nbAbsences;
 		if (PROMO < 1 || PROMO > 3) {
-			throw new Exception_Promo("La promo de l'étudiant doit être compris entre 1 et 3!");
+			throw new ExceptionPromo("La promo de l'étudiant doit être compris entre 1 et 3!");
 		}
 		this.PROMO = PROMO;
 	}
@@ -105,7 +110,7 @@ public class Student extends Person {
 		if (nbAbsencesCopy > SCORE_MAX_ABSENCES) {
 			nbAbsencesCopy = SCORE_MAX_ABSENCES;
 		}
-		return PROMO * PROMO_SCORE_GAP + moyenne - (nbAbsencesCopy / NB_ABSENCES_SCORE_DIVISOR);
+		return PROMO * PROMO_SCORE_GAP + moyenne - (nbAbsencesCopy / ABSENCE_SCORE_DIVISOR);
 	}
 
 	/**
@@ -120,13 +125,10 @@ public class Student extends Person {
 	 * Change le nombre d'absence d'un étudiant
 	 * @param absence
 	 */
-	public boolean setNbAbsences(int nbAbsences) {
-		boolean res = false;
-		if (nbAbsences >= 0) {
-			this.nbAbsences = nbAbsences;
-			res = true;
-		}
-		return res;
+	public void setNbAbsences(int nbAbsences) {
+		if (nbAbsences <= 0)
+			throw new IllegalArgumentException("Le nombre d'absences doit être un nombre positif!");
+		this.nbAbsences = nbAbsences;
 	}
 
 	@Override
@@ -143,19 +145,22 @@ public class Student extends Person {
 
 	@Override
 	public boolean equals(Object obj) {
+		boolean res = true;
 		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Student other = (Student) obj;
-		if (PROMO != other.PROMO)
-			return false;
-		if (Double.doubleToLongBits(moyenne) != Double.doubleToLongBits(other.moyenne))
-			return false;
-		if (nbAbsences != other.nbAbsences)
-			return false;
-		return true;
+			res = true;
+		else if (!super.equals(obj))
+			res = false;
+		else if (getClass() != obj.getClass())
+			res = false;
+		else {
+			Student other = (Student) obj;
+			if (PROMO != other.PROMO)
+				res = false;
+			if (Double.doubleToLongBits(moyenne) != Double.doubleToLongBits(other.moyenne))
+				res = false;
+			if (nbAbsences != other.nbAbsences)
+				res = false;
+		}
+		return res;
 	}
 }

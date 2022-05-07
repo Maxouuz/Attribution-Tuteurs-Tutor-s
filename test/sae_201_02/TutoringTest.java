@@ -23,7 +23,7 @@ public class TutoringTest {
 	/**
 	 * Utilise les données exemples de DonneesPourTester
 	 */
-	public void initialization() throws Exception_Promo {
+	public void initialization() throws ExceptionPromo {
 		tutoring = new Tutoring();
 		String[][] data = DonneesPourTester.studentData;
 		for (String[] student: data) {

@@ -21,7 +21,6 @@
 <rule ref="category/java/bestpractices.xml/MissingOverride"/>
 <rule ref="category/java/bestpractices.xml/PreserveStackTrace"/>
 <rule ref="category/java/bestpractices.xml/SwitchStmtsShouldHaveDefault"/>
-<rule ref="category/java/bestpractices.xml/SystemPrintln"/>
 <rule ref="category/java/bestpractices.xml/UnusedAssignment">
 <properties>
 <property name="checkUnusedPrefixIncrement" value="true"/>
@@ -49,11 +48,6 @@
 <rule ref="category/java/codestyle.xml/IdenticalCatchBranches"/>
 <rule ref="category/java/codestyle.xml/LinguisticNaming"/>
 <rule ref="category/java/codestyle.xml/LocalVariableNamingConventions"/>
-<rule ref="category/java/codestyle.xml/LongVariable">
-<properties>
-<property name="minimum" value="17"/>
-</properties>
-</rule>
 <rule ref="category/java/codestyle.xml/MethodNamingConventions"/>
 <rule ref="category/java/codestyle.xml/NoPackage"/>
 <rule ref="category/java/codestyle.xml/OnlyOneReturn"/>
@@ -119,16 +113,6 @@
 </properties>
 </rule>
 <rule ref="category/java/design.xml/ExcessiveImports"/>
-<rule ref="category/java/design.xml/ExcessiveMethodLength">
-<properties>
-<property name="minimum" value="30.0"/>
-</properties>
-</rule>
-<rule>
-<properties>
-<property name="minimum" value="5.0"/>
-</properties>
-</rule>
 <rule ref="category/java/design.xml/ExcessivePublicCount">
 <properties>
 <property name="minimum" value="20.0"/>
@@ -137,7 +121,6 @@
 <rule ref="category/java/design.xml/FinalFieldCouldBeStatic"/>
 <rule ref="category/java/design.xml/GodClass"/>
 <rule ref="category/java/design.xml/ImmutableField"/>
-<rule ref="category/java/design.xml/LawOfDemeter"/>
 <rule ref="category/java/design.xml/LogicInversion"/>
 <rule ref="category/java/design.xml/NcssCount">
 <properties>
@@ -157,7 +140,6 @@
 <rule ref="category/java/design.xml/SimplifyBooleanExpressions"/>
 <rule ref="category/java/design.xml/SimplifyBooleanReturns"/>
 <rule ref="category/java/design.xml/SimplifyConditional"/>
-<rule ref="category/java/design.xml/SingularField"/>
 <rule ref="category/java/design.xml/SwitchDensity">
 <properties>
 <property name="minimum" value="10.0"/>
@@ -189,12 +171,6 @@
 <property name="serialPersistentFieldsCommentRequired" value="Ignored"/>
 </properties>
 </rule>
-<rule ref="category/java/documentation.xml/CommentSize">
-<properties>
-<property name="maxLines" value="6"/>
-<property name="maxLineLength" value="80"/>
-</properties>
-</rule>
 <rule ref="category/java/documentation.xml/UncommentedEmptyConstructor"/>
 <rule ref="category/java/documentation.xml/UncommentedEmptyMethodBody"/>
 <rule ref="category/java/errorprone.xml/AssignmentInOperand"/>
@@ -203,7 +179,6 @@
 <rule ref="category/java/errorprone.xml/AvoidCallingFinalize"/>
 <rule ref="category/java/errorprone.xml/AvoidCatchingNPE"/>
 <rule ref="category/java/errorprone.xml/AvoidCatchingThrowable"/>
-<rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals"/>
 <rule ref="category/java/errorprone.xml/AvoidFieldNameMatchingMethodName"/>
 <rule ref="category/java/errorprone.xml/AvoidFieldNameMatchingTypeName"/>
 <rule ref="category/java/errorprone.xml/AvoidInstanceofChecksInCatchClause"/>
