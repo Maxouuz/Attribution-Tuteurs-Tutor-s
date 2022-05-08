@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -160,10 +161,10 @@ class StudentTest {
 		 */
 		
 		//Création de tableaux d'étudiants
-		ArrayList<Student> groupeDe1ereAnnee = new ArrayList<Student>();
-		ArrayList<Student> groupeDe1ereAnneeTrié = new ArrayList<Student>();
-		ArrayList<Student> groupeDe2Et3emeAnnee = new ArrayList<Student>();
-		ArrayList<Student> groupeDe2Et3emeAnneeTrié = new ArrayList<Student>();
+		List<Student> groupeDe1ereAnnee = new ArrayList<>();
+		List<Student> groupeDe1ereAnneeTrie = new ArrayList<>();
+		List<Student> groupeDe2Et3emeAnnee = new ArrayList<>();
+		List<Student> groupeDe2Et3emeAnneeTrie = new ArrayList<>();
 		
 		//Initialisation des étudiants de 1ere année
 		Student st1 = new Student("Jean", "Dupont", 12, 1, 0);
@@ -176,15 +177,15 @@ class StudentTest {
 		groupeDe1ereAnnee.add(st2);
 		
 		//Remplissage d'un tableau en le triant à la main :
-		groupeDe1ereAnneeTrié.add(st1);
-		groupeDe1ereAnneeTrié.add(st2);
-		groupeDe1ereAnneeTrié.add(st3);
+		groupeDe1ereAnneeTrie.add(st1);
+		groupeDe1ereAnneeTrie.add(st2);
+		groupeDe1ereAnneeTrie.add(st3);
 		
 		//Trie des étudiants par score croissant
 		Collections.sort(groupeDe1ereAnnee, new ScoreComparator());
 		
 		//Comparaison avec le groupe trier à la main : 
-		assertTrue(groupeDe1ereAnnee.equals(groupeDe1ereAnneeTrié));
+		assertEquals(groupeDe1ereAnnee, groupeDe1ereAnneeTrie);
 		
 		//Même chose mais avec des étudiants de 2eme et 3eme année :
 		Student st11 = new Student("Jean", "Dupont", 12, 2, 0);
@@ -193,12 +194,12 @@ class StudentTest {
 		groupeDe2Et3emeAnnee.add(st31);
 		groupeDe2Et3emeAnnee.add(st11);
 		groupeDe2Et3emeAnnee.add(st21);
-		groupeDe2Et3emeAnneeTrié.add(st11);
-		groupeDe2Et3emeAnneeTrié.add(st31);
-		groupeDe2Et3emeAnneeTrié.add(st21);
+		groupeDe2Et3emeAnneeTrie.add(st11);
+		groupeDe2Et3emeAnneeTrie.add(st31);
+		groupeDe2Et3emeAnneeTrie.add(st21);
 		
 		Collections.sort(groupeDe2Et3emeAnnee, new ScoreComparator());
-		assertTrue(groupeDe2Et3emeAnnee.equals(groupeDe2Et3emeAnneeTrié));
+		assertEquals(groupeDe2Et3emeAnnee, groupeDe2Et3emeAnneeTrie);
 
 		
 	}
