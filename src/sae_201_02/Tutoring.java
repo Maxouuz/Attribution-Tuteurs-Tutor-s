@@ -200,6 +200,29 @@ public class Tutoring {
 	}
 	
 	/**
+	 * Désinscrit l'étudiant du tutorat
+	 * @param student
+	 * @return
+	 */
+	public void removeStudent(Student student) {
+		if (student.canBeTutee()) {
+			// Retire de la liste le tutoré
+			tutees.remove(student);
+			// Retire éventuellement l'affectation concernant le tutoré
+			forcedAssignment.remove(student);
+		} else {
+			// Retire de la liste le tuteur
+			tutors.remove(student);
+			// Retire éventuellement toutes les affectations concernant le tuteur
+			for (Student tutee : forcedAssignment.keySet()) {
+				if (forcedAssignment.get(tutee) == student) {
+					forcedAssignment.remove(tutee);
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Retourne true si l'étudiant a une moyenne suffisante pour être tuteur/tutoré
 	 * @param student
 	 * @return
