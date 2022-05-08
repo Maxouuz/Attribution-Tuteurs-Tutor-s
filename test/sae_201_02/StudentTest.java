@@ -156,7 +156,7 @@ class StudentTest {
 	@Test
 	void scoreComparatorTest() throws ExceptionPromo {
 		/**
-		 * 
+		 * Rappel : scoreComparator() trie les étudiants par score dans l'ordre croissant.
 		 */
 		
 		//Création de tableaux d'étudiants
@@ -180,7 +180,7 @@ class StudentTest {
 		groupeDe1ereAnneeTrié.add(st2);
 		groupeDe1ereAnneeTrié.add(st3);
 		
-		//Tri des étudiants par score croissant
+		//Trie des étudiants par score croissant
 		Collections.sort(groupeDe1ereAnnee, new ScoreComparator());
 		
 		//Comparaison avec le groupe trier à la main : 
