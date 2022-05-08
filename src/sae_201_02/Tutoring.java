@@ -32,6 +32,8 @@ public class Tutoring {
 	private final Map<Student, Student> tuteeToTutor;
 	/** Map qui donne le/les tutoré(s) associé au tuteur */
 	private final Map<Student, Set<Student>> tutorToTutees;
+	/** Map qui enregistre toutes les associations forcées par les professeurs */
+	private final Map<Student, Student> forcedAssignment;
 	/** Variable qui donne le poids maximal que peut avoir une arête */
 	public final static double POIDS_MAXIMAL;
 	/** Variable qui définit combien de tutorés un tuteur peut gérer */
@@ -61,6 +63,7 @@ public class Tutoring {
 	public Tutoring() {
 		this.tuteeToTutor = new HashMap<>();
 		this.tutorToTutees = new HashMap<>();
+		this.forcedAssignment = new HashMap<>();
 		this.motivations = new HashMap<>();
 		this.tutees = new ArrayList<>();
 		this.tutors = new ArrayList<>();
@@ -94,6 +97,19 @@ public class Tutoring {
 		Map<Student, Student> copy = new HashMap<>();
 		copy.putAll(tuteeToTutor);
 		return copy;
+	}
+	
+	/**
+	 * Réinitialise les deux maps d'affectations
+	 */
+	void clearAssignments() {
+		tuteeToTutor.clear();
+		tutorToTutees.clear();
+		
+		// Remet la lisee des affectations forcées
+		for (Student tutee: forcedAssignment.keySet()) {
+			addAssignment(tutee, forcedAssignment.get(tutee));
+		}
 	}
 
 	/**
@@ -191,6 +207,7 @@ public class Tutoring {
 	public boolean canParticipate(Student student) {
 		boolean res;
 		// Retourne true si il n'y a pas de filtre ou si l'étudiant a une bonne moyenne
+		// et qu'il n'a pas trop d'absences
 		if (student.canBeTutee()) {
 			res = (moyenneMaxTutee == null || student.getMoyenne() <= moyenneMaxTutee);
 		} else {
@@ -198,6 +215,42 @@ public class Tutoring {
 		}
 		res = res && (nbAbsencesMax == null || student.getNbAbsences() <= nbAbsencesMax);
 		return res;
+	}
+	
+	/**
+	 * Méthode qui permet de forcer une association entre un tuteur et un tutoré
+	 * @param tutee
+	 * @param tutor
+	 * @throws ExceptionPromo
+	 * @throws ExceptionNotInTutoring
+	 * @throws ExceptionTooManyTutees 
+	 */
+	public void forceAssignment(Student tutee, Student tutor) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyTutees {
+		// Retourne une erreur si le tutoré n'est pas en première année
+		if (!tutee.canBeTutee()) {
+			throw new ExceptionPromo("Le tutoré doit être en première année!");
+		// Retourne une erreur si le tuteur est en première année
+		} else if (!tutor.canBeTutor()) {
+			throw new ExceptionPromo("Le tuteur doit être en deuxième ou troisième année!");
+		// Retourne une erreur si le tutoré ou le tuteur n'est pas dans la liste des candidats
+		} else if (!tutees.contains(tutee) || !tutors.contains(tutor)) {
+			throw new ExceptionNotInTutoring();
+		} else if (Collections.frequency(forcedAssignment.values(), tutor) == MAX_TUTEES_FOR_TUTOR) {
+			throw new ExceptionTooManyTutees();
+		} else {
+			// Ajoute l'affectation forcée si tout est valide
+			forcedAssignment.put(tutee, tutor);
+		}
+	}
+	
+	/**
+	 * Méthode qui permet d'annuler une association entre un tuteur et un tutoré qui était forcée
+	 * @param tutee
+	 */
+	public void removeForcedAssignment(Student tutee) {
+		if (forcedAssignment.containsKey(tutee)) {
+			forcedAssignment.remove(tutee);
+		}
 	}
 	
 	/**
@@ -213,20 +266,29 @@ public class Tutoring {
 	}
 	
 	/**
-	 * Retourne la liste de tous les tuteurs de troisième année
+	 * Enlève de la liste tous les étudiants de 2ème année
 	 * @return
 	 */
-	public List<Student> getEligibleTutorsThirdYear() {
-		List<Student> eligibleTutors = getEligibleTutors();
-		List<Student> eligibleTutors3y = new ArrayList<>();
+	private void removeAll2yInList(List<Student> tutors) {
+		int secondYear = 2;
 		
-		for (Student student : eligibleTutors) {
-			if (student.canBeTutor()) {
-				eligibleTutors3y.add(student);
+		for (int i = 0; i < tutors.size(); i++) {
+			if (tutors.get(i).getPROMO() == secondYear) {
+				tutors.remove(tutors.get(i));
 			}
 		}
-		
-		return eligibleTutors3y;
+	}
+	
+	/**
+	 * Enlève de la liste tous les étudiants qui sont associés au nombre maximum de tutorés
+	 * @return
+	 */
+	private void removeFullTutors(List<Student> tutors) {
+		for (int i = 0; i < tutors.size(); i++) {
+			if (getTutorAssignment(tutors.get(i)).size() >= MAX_TUTEES_FOR_TUTOR) {
+				tutors.remove(tutors.get(i));
+			}
+		}
 	}
 	
 	/**
@@ -249,25 +311,25 @@ public class Tutoring {
 	}
 	
 	void addFakeStudents(List<Student> tuteesList, List<Student> tutorsList, GrapheNonOrienteValue<Student> graphe) throws ExceptionPromo {
-			// Ajoute les tuteurs manquants
-			while (tuteesList.size() > tutorsList.size()) {
-				Student fakeStudent = new Student("", "", 0, 2, 0);
-				tutorsList.add(fakeStudent);
-				graphe.ajouterSommet(fakeStudent);
-				for (Student tutee: tuteesList) {
-					graphe.ajouterArete(tutee, fakeStudent, POIDS_MAXIMAL + 1);
-				}
+		// Ajoute les tuteurs manquants
+		while (tuteesList.size() > tutorsList.size()) {
+			Student fakeStudent = new Student("", "", 0, 2, 0);
+			tutorsList.add(fakeStudent);
+			graphe.ajouterSommet(fakeStudent);
+			for (Student tutee: tuteesList) {
+				graphe.ajouterArete(tutee, fakeStudent, POIDS_MAXIMAL + 1);
 			}
-			
-			// Ajoute les tutorés manquants
-			while (tutorsList.size() > tuteesList.size()) {
-				Student fakeStudent = new Student("", "", 0, 1, 0);
-				tuteesList.add(fakeStudent);
-				graphe.ajouterSommet(fakeStudent);
-				for (Student tutor: tutorsList) {
-					graphe.ajouterArete(fakeStudent, tutor, POIDS_MAXIMAL + 1);
-				}
+		}
+		
+		// Ajoute les tutorés manquants
+		while (tutorsList.size() > tuteesList.size()) {
+			Student fakeStudent = new Student("", "", 0, 1, 0);
+			tuteesList.add(fakeStudent);
+			graphe.ajouterSommet(fakeStudent);
+			for (Student tutor: tutorsList) {
+				graphe.ajouterArete(fakeStudent, tutor, POIDS_MAXIMAL + 1);
 			}
+		}
 	}
 	
 	/**
@@ -297,7 +359,7 @@ public class Tutoring {
 	/**
 	 * Méthode qui ajoute une association dans les deux maps
 	 */
-	public void addAssignment(Student tutee, Student tutor) {
+	void addAssignment(Student tutee, Student tutor) {
 		tuteeToTutor.put(tutee, tutor);
 		if (!tutorToTutees.containsKey(tutor)) {
 			tutorToTutees.put(tutor, new LinkedHashSet<>());
@@ -310,10 +372,19 @@ public class Tutoring {
 	 * @throws ExceptionPromo 
 	 */
 	public void createAssignments() throws ExceptionPromo {
+		clearAssignments();
+		
 		List<Student> eligibleTutees = getEligibleTutees();
 		List<Student> eligibleTutors = getEligibleTutors();
-		int nbRepetitions = 0;
-		while (!eligibleTutees.isEmpty() && nbRepetitions < MAX_TUTEES_FOR_TUTOR) {
+		
+		// Nous n'avons pas besoin d'associer des tutorés qui ont des affectations forcées
+		eligibleTutees.removeAll(forcedAssignment.keySet());
+		
+		// Fait des affectations tant qu'il y a toujours des tutorés à affecter
+		// et tant qu'il n'y a pas eu trop de répétitions
+		while (!eligibleTutees.isEmpty() && !eligibleTutors.isEmpty()) {
+			removeFullTutors(eligibleTutors);
+			// Variable qui vérifie si les faux étudiants ajoutés se trouveront dans les tuteurs ou tutorés
 			boolean fakeStudentsAreTutees = eligibleTutors.size() > eligibleTutees.size();
 			
 			GrapheNonOrienteValue<Student> graphe = getGrapheTutorTutee(eligibleTutees, eligibleTutors);
@@ -322,17 +393,42 @@ public class Tutoring {
 				Student tutee = arete.getExtremite1();
 				Student tutor = arete.getExtremite2();
 				
+				// Vérifie si l'affectation n'est pas avec un faux étudiant
 				if (graphe.getPoids(tutee, tutor) <= POIDS_MAXIMAL) {
 					addAssignment(tutee, tutor);
 					eligibleTutees.remove(tutee);
 				} else {
+					// Enlève ce faux étudiant pour la prochaine affectation
 					if (fakeStudentsAreTutees) eligibleTutees.remove(tutee);
 					else eligibleTutors.remove(tutor);
 				}
-				eligibleTutors = getEligibleTutorsThirdYear();
 			}
-			nbRepetitions++;
+			removeAll2yInList(eligibleTutors);
 		}
+	}
+	
+	/**
+	 * Retourne le tuteur affecté au tutoré donné en entrée
+	 * @param tutee
+	 * @return
+	 */
+	public Student getTuteeAssignment(Student tutee) {
+		return tuteeToTutor.get(tutee);
+	}
+	
+	/**
+	 * Retourne la liste des affectations pour un tuteur
+	 * @param tutor
+	 * @return
+	 */
+	public Set<Student> getTutorAssignment(Student tutor) {
+		Set<Student> tutees;
+		if (tutorToTutees.containsKey(tutor)) {
+			tutees = tutorToTutees.get(tutor);
+		} else {
+			tutees = new LinkedHashSet<>();
+		}
+		return tutees;
 	}
 	
 	/**

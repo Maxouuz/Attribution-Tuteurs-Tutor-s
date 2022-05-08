@@ -26,7 +26,7 @@ public enum Subject {
 	 * Constructeur de l'enum comportant l'initialisation de l'intitulé d'une matière
 	 * @param NOM_MAT
 	 */
-	Subject(String NOM_MAT) {
+	private Subject(String NOM_MAT) {
 		this.NOM_MAT = NOM_MAT;
 	}
 

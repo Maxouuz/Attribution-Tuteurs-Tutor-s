@@ -7,7 +7,6 @@
 </properties>
 </rule>
 <rule ref="category/java/bestpractices.xml/AvoidReassigningParameters"/>
-<rule ref="category/java/bestpractices.xml/ForLoopCanBeForeach"/>
 <rule ref="category/java/bestpractices.xml/JUnitTestContainsTooManyAsserts"/>
 <rule ref="category/java/bestpractices.xml/JUnitTestContainsTooManyAsserts">
 <properties>
