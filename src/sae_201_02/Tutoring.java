@@ -248,6 +248,28 @@ public class Tutoring {
 		return (tutor.getScore() + getBonusPoints(tutor)) * (tutee.getScore() - getBonusPoints(tutee));
 	}
 	
+	void addFakeStudents(List<Student> tuteesList, List<Student> tutorsList, GrapheNonOrienteValue<Student> graphe) throws ExceptionPromo {
+			// Ajoute les tuteurs manquants
+			while (tuteesList.size() > tutorsList.size()) {
+				Student fakeStudent = new Student("", "", 0, 2, 0);
+				tutorsList.add(fakeStudent);
+				graphe.ajouterSommet(fakeStudent);
+				for (Student tutee: tuteesList) {
+					graphe.ajouterArete(tutee, fakeStudent, POIDS_MAXIMAL + 1);
+				}
+			}
+			
+			// Ajoute les tutorés manquants
+			while (tutorsList.size() > tuteesList.size()) {
+				Student fakeStudent = new Student("", "", 0, 1, 0);
+				tuteesList.add(fakeStudent);
+				graphe.ajouterSommet(fakeStudent);
+				for (Student tutor: tutorsList) {
+					graphe.ajouterArete(fakeStudent, tutor, POIDS_MAXIMAL + 1);
+				}
+			}
+	}
+	
 	/**
 	 * Méthode qui résout le problème d'affectation (ne crée que des couples)
 	 * @return
@@ -267,25 +289,7 @@ public class Tutoring {
 			}
 		}
 		
-		// Ajoute les tuteurs manquants
-		while (tuteesList.size() > tutorsList.size()) {
-			Student fakeStudent = new Student("", "", 0, 2, 0);
-			tutorsList.add(fakeStudent);
-			graphe.ajouterSommet(fakeStudent);
-			for (Student tutee: tuteesList) {
-				graphe.ajouterArete(tutee, fakeStudent, POIDS_MAXIMAL + 1);
-			}
-		}
-		
-		// Ajoute les tutorés manquants
-		while (tutorsList.size() > tuteesList.size()) {
-			Student fakeStudent = new Student("", "", 0, 1, 0);
-			tuteesList.add(fakeStudent);
-			graphe.ajouterSommet(fakeStudent);
-			for (Student tutor: tutorsList) {
-				graphe.ajouterArete(fakeStudent, tutor, POIDS_MAXIMAL + 1);
-			}
-		}
+		addFakeStudents(tuteesList, tutorsList, graphe);
 		
 		return graphe;
 	}
@@ -310,8 +314,7 @@ public class Tutoring {
 		List<Student> eligibleTutors = getEligibleTutors();
 		int nbRepetitions = 0;
 		while (!eligibleTutees.isEmpty() && nbRepetitions < MAX_TUTEES_FOR_TUTOR) {
-			boolean fakeStudentsAreTutees = false;
-			if (eligibleTutors.size() > eligibleTutees.size()) fakeStudentsAreTutees = true;
+			boolean fakeStudentsAreTutees = eligibleTutors.size() > eligibleTutees.size();
 			
 			GrapheNonOrienteValue<Student> graphe = getGrapheTutorTutee(eligibleTutees, eligibleTutors);
 			CalculAffectation<Student> calcul = new CalculAffectation<>(graphe, eligibleTutees, eligibleTutors);
