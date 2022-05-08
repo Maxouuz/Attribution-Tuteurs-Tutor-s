@@ -93,19 +93,19 @@ public class TutoringTest {
 	@Test
 	void showExemple() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyTutees {
 		Tutoring tutoringShort = new Tutoring();
-		Student tutor1 = new Student("Sophie", "Vallee", 15.5, 2, 0);
-		Student tutor2 = new Student("Nicolas", "Roche", 16.5, 3, 0);
-		Student tutor3 = new Student("Maurice", "Fernandez", 14.5, 3, 3);
+		Student tutor1 = new Student("Sophie", "Vallee", 15.5, 2, 3);
+		Student tutor2 = new Student("Nicolas", "Roche", 16.5, 3, 6);
+		Student tutor3 = new Student("Maurice", "Fernandez", 14.5, 3, 4);
 		Student tutor4 = new Student("William", "Letellier", 18.5, 2, 2);
 		Student tutor5 = new Student("Paul", "Sanchez", 13.7, 3, 0);
 		
 		Student tutee1 = new Student("Charles", "Letellier", 8, 1, 0);
-		Student tutee2 = new Student("Daniel", "Daniel", 9.5, 1, 1);
-		Student tutee3 = new Student("François", "Bertin", 7, 1, 1);
-		Student tutee4 = new Student("Sabine", "Leleu", 5.5, 1, 0);
-		Student tutee5 = new Student("Gabriel", "Marin", 9, 1, 8);
-		Student tutee6 = new Student("Juliette", "Traore", 12, 1, 0);
-		Student tutee7 = new Student("Franck", "Hebert", 2.5, 1, 0);
+		Student tutee2 = new Student("Daniel", "Daniel", 9, 1, 3);
+		Student tutee3 = new Student("François", "Bertin", 7, 1, 9);
+		Student tutee4 = new Student("Sabine", "Leleu", 5.5, 1, 1);
+		Student tutee5 = new Student("Gabriel", "Marin", 9, 1, 0);
+		Student tutee6 = new Student("Juliette", "Traore", 12, 1, 30);
+		Student tutee7 = new Student("Franck", "Hebert", 2.5, 1, 5);
 		
 		tutoringShort.addStudent(tutor1);
 		tutoringShort.addStudent(tutor2);
@@ -121,19 +121,18 @@ public class TutoringTest {
 		tutoringShort.addStudent(tutee6);
 		tutoringShort.addStudent(tutee7);
 		
+		tutoringShort.addStudentMotivation(tutor4, Motivation.MOTIVATED);
+		tutoringShort.addStudentMotivation(tutee2, Motivation.NOT_MOTIVATED);
+		tutoringShort.addStudentMotivation(tutee3, Motivation.MOTIVATED);
+		tutoringShort.addStudentMotivation(tutee5, Motivation.NOT_MOTIVATED);
+		tutoringShort.addStudentMotivation(tutee6, Motivation.MOTIVATED);
+		
 		System.out.println("--- AFFECTATION PAR DÉFAUT ---\n");
 		tutoringShort.createAssignments();
 		System.out.println(tutoringShort.toStringTutors());
 		
-		System.out.println("\n--- AFFECTATION AVEC FILTRES ---\n");
-		tutoringShort.setMoyenneMinTutor(10.0);
-		tutoringShort.setMoyenneMaxTutee(14.0);
-		tutoringShort.setNbAbsencesMax(2);
-		tutoringShort.createAssignments();
-		System.out.println(tutoringShort.toStringTutors());
-		
 		System.out.println("\n--- AFFECTATION AVEC AFFECTATION MANUELLE ---\n");
-		tutoringShort.forceAssignment(tutee7, tutor5);
+		tutoringShort.forceAssignment(tutee6, tutor5);
 		tutoringShort.createAssignments();
 		System.out.println(tutoringShort.toStringTutors());
 	}
