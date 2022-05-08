@@ -44,7 +44,7 @@ public class Teacher extends Person {
 	 * Retourne une copie des matières enseignées par le professeur
 	 * @return
 	 */
-	public Set<Subject> getSubjectTeached() {
+	public Set<Subject> getSubjectsTeached() {
 		return new LinkedHashSet<Subject>(subjectsTeached);
 	}
 }
