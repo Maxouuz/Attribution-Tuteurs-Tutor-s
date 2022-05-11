@@ -16,6 +16,9 @@ class TeacherTest {
 	Teacher teacher;
 
 	@BeforeEach
+	/**
+	 * Initialisation de la variable test
+	 */
 	public void initialization() {
 		teacher = new Teacher("Jean", "Dupont");
 	}

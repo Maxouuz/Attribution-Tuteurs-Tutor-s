@@ -10,6 +10,9 @@ import org.junit.Test;
  */
 public class SubjectTest {
 	@Test
+	/**
+	 * Test de la méthode toString de Subject Test
+	 */
 	public void testToString() {
 		assertEquals("R101 - Initiation au développement", Subject.R101.toString());
 	}

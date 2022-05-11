@@ -186,6 +186,15 @@ public class Tutoring {
 	}
 	
 	/**
+	 * Inscrit plusieurs étudiants pour ce tutorat
+	 */
+	public void addAllStudents(Student... students) {
+		for (Student std : students) {
+			addStudent(std);
+		}
+	}
+	
+	/**
 	 * Désinscrit l'étudiant du tutorat
 	 * @param student
 	 * @return
