@@ -97,13 +97,6 @@
 <property name="threshold" value="10"/>
 </properties>
 </rule>
-<rule ref="category/java/design.xml/CyclomaticComplexity">
-<properties>
-<property name="classReportLevel" value="80"/>
-<property name="methodReportLevel" value="10"/>
-<property name="cycloOptions" value=""/>
-</properties>
-</rule>
 <rule ref="category/java/design.xml/DataClass"/>
 <rule ref="category/java/design.xml/ExceptionAsFlowControl"/>
 <rule ref="category/java/design.xml/ExcessiveClassLength">
@@ -112,13 +105,7 @@
 </properties>
 </rule>
 <rule ref="category/java/design.xml/ExcessiveImports"/>
-<rule ref="category/java/design.xml/ExcessivePublicCount">
-<properties>
-<property name="minimum" value="20.0"/>
-</properties>
-</rule>
 <rule ref="category/java/design.xml/FinalFieldCouldBeStatic"/>
-<rule ref="category/java/design.xml/GodClass"/>
 <rule ref="category/java/design.xml/ImmutableField"/>
 <rule ref="category/java/design.xml/LogicInversion"/>
 <rule ref="category/java/design.xml/NcssCount">

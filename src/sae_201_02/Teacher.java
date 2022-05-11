@@ -25,6 +25,13 @@ public class Teacher extends Person {
 	}
 	
 	/**
+	 * Constructeur surchargé de la classe Teacher
+	 */
+	public Teacher(String FORENAME, String NAME) {
+		this(FORENAME, NAME, new LinkedHashSet<>());
+	}
+	
+	/**
 	 * Ajoute une matière enseigné par le professeur
 	 * @param subject
 	 */
@@ -36,8 +43,8 @@ public class Teacher extends Person {
 	 * Retire une matière enseigné par le professeur
 	 * @param subject
 	 */
-	public void removeSubjectTeached(Subject subject) {
-		this.subjectsTeached.remove(subject);
+	public boolean removeSubjectTeached(Subject subject) {
+		return this.subjectsTeached.remove(subject);
 	}
 
 	/**

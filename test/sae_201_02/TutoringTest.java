@@ -107,19 +107,8 @@ public class TutoringTest {
 		Student tutee6 = new Student("Juliette", "Traore", 12, 1, 30);
 		Student tutee7 = new Student("Franck", "Hebert", 2.5, 1, 5);
 		
-		tutoringShort.addStudent(tutor1);
-		tutoringShort.addStudent(tutor2);
-		tutoringShort.addStudent(tutor3);
-		tutoringShort.addStudent(tutor4);
-		tutoringShort.addStudent(tutor5);
-		
-		tutoringShort.addStudent(tutee1);
-		tutoringShort.addStudent(tutee2);
-		tutoringShort.addStudent(tutee3);
-		tutoringShort.addStudent(tutee4);
-		tutoringShort.addStudent(tutee5);
-		tutoringShort.addStudent(tutee6);
-		tutoringShort.addStudent(tutee7);
+		tutoringShort.addAllStudents(tutor1, tutor2, tutor3, tutor4, tutor5,
+									 tutee1, tutee2, tutee3, tutee4, tutee5, tutee6, tutee7);
 		
 		tutoringShort.addStudentMotivation(tutor4, Motivation.MOTIVATED);
 		tutoringShort.addStudentMotivation(tutee2, Motivation.NOT_MOTIVATED);
