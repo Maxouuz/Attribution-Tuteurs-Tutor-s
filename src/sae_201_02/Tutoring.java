@@ -275,7 +275,7 @@ public class Tutoring {
 		return (tutor.getScore() + getBonusPoints(tutor)) * (tutee.getScore() - getBonusPoints(tutee));
 	}
 	
-	void addFakeStudents(List<Student> tuteesList, List<Student> tutorsList, GrapheNonOrienteValue<Student> graphe) throws ExceptionPromo {
+	public void addFakeStudents(List<Student> tuteesList, List<Student> tutorsList, GrapheNonOrienteValue<Student> graphe) throws ExceptionPromo {
 		// Ajoute les tuteurs manquants
 		while (tuteesList.size() > tutorsList.size()) {
 			Student fakeStudent = new Student("", "", 0, 2, 0);

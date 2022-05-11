@@ -1,10 +1,14 @@
 package sae_201_02;
 
 import fr.ulille.but.sae2_02.donnees.DonneesPourTester;
+import fr.ulille.but.sae2_02.graphes.GrapheNonOrienteValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -89,6 +93,70 @@ public class TutoringTest {
 		
 		assertTrue(res);
 	}
+	
+	@Test
+	void testAddFakeStudent() throws ExceptionPromo{
+		/** Création des étudiants pour les ArrayLists*/
+		Student st1 = new Student("Michel", "Blanc", 16, 1, 0);
+		Student st2 = new Student("Laurent", "Blanc", 16, 1, 0);
+		Student st3 = new Student("Patrick", "Bruel", 16, 1, 0);
+		Student st4 = new Student("Jean", "Jardin", 16, 3, 2);
+		Student st5 = new Student("Henri", "Voisin", 16, 3, 0);
+		Student st6 = new Student("Maxence", "Stievenard", 16, 3, 2);
+		
+		/**Création des faux étudiants qui vont être ajoutés manuellement*/
+		Student fakeTutee = new Student("", "", 0, 1, 0);
+		Student fakeTutors = new Student("", "", 0, 2, 0);
+		
+		/** Création des ArrayList */
+		/**Ici plus de tutorés que de tuteurs*/
+		List<Student> exemple1Tutees = new ArrayList<Student>();
+		exemple1Tutees.add(st1);
+		exemple1Tutees.add(st2);
+		exemple1Tutees.add(st3);
+		
+		List<Student> exemple1Tutors = new ArrayList<Student>();
+		exemple1Tutors.add(st4);
+		exemple1Tutors.add(st5);
+		
+		/*Et ici plus de tuteurs que de tutorés*/
+		List<Student> exemple2Tutees = new ArrayList<Student>();
+		exemple2Tutees.add(st1);
+		exemple2Tutees.add(st2);
+		
+		List<Student> exemple2Tutors = new ArrayList<Student>();
+		exemple2Tutors.add(st4);
+		exemple2Tutors.add(st5);
+		exemple2Tutors.add(st6);
+		
+		/**Ajout a la main des fakeStudent*/
+		
+		List<Student> exemple1TutorsFake = new ArrayList<Student>();
+		exemple1Tutors.add(st4);
+		exemple1Tutors.add(st5);
+		exemple2Tutors.add(fakeTutors);
+		
+		/**Ici le fake est le tutoré*/
+		List<Student> exemple2TuteesFake = new ArrayList<Student>();
+		exemple1Tutees.add(st1);
+		exemple1Tutees.add(st2);
+		exemple1Tutees.add(fakeTutee);
+		
+
+		
+		/** J'instancie le GrapheNonOrienteValué<Student>*/
+		GrapheNonOrienteValue<Student> graphe = new GrapheNonOrienteValue<Student>();
+		
+		/**Passons au corps du test*/
+		/**Ici dans le cas où il y a plus de tutorés que de tuteurs*/
+		tutoring.addFakeStudents(exemple1Tutees, exemple2Tutors, graphe);
+		tutoring.addFakeStudents(exemple2Tutees, exemple2Tutors, graphe);
+		
+		/**verifions l'égalité entre les etudiants ajoutés manuellement et ceux ajoutés par la méthode*/
+		
+		
+	}
+	
 	
 	@Test
 	void showExemple() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyTutees {
