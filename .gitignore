@@ -5,3 +5,5 @@ bin
 doc
 rapport.html
 .eclipse-pmd
+.vscode
+lib/junit-platform-console-standalone-1.8.2.jar
