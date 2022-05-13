@@ -19,9 +19,9 @@ import fr.ulille.but.sae2_02.graphes.GrapheNonOrienteValue;
  */
 public class Tutoring {
 	/** Liste des tutorés */
-	private final List<Student> tutees;
+	private final Set<Student> tutees;
 	/** Liste des tuteurs */
-	private final List<Student> tutors;
+	private final Set<Student> tutors;
 	/** Map de motivation des élèves */
 	private final Map<Student, Motivation> motivations;
 	/** Variables pour filtrer les tutorés qui ont une moyenne trop élevée */
@@ -63,8 +63,8 @@ public class Tutoring {
 		this.tutorToTutees = new HashMap<>();
 		this.forcedAssignment = new HashMap<>();
 		this.motivations = new HashMap<>();
-		this.tutees = new ArrayList<>();
-		this.tutors = new ArrayList<>();
+		this.tutees = new LinkedHashSet<>();
+		this.tutors = new LinkedHashSet<>();
 	}
 	
 	public List<Student> getTutees() { return new ArrayList<>(tutees); }
@@ -239,8 +239,8 @@ public class Tutoring {
 	 * Retourne la liste de tous les tuteurs qui peuvent encore être affectés
 	 * @return
 	 */
-	private List<Student> getEligibleTutors() {
-		List<Student> eligibleTutors = new ArrayList<>();
+	private Set<Student> getEligibleTutors() {
+		Set<Student> eligibleTutors = new LinkedHashSet<>();
 		for (Student tutor: tutors) {
 			if (this.canParticipate(tutor)) {
 				// Un étudiant de 2ème année ne peut aider qu'un seul tutoré
@@ -259,8 +259,8 @@ public class Tutoring {
 	 * Retourne la liste de tous les tutorés qui peuvent encore être affectés
 	 * @return
 	 */
-	private List<Student> getEligibleTutees() {
-		List<Student> eligibleTutees = new ArrayList<>();
+	private Set<Student> getEligibleTutees() {
+		Set<Student> eligibleTutees = new LinkedHashSet<>();
 		for (Student tutee: tutees) {
 			if (this.canParticipate(tutee) && !tuteeToTutor.containsKey(tutee))
 				eligibleTutees.add(tutee);
@@ -275,25 +275,25 @@ public class Tutoring {
 		return (tutor.getScore() + getBonusPoints(tutor)) * (tutee.getScore() - getBonusPoints(tutee));
 	}
 	
-	public void addFakeStudents(List<Student> tuteesList, List<Student> tutorsList, GrapheNonOrienteValue<Student> graphe) throws ExceptionPromo {
+	/**
+	 * Remplie une des deux listes de tuteurs ou des tutorés de faux étudiants
+	 * pour avoir le même nombre de tuteurs et de tutorés
+	 * @param tuteesList
+	 * @param tutorsList
+	 * @param graphe
+	 * @throws ExceptionPromo
+	 */
+	void addFakeStudents(Set<Student> tuteesList, Set<Student> tutorsList) throws ExceptionPromo {
 		// Ajoute les tuteurs manquants
 		while (tuteesList.size() > tutorsList.size()) {
 			Student fakeStudent = new Student("", "", 0, 2, 0);
 			tutorsList.add(fakeStudent);
-			graphe.ajouterSommet(fakeStudent);
-			for (Student tutee: tuteesList) {
-				graphe.ajouterArete(tutee, fakeStudent, POIDS_MAXIMAL + 1);
-			}
 		}
 		
 		// Ajoute les tutorés manquants
 		while (tutorsList.size() > tuteesList.size()) {
 			Student fakeStudent = new Student("", "", 0, 1, 0);
 			tuteesList.add(fakeStudent);
-			graphe.ajouterSommet(fakeStudent);
-			for (Student tutor: tutorsList) {
-				graphe.ajouterArete(fakeStudent, tutor, POIDS_MAXIMAL + 1);
-			}
 		}
 	}
 	
@@ -302,23 +302,26 @@ public class Tutoring {
 	 * @return
 	 * @throws ExceptionPromo 
 	 */
-	GrapheNonOrienteValue<Student> getGrapheTutorTutee(List<Student> tuteesList, List<Student> tutorsList) throws ExceptionPromo {
+	private CalculAffectation<Student> createCoupleTuteeTutor(Set<Student> tuteesList, Set<Student> tutorsList) throws ExceptionPromo {
 		GrapheNonOrienteValue<Student> graphe = new GrapheNonOrienteValue<>();
 		
+		Set<Student> tuteesListCopy = new LinkedHashSet<>(tuteesList);
+		Set<Student> tutorsListCopy = new LinkedHashSet<>(tutorsList);
+
+		addFakeStudents(tuteesListCopy, tutorsListCopy);
+
 		// Ajout de tous les sommets
-		for (Student student: tuteesList) graphe.ajouterSommet(student);
-		for (Student student: tutorsList) graphe.ajouterSommet(student);
+		for (Student student: tuteesListCopy) graphe.ajouterSommet(student);
+		for (Student student: tutorsListCopy) graphe.ajouterSommet(student);
 
 		// Ajout des arêtes
-		for (Student tutee: tuteesList) {
-			for (Student tutor: tutorsList) {
+		for (Student tutee: tuteesListCopy) {
+			for (Student tutor: tutorsListCopy) {
 				graphe.ajouterArete(tutee, tutor, this.getWidthArete(tutee, tutor));
 			}
 		}
 		
-		addFakeStudents(tuteesList, tutorsList, graphe);
-		
-		return graphe;
+		return new CalculAffectation<>(graphe, new ArrayList<Student>(tuteesListCopy), new ArrayList<Student>(tutorsListCopy));
 	}
 	
 	/**
@@ -340,7 +343,7 @@ public class Tutoring {
 	public void createAssignments() throws ExceptionPromo {
 		clearAssignments();
 		
-		List<Student> eligibleTutors, eligibleTutees;
+		Set<Student> eligibleTutors, eligibleTutees;
 		
 		// Fait des affectations tant qu'il y a toujours des tutorés à affecter
 		// et tant qu'il n'y a pas eu trop de répétitions
@@ -348,23 +351,15 @@ public class Tutoring {
 			eligibleTutors = getEligibleTutors();
 			eligibleTutees = getEligibleTutees();
 			
-			// Variable qui vérifie si les faux étudiants ajoutés se trouveront dans les tuteurs ou tutorés
-			boolean fakeStudentsAreTutees = eligibleTutors.size() > eligibleTutees.size();
-			
-			GrapheNonOrienteValue<Student> graphe = getGrapheTutorTutee(eligibleTutees, eligibleTutors);
-			CalculAffectation<Student> calcul = new CalculAffectation<>(graphe, eligibleTutees, eligibleTutors);
+			CalculAffectation<Student> calcul = createCoupleTuteeTutor(eligibleTutees, eligibleTutors);
 			
 			for (Arete<Student> arete : calcul.getAffectation()) {
 				Student tutee = arete.getExtremite1();
 				Student tutor = arete.getExtremite2();
 				
 				// Vérifie si l'affectation n'est pas avec un faux étudiant
-				if (graphe.getPoids(tutee, tutor) <= POIDS_MAXIMAL) {
+				if (eligibleTutors.contains(tutor) && eligibleTutees.contains(tutee)) {
 					addAssignment(tutee, tutor);
-				} else {
-					// Enlève ce faux étudiant pour la prochaine affectation
-					if (fakeStudentsAreTutees) eligibleTutees.remove(tutee);
-					else eligibleTutors.remove(tutor);
 				}
 			}
 		} while (!eligibleTutees.isEmpty() && !eligibleTutors.isEmpty());

@@ -1,15 +1,15 @@
 package sae_201_02;
 
 import fr.ulille.but.sae2_02.donnees.DonneesPourTester;
-import fr.ulille.but.sae2_02.graphes.GrapheNonOrienteValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,10 +20,14 @@ import org.junit.jupiter.api.Test;
  */
 public class TutoringTest {
 	
-	/**
-	 * Instance de Tutoring utilisé pour faire les tests
-	 */
-	private Tutoring tutoring;
+	/** Instance de Tutoring qui contient des exemples d'élèves de DonneesPourTester */
+	private static Tutoring tutoring;
+	/** Instance de Tutoring qui contient des exemples de graphes */
+	private static Tutoring tutoringShort;
+	/** Variables de tuteurs */
+	private static Student tutor1, tutor2, tutor3, tutor4, tutor5;
+	/** Variables de tutorés */
+	private static Student tutee1, tutee2, tutee3, tutee4, tutee5, tutee6, tutee7;
 	
 	@BeforeEach
 	/**
@@ -36,6 +40,22 @@ public class TutoringTest {
 			Student tmp = new Student(student[0], student[1], Double.valueOf(student[2]), Integer.valueOf(student[3]), 0);
 			tutoring.addStudent(tmp);
 		}
+
+		tutoringShort = new Tutoring();
+
+		tutor1 = new Student("Sophie", "Vallee", 15.5, 2, 3);
+		tutor2 = new Student("Nicolas", "Roche", 16.5, 3, 6);
+		tutor3 = new Student("Maurice", "Fernandez", 14.5, 3, 4);
+		tutor4 = new Student("William", "Letellier", 18.5, 2, 2);
+		tutor5 = new Student("Paul", "Sanchez", 13.7, 3, 0);
+		
+		tutee1 = new Student("Charles", "Letellier", 8, 1, 0);
+		tutee2 = new Student("Daniel", "Daniel", 9, 1, 3);
+		tutee3 = new Student("François", "Bertin", 7, 1, 9);
+		tutee4 = new Student("Sabine", "Leleu", 5.5, 1, 1);
+		tutee5 = new Student("Gabriel", "Marin", 9, 1, 0);
+		tutee6 = new Student("Juliette", "Traore", 12, 1, 30);
+		tutee7 = new Student("Franck", "Hebert", 2.5, 1, 5);
 	}
 	
 	@Test
@@ -95,87 +115,44 @@ public class TutoringTest {
 	}
 	
 	@Test
-	void testAddFakeStudent() throws ExceptionPromo{
-		/** Création des étudiants pour les ArrayLists*/
-		Student st1 = new Student("Michel", "Blanc", 16, 1, 0);
-		Student st2 = new Student("Laurent", "Blanc", 16, 1, 0);
-		Student st3 = new Student("Patrick", "Bruel", 16, 1, 0);
-		Student st4 = new Student("Jean", "Jardin", 16, 3, 2);
-		Student st5 = new Student("Henri", "Voisin", 16, 3, 0);
-		Student st6 = new Student("Maxence", "Stievenard", 16, 3, 2);
-		
-		/**Création des faux étudiants qui vont être ajoutés manuellement*/
-		Student fakeTutee = new Student("", "", 0, 1, 0);
-		Student fakeTutors = new Student("", "", 0, 2, 0);
-		
+	void testAddFakeStudentMoreTutorThanTutees() throws ExceptionPromo {
 		/** Création des ArrayList */
 		/**Ici plus de tutorés que de tuteurs*/
-		List<Student> exemple1Tutees = new ArrayList<Student>();
-		exemple1Tutees.add(st1);
-		exemple1Tutees.add(st2);
-		exemple1Tutees.add(st3);
+		Set<Student> exemple1Tutees = new LinkedHashSet<>();
+		exemple1Tutees.add(tutee1);
+		exemple1Tutees.add(tutee2);
+		exemple1Tutees.add(tutee3);
 		
-		List<Student> exemple1Tutors = new ArrayList<Student>();
-		exemple1Tutors.add(st4);
-		exemple1Tutors.add(st5);
-		
-		/*Et ici plus de tuteurs que de tutorés*/
-		List<Student> exemple2Tutees = new ArrayList<Student>();
-		exemple2Tutees.add(st1);
-		exemple2Tutees.add(st2);
-		
-		List<Student> exemple2Tutors = new ArrayList<Student>();
-		exemple2Tutors.add(st4);
-		exemple2Tutors.add(st5);
-		exemple2Tutors.add(st6);
-		
-		/**Ajout a la main des fakeStudent*/
-		
-		List<Student> exemple1TutorsFake = new ArrayList<Student>();
-		exemple1TutorsFake.add(st4);
-		exemple1TutorsFake.add(st5);
-		exemple1TutorsFake.add(fakeTutors);
-		
-		/**Ici le fake est le tutoré*/
-		List<Student> exemple2TuteesFake = new ArrayList<Student>();
-		exemple1TutorsFake.add(st1);
-		exemple1TutorsFake.add(st2);
-		exemple1TutorsFake.add(fakeTutee);
-		
-		/** J'instancie le GrapheNonOrienteValué<Student>*/
-		GrapheNonOrienteValue<Student> graphe = tutoring.getGrapheTutorTutee(exemple1Tutees, exemple1Tutors);
+		Set<Student> exemple1Tutors = new LinkedHashSet<>();
+		exemple1Tutors.add(tutor1);
+		exemple1Tutors.add(tutor2);
 
 		/**Passons au corps du test*/
 		/**Ici dans le cas où il y a plus de tutorés que de tuteurs*/
-		tutoring.addFakeStudents(exemple1Tutees, exemple2Tutors, graphe);
-
-		graphe = tutoring.getGrapheTutorTutee(exemple2Tutees, exemple2Tutors);
-
-		tutoring.addFakeStudents(exemple2Tutees, exemple2Tutors, graphe);
+		tutoring.addFakeStudents(exemple1Tutees, exemple1Tutors);
 		
-		/**verifions l'égalité entre les etudiants ajoutés manuellement et ceux ajoutés par la méthode*/
+		assertEquals(exemple1Tutees.size(), exemple1Tutors.size());
+	}
+
+	@Test
+	void testAddFakeStudentLessTutorThanTutees() throws ExceptionPromo {
+		/*Et ici plus de tuteurs que de tutorés*/
+		Set<Student> exemple2Tutees = new LinkedHashSet<>();
+		exemple2Tutees.add(tutee1);
+		exemple2Tutees.add(tutee2);
 		
-		// TODO: Ce test doit être terminé
+		Set<Student> exemple2Tutors = new LinkedHashSet<>();
+		exemple2Tutors.add(tutor1);
+		exemple2Tutors.add(tutor2);
+		exemple2Tutors.add(tutor3);
+
+		tutoring.addFakeStudents(exemple2Tutees, exemple2Tutors);
+
+		assertEquals(exemple2Tutees.size(), exemple2Tutors.size());
 	}
 	
-	
-	@Test
-	void showExemple() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyTutees {
-		Tutoring tutoringShort = new Tutoring();
-		Student tutor1 = new Student("Sophie", "Vallee", 15.5, 2, 3);
-		Student tutor2 = new Student("Nicolas", "Roche", 16.5, 3, 6);
-		Student tutor3 = new Student("Maurice", "Fernandez", 14.5, 3, 4);
-		Student tutor4 = new Student("William", "Letellier", 18.5, 2, 2);
-		Student tutor5 = new Student("Paul", "Sanchez", 13.7, 3, 0);
-		
-		Student tutee1 = new Student("Charles", "Letellier", 8, 1, 0);
-		Student tutee2 = new Student("Daniel", "Daniel", 9, 1, 3);
-		Student tutee3 = new Student("François", "Bertin", 7, 1, 9);
-		Student tutee4 = new Student("Sabine", "Leleu", 5.5, 1, 1);
-		Student tutee5 = new Student("Gabriel", "Marin", 9, 1, 0);
-		Student tutee6 = new Student("Juliette", "Traore", 12, 1, 30);
-		Student tutee7 = new Student("Franck", "Hebert", 2.5, 1, 5);
-		
+	@AfterAll
+	static void showExemple() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyTutees {
 		tutoringShort.addAllStudents(tutor1, tutor2, tutor3, tutor4, tutor5,
 									 tutee1, tutee2, tutee3, tutee4, tutee5, tutee6, tutee7);
 		

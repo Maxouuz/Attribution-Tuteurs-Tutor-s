@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -102,31 +100,22 @@ class StudentTest {
 		 * 2eme ou 3eme année ne peut pas etre tutoré.
 		 */
 
-		// Étudiants de 1ère année avec paramètres aléatoire
+		// Étudiant de 1ère année avec paramètres aléatoire
 		Student st10 = new Student("Jean", "Dupont", 16, 1, 0);
-		Student st11 = new Student("Jules", "Demain", 18, 1, 2);
-		// Étudiants de 2ème année avec paramètres aléatoire
+		// Étudiant de 2ème année avec paramètres aléatoire
 		Student st20 = new Student("Jordan", "Coubert", 15, 2, 0);
-		Student st21 = new Student("Jade", "Jadot", 14, 2, 3);
-		// Étudiants de 3ème année avec paramètres aléatoire
+		// Étudiant de 3ème année avec paramètres aléatoire
 		Student st30 = new Student("jacques", "Petard", 12, 3, 0);
-		Student st31 = new Student("Franck", "Michalak", 19, 3, 0);
 
 		// Vérification pour les 1ere année
 		assertTrue(st10.canBeTutee());
-		assertTrue(st11.canBeTutee());
 		assertFalse(st10.canBeTutor());
-		assertFalse(st11.canBeTutor());
 
 		// Vérification pour les 2eme/3eme année
 		assertTrue(st20.canBeTutor());
-		assertTrue(st21.canBeTutor());
 		assertTrue(st30.canBeTutor());
-		assertTrue(st31.canBeTutor());
 		assertFalse(st20.canBeTutee());
-		assertFalse(st21.canBeTutee());
 		assertFalse(st30.canBeTutee());
-		assertFalse(st31.canBeTutee());
 	}
 
 	@Test
@@ -155,16 +144,15 @@ class StudentTest {
 	}
 
 	@Test
-	void scoreComparatorTest() throws ExceptionPromo {
+	void scoreComparatorTest1st2ndYear() throws ExceptionPromo {
 		/**
 		 * Rappel : scoreComparator() trie les étudiants par score dans l'ordre croissant.
 		 */
-		
+
 		//Création de tableaux d'étudiants
 		List<Student> groupeDe1ereAnnee = new ArrayList<>();
 		List<Student> groupeDe1ereAnneeTrie = new ArrayList<>();
-		List<Student> groupeDe2Et3emeAnnee = new ArrayList<>();
-		List<Student> groupeDe2Et3emeAnneeTrie = new ArrayList<>();
+		
 		
 		//Initialisation des étudiants de 1ere année
 		Student st1 = new Student("Jean", "Dupont", 12, 1, 0);
@@ -186,11 +174,22 @@ class StudentTest {
 		
 		//Comparaison avec le groupe trier à la main : 
 		assertEquals(groupeDe1ereAnnee, groupeDe1ereAnneeTrie);
+	}
+
+	@Test
+	void scoreComparatorTest2nd3rdYear() throws ExceptionPromo {
+		/**
+		 * Rappel : scoreComparator() trie les étudiants par score dans l'ordre croissant.
+		 */
 		
+		List<Student> groupeDe2Et3emeAnnee = new ArrayList<>();
+		List<Student> groupeDe2Et3emeAnneeTrie = new ArrayList<>();
+
 		//Même chose mais avec des étudiants de 2eme et 3eme année :
 		Student st11 = new Student("Jean", "Dupont", 12, 2, 0);
 		Student st21 = new Student("Jordan", "Coubert", 16, 3, 0);
 		Student st31 = new Student("Franck", "Michalak", 20, 2, 0);
+
 		groupeDe2Et3emeAnnee.add(st31);
 		groupeDe2Et3emeAnnee.add(st11);
 		groupeDe2Et3emeAnnee.add(st21);
@@ -200,7 +199,5 @@ class StudentTest {
 		
 		Collections.sort(groupeDe2Et3emeAnnee, new ScoreComparator());
 		assertEquals(groupeDe2Et3emeAnnee, groupeDe2Et3emeAnneeTrie);
-
-		
 	}
 }

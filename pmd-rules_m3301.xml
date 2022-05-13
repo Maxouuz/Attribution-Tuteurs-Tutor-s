@@ -10,7 +10,7 @@
 <rule ref="category/java/bestpractices.xml/JUnitTestContainsTooManyAsserts"/>
 <rule ref="category/java/bestpractices.xml/JUnitTestContainsTooManyAsserts">
 <properties>
-<property name="maximumAsserts" value="3"/>
+<property name="maximumAsserts" value="6"/>
 </properties>
 </rule>
 <rule ref="category/java/bestpractices.xml/JUnitTestsShouldIncludeAssert"/>
