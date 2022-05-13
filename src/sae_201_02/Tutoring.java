@@ -302,13 +302,13 @@ public class Tutoring {
 	 * @return
 	 * @throws ExceptionPromo 
 	 */
-	private GrapheNonOrienteValue<Student> getGrapheTutorTutee(List<Student> tuteesList, List<Student> tutorsList) throws ExceptionPromo {
+	GrapheNonOrienteValue<Student> getGrapheTutorTutee(List<Student> tuteesList, List<Student> tutorsList) throws ExceptionPromo {
 		GrapheNonOrienteValue<Student> graphe = new GrapheNonOrienteValue<>();
 		
 		// Ajout de tous les sommets
 		for (Student student: tuteesList) graphe.ajouterSommet(student);
 		for (Student student: tutorsList) graphe.ajouterSommet(student);
-		
+
 		// Ajout des arêtes
 		for (Student tutee: tuteesList) {
 			for (Student tutor: tutorsList) {

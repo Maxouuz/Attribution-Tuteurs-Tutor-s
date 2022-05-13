@@ -132,29 +132,30 @@ public class TutoringTest {
 		/**Ajout a la main des fakeStudent*/
 		
 		List<Student> exemple1TutorsFake = new ArrayList<Student>();
-		exemple1Tutors.add(st4);
-		exemple1Tutors.add(st5);
-		exemple2Tutors.add(fakeTutors);
+		exemple1TutorsFake.add(st4);
+		exemple1TutorsFake.add(st5);
+		exemple1TutorsFake.add(fakeTutors);
 		
 		/**Ici le fake est le tutoré*/
 		List<Student> exemple2TuteesFake = new ArrayList<Student>();
-		exemple1Tutees.add(st1);
-		exemple1Tutees.add(st2);
-		exemple1Tutees.add(fakeTutee);
-		
-
+		exemple1TutorsFake.add(st1);
+		exemple1TutorsFake.add(st2);
+		exemple1TutorsFake.add(fakeTutee);
 		
 		/** J'instancie le GrapheNonOrienteValué<Student>*/
-		GrapheNonOrienteValue<Student> graphe = new GrapheNonOrienteValue<Student>();
-		
+		GrapheNonOrienteValue<Student> graphe = tutoring.getGrapheTutorTutee(exemple1Tutees, exemple1Tutors);
+
 		/**Passons au corps du test*/
 		/**Ici dans le cas où il y a plus de tutorés que de tuteurs*/
 		tutoring.addFakeStudents(exemple1Tutees, exemple2Tutors, graphe);
+
+		graphe = tutoring.getGrapheTutorTutee(exemple2Tutees, exemple2Tutors);
+
 		tutoring.addFakeStudents(exemple2Tutees, exemple2Tutors, graphe);
 		
 		/**verifions l'égalité entre les etudiants ajoutés manuellement et ceux ajoutés par la méthode*/
 		
-		
+		// TODO: Ce test doit être terminé
 	}
 	
 	
