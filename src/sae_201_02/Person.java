@@ -65,27 +65,6 @@ public abstract class Person implements Comparable<Person> {
 	public String getName() {
 		return NAME;
 	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(INE);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		boolean res;
-		if (this == obj)
-			res = true;
-		else if (obj == null)
-			res = false;
-		else if (getClass() != obj.getClass())
-			res =  false;
-		else {
-			Person other = (Person) obj;
-			res = INE == other.INE;
-		}
-		return res;
-	}
 	
 	@Override
 	public String toString() {

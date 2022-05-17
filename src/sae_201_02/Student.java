@@ -130,37 +130,4 @@ public class Student extends Person {
 			throw new IllegalArgumentException("Le nombre d'absences doit être un nombre positif!");
 		this.nbAbsences = nbAbsences;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + PROMO;
-		long temp;
-		temp = Double.doubleToLongBits(moyenne);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + nbAbsences;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		boolean res = true;
-		if (this == obj)
-			res = true;
-		else if (!super.equals(obj))
-			res = false;
-		else if (getClass() != obj.getClass())
-			res = false;
-		else {
-			Student other = (Student) obj;
-			if (PROMO != other.PROMO)
-				res = false;
-			if (Double.doubleToLongBits(moyenne) != Double.doubleToLongBits(other.moyenne))
-				res = false;
-			if (nbAbsences != other.nbAbsences)
-				res = false;
-		}
-		return res;
-	}
 }
