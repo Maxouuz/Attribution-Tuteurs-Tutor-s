@@ -203,25 +203,31 @@ class StudentTest {
 	}
 	
 	@Test
-	void compareToTest() throws ExceptionPromo {
+	void compareToEqualsTest() throws ExceptionPromo {
 		/**
 		 * Rappel: La fonction compareTo compare les prénoms et nom de deux étudiants.
 		 * S'ils sont identiques, la fonction renvoie 0, sinon, un nombres inférieures à 0.
 		 */
 		//Je créé 2 fois 2 personnes, avec les memes prénom et nom
-		Student p1 = new Student("Maxence","Stievenard", 15, 3, 11);
-		Student p1bis = new Student("Maxence","Stievenard", 12, 2, 0);
-		Student p2 = new Student("Nathan","Hallez", 10, 3, 9);
-		Student p2bis = new Student("Nathan","Hallez", 8, 1, 0);
+		Student std1 = new Student("Maxence","Stievenard", 15, 3, 11);
+		Student std1bis = new Student("Maxence","Stievenard", 12, 2, 0);
+		Student std2 = new Student("Nathan","Hallez", 10, 3, 9);
+		Student std2bis = new Student("Nathan","Hallez", 8, 1, 0);
 		// je compare les personnes deux par deux, et je vérifie si la fonction envoie 0 en cas d'égalité.
-		assertEquals(0,p1.compareTo(p1bis));
-		assertEquals(0,p2.compareTo(p2bis));
-		assertEquals(0,p1bis.compareTo(p1));
-		assertEquals(0,p2bis.compareTo(p2));
+		assertEquals(0,std1.compareTo(std1bis));
+		assertEquals(0,std2.compareTo(std2bis));
+		assertEquals(0,std1bis.compareTo(std1));
+		assertEquals(0,std2bis.compareTo(std2));
+			
+	}
+	
+	@Test
+	void compareToDifferentTest() throws ExceptionPromo {
+		Student std1 = new Student("Maxence","Stievenard", 15, 3, 11);
+		Student std2 = new Student("Nathan","Hallez", 10, 3, 9);
+		
 		// Je vérifie si la fonction ne renvoie pas 0 en cas d'inégalité
-		assertNotEquals(0,p1.compareTo(p2));
-		assertNotEquals(0,p2.compareTo(p1));
-		assertNotEquals(0,p1bis.compareTo(p2));
-		assertNotEquals(0,p2.compareTo(p1bis));		
+		assertNotEquals(0,std1.compareTo(std2));
+		assertNotEquals(0,std2.compareTo(std1));
 	}
 }

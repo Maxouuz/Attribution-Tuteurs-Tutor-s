@@ -1,7 +1,5 @@
 package sae_201_02;
 
-import java.util.Objects;
-
 /**
  * Classe abstraite qui représente une personne avec un identifiant unique.
  * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier

@@ -41,8 +41,6 @@ public class Tutoring {
 	/** Map qui enregistre toutes les associations forcées par les professeurs */
 	private final Map<Student, Student> forcedAssignment;
 	
-	/** Variable qui donne le poids maximal que peut avoir une arête */
-	private double maxWidth;
 	/** Variable qui définit combien de tutorés un tuteur peut gérer */
 	public final static int MAX_TUTEES_FOR_TUTOR = 2;
 	/** Variable qui représente le poids de la moyenne dans le calcul du score */
@@ -72,7 +70,7 @@ public class Tutoring {
 	 * Constructeur tutoring sans paramètres
 	 */
 	public Tutoring() {
-		this(1, 3);
+		this(1.0, 3.0);
 	}
 	
 	public List<Student> getTutees() { return new ArrayList<>(tutees); }
@@ -93,31 +91,11 @@ public class Tutoring {
 	
 	public double getAbsenceWidth() { return absenceWidth; }
 
-	public void setAbsenceWidth(double absenceWidth) {
-		this.absenceWidth = absenceWidth;
-		updateMaxWidth();
-	}
+	public void setAbsenceWidth(double absenceWidth) { this.absenceWidth = absenceWidth; }
 
 	public double getMoyenneWidth() { return moyenneWidth; }
 
-	public void setMoyenneWidth(double moyenneWidth) {
-		this.moyenneWidth = moyenneWidth;
-		updateMaxWidth();
-	}
-	
-	private void updateMaxWidth() {
-		double poidsMaximal;
-		try {
-			Tutoring tutoring = new Tutoring();
-			Student st1 = new Student("Best", "Tutor", 20.0, 3, 0);
-			Student st2 = new Student("Best", "Tutee", 20.0, 1, 0);
-			poidsMaximal = tutoring.getWidthArete(st1, st2);
-		} catch (ExceptionPromo e) {
-			poidsMaximal = Double.MAX_VALUE;
-			e.printStackTrace();
-		}
-		maxWidth = poidsMaximal;
-	}
+	public void setMoyenneWidth(double moyenneWidth) { this.moyenneWidth = moyenneWidth; }
 
 	/**
 	 * Retourne le tuteur affecté au tutoré donné en entrée
