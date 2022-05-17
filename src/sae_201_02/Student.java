@@ -13,16 +13,10 @@ public class Student extends Person {
 	/**Nombre abscences de l'etudiant */
 	private int nbAbsences;
 	/** 
-	 * Variable qui représente le nombre d'absences
-	 * qu'il faut pour perdre un point de score
-	 */
-	private final static double ABSENCE_SCORE_DIVISOR = 3;
-	/** Variable qui représente la limite du nombre d'absences
+	 * Variable qui représente la limite du nombre d'absences
 	 * pris en compte dans le calcul du score
 	 */
 	private final static double SCORE_MAX_ABSENCES = 365;
-	/** Variable qui représente l'écart des scores entre les différentes promos */
-	private final static double PROMO_SCORE_GAP = (SCORE_MAX_ABSENCES / ABSENCE_SCORE_DIVISOR) + 21;
 	
 	/**
 	 * Constructeur de la classe Student
@@ -97,7 +91,7 @@ public class Student extends Person {
 	}
 	
 	/**
-	 * Méthode qui calcule un score pour l'étudiant
+	 * Méthode qui calcule un score pour l'étudiant pour un tutorat
 	 * Plus le score est grand, plus l'étudiant est considéré comme meilleur
 	 * Les critères pris en compte sont:
 	 * - La promo
@@ -105,12 +99,24 @@ public class Student extends Person {
 	 * - Le nombre d'absences
 	 * @return
 	 */
-	public double getScore() {
+	public double getScore(Tutoring tutoring) {
+		/** Variable qui représente l'écart des scores entre les différentes promos */
+		double promoScoreGap = (SCORE_MAX_ABSENCES / tutoring.getAbsenceWidth()) + 21;
+		
 		double nbAbsencesCopy = nbAbsences;
+		
 		if (nbAbsencesCopy > SCORE_MAX_ABSENCES) {
 			nbAbsencesCopy = SCORE_MAX_ABSENCES;
 		}
-		return PROMO * PROMO_SCORE_GAP + moyenne - (nbAbsencesCopy / ABSENCE_SCORE_DIVISOR);
+		return PROMO * promoScoreGap + moyenne * tutoring.getMoyenneWidth()- (nbAbsencesCopy / tutoring.getAbsenceWidth());
+	}
+	
+	/**
+	 * Méthode qui calcule un score pour l'étudiant avec les poids par défaut
+	 * @return
+	 */
+	public double getScore() {
+		return getScore(new Tutoring());
 	}
 
 	/**

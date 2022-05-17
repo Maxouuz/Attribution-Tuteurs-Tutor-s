@@ -22,49 +22,57 @@ public class Tutoring {
 	private final Set<Student> tutees;
 	/** Liste des tuteurs */
 	private final Set<Student> tutors;
+	
 	/** Map de motivation des élèves */
 	private final Map<Student, Motivation> motivations;
+	
 	/** Variables pour filtrer les tutorés qui ont une moyenne trop élevée */
 	private Double moyenneMaxTutee;
 	/** Variable pour filtrer les tuteurs qui ont une moyenne trop faible */
 	private Double moyenneMinTutor;
 	/** Variable pour filtrer les étudiants qui ont trop d'absences */
 	private Integer nbAbsencesMax;
+	
 	/** Map qui donne le tuteur associé au tutoré */
 	private final Map<Student, Student> tuteeToTutor;
 	/** Map qui donne le/les tutoré(s) associé au tuteur */
 	private final Map<Student, Set<Student>> tutorToTutees;
+	
 	/** Map qui enregistre toutes les associations forcées par les professeurs */
 	private final Map<Student, Student> forcedAssignment;
+	
 	/** Variable qui donne le poids maximal que peut avoir une arête */
-	public final static double POIDS_MAXIMAL;
+	private double maxWidth;
 	/** Variable qui définit combien de tutorés un tuteur peut gérer */
 	public final static int MAX_TUTEES_FOR_TUTOR = 2;
+	/** Variable qui représente le poids de la moyenne dans le calcul du score */
+	private double moyenneWidth;
+	/** Variable qui représente le nombre d'absences qu'il faut pour perdre un point de score */
+	private double absenceWidth;
 	
 	/**
-	 * Initialise la variable POIDS_MAXIMAL
+	 * Constructeur Tutoring avec le poids des moyennes et absences données
+	 * en paramètre
+	 * @param moyenneWidth
+	 * @param absenceWidth
 	 */
-	static {
-		double poidsMaximal;
-		try {
-			Tutoring tutoring = new Tutoring();
-			Student st1 = new Student("Best", "Tutor", 20.0, 3, 0);
-			Student st2 = new Student("Best", "Tutee", 20.0, 1, 0);
-			poidsMaximal = tutoring.getWidthArete(st1, st2);
-		} catch (ExceptionPromo e) {
-			poidsMaximal = Double.MAX_VALUE;
-			e.printStackTrace();
-		}
-		POIDS_MAXIMAL = poidsMaximal;
-	}
-
-	public Tutoring() {
+	public Tutoring(double moyenneWidth, double absenceWidth) {
 		this.tuteeToTutor = new HashMap<>();
 		this.tutorToTutees = new HashMap<>();
 		this.forcedAssignment = new HashMap<>();
 		this.motivations = new HashMap<>();
 		this.tutees = new LinkedHashSet<>();
 		this.tutors = new LinkedHashSet<>();
+		
+		setMoyenneWidth(moyenneWidth);
+		setAbsenceWidth(absenceWidth);
+	}
+	
+	/**
+	 * Constructeur tutoring sans paramètres
+	 */
+	public Tutoring() {
+		this(1, 3);
 	}
 	
 	public List<Student> getTutees() { return new ArrayList<>(tutees); }
@@ -83,6 +91,34 @@ public class Tutoring {
 
 	public void setNbAbsencesMax(Integer nbAbsencesMax) { this.nbAbsencesMax = nbAbsencesMax; }
 	
+	public double getAbsenceWidth() { return absenceWidth; }
+
+	public void setAbsenceWidth(double absenceWidth) {
+		this.absenceWidth = absenceWidth;
+		updateMaxWidth();
+	}
+
+	public double getMoyenneWidth() { return moyenneWidth; }
+
+	public void setMoyenneWidth(double moyenneWidth) {
+		this.moyenneWidth = moyenneWidth;
+		updateMaxWidth();
+	}
+	
+	private void updateMaxWidth() {
+		double poidsMaximal;
+		try {
+			Tutoring tutoring = new Tutoring();
+			Student st1 = new Student("Best", "Tutor", 20.0, 3, 0);
+			Student st2 = new Student("Best", "Tutee", 20.0, 1, 0);
+			poidsMaximal = tutoring.getWidthArete(st1, st2);
+		} catch (ExceptionPromo e) {
+			poidsMaximal = Double.MAX_VALUE;
+			e.printStackTrace();
+		}
+		maxWidth = poidsMaximal;
+	}
+
 	/**
 	 * Retourne le tuteur affecté au tutoré donné en entrée
 	 * @param tutee
@@ -272,7 +308,7 @@ public class Tutoring {
 	 * Retourne le poids d'une arête pour un tuteur et un tutoré
 	 */
 	public double getWidthArete(Student tutee, Student tutor) {
-		return (tutor.getScore() + getBonusPoints(tutor)) * (tutee.getScore() - getBonusPoints(tutee));
+		return (tutor.getScore(this) + getBonusPoints(tutor)) * (tutee.getScore(this) - getBonusPoints(tutee));
 	}
 	
 	/**
@@ -374,7 +410,7 @@ public class Tutoring {
 		StringBuilder res = new StringBuilder();
 		List<Student> students = new ArrayList<>();
 		students.addAll(map.keySet());
-		Collections.sort(students, new ScoreComparator());
+		Collections.sort(students, new ScoreComparator(this));
 		
 		for (Student student : students) {
 			if (map.containsKey(student)) {
