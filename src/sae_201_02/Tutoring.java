@@ -18,6 +18,8 @@ import fr.ulille.but.sae2_02.graphes.GrapheNonOrienteValue;
  * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  */
 public class Tutoring {
+	/** Matière dédiée du tutorat */
+	private final Subject subject;
 	/** Liste des tutorés */
 	private final Set<Student> tutees;
 	/** Liste des tuteurs */
@@ -54,7 +56,8 @@ public class Tutoring {
 	 * @param moyenneWidth
 	 * @param absenceWidth
 	 */
-	public Tutoring(double moyenneWidth, double absenceWidth) {
+	public Tutoring(Subject subject, double moyenneWidth, double absenceWidth) {
+		this.subject = subject;
 		this.tuteeToTutor = new HashMap<>();
 		this.tutorToTutees = new HashMap<>();
 		this.forcedAssignment = new HashMap<>();
@@ -69,9 +72,11 @@ public class Tutoring {
 	/**
 	 * Constructeur tutoring sans paramètres
 	 */
-	public Tutoring() {
-		this(1.0, 3.0);
+	public Tutoring(Subject subject) {
+		this(subject, 1.0, 3.0);
 	}
+	
+	public Subject getSubject() { return this.subject; };
 	
 	public List<Student> getTutees() { return new ArrayList<>(tutees); }
 	
@@ -241,9 +246,9 @@ public class Tutoring {
 		// Retourne true si il n'y a pas de filtre ou si l'étudiant a une bonne moyenne
 		// et qu'il n'a pas trop d'absences
 		if (student.canBeTutee()) {
-			res = moyenneMaxTutee == null || student.getMoyenne() <= moyenneMaxTutee;
+			res = moyenneMaxTutee == null || student.getMoyenne(subject) <= moyenneMaxTutee;
 		} else {
-			res = moyenneMinTutor == null || student.getMoyenne() >= moyenneMinTutor;
+			res = moyenneMinTutor == null || student.getMoyenne(subject) >= moyenneMinTutor;
 		}
 		res = res && (nbAbsencesMax == null || student.getNbAbsences() <= nbAbsencesMax);
 		return res;
@@ -298,15 +303,16 @@ public class Tutoring {
 	 * @throws ExceptionPromo
 	 */
 	void addFakeStudents(Set<Student> tuteesList, Set<Student> tutorsList) throws ExceptionPromo {
+		
 		// Ajoute les tuteurs manquants
 		while (tuteesList.size() > tutorsList.size()) {
-			Student fakeStudent = new Student("", "", 0, 2, 0);
+			Student fakeStudent = new Student("", "", 2, Integer.MAX_VALUE);
 			tutorsList.add(fakeStudent);
 		}
 		
 		// Ajoute les tutorés manquants
 		while (tutorsList.size() > tuteesList.size()) {
-			Student fakeStudent = new Student("", "", 0, 1, 0);
+			Student fakeStudent = new Student("", "", 1, Integer.MAX_VALUE);
 			tuteesList.add(fakeStudent);
 		}
 	}

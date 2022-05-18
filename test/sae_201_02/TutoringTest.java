@@ -1,12 +1,14 @@
 package sae_201_02;
 
-import fr.ulille.but.sae2_02.donnees.DonneesPourTester;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.LinkedHashSet;
+import java.util.Scanner;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterAll;
@@ -31,31 +33,50 @@ public class TutoringTest {
 	
 	@BeforeEach
 	/**
-	 * Utilise les données exemples de DonneesPourTester
+	 * Utilise les données exemples de DonneesPourTester + données supplémentaires
 	 */
-	public void initialization() throws ExceptionPromo {
-		tutoring = new Tutoring();
-		String[][] data = DonneesPourTester.studentData;
-		for (String[] student: data) {
-			Student tmp = new Student(student[0], student[1], Double.valueOf(student[2]), Integer.valueOf(student[3]), 0);
-			tutoring.addStudent(tmp);
-		}
-
-		tutoringShort = new Tutoring();
-
-		tutor1 = new Student("Sophie", "Vallee", 15.5, 2, 3);
-		tutor2 = new Student("Nicolas", "Roche", 16.5, 3, 6);
-		tutor3 = new Student("Maurice", "Fernandez", 14.5, 3, 4);
-		tutor4 = new Student("William", "Letellier", 18.5, 2, 2);
-		tutor5 = new Student("Paul", "Sanchez", 13.7, 3, 0);
+	public void initialization1() throws ExceptionPromo, IOException {
+		tutoring = new Tutoring(Subject.R101);
 		
-		tutee1 = new Student("Charles", "Letellier", 8, 1, 0);
-		tutee2 = new Student("Daniel", "Daniel", 9, 1, 3);
-		tutee3 = new Student("François", "Bertin", 7, 1, 9);
-		tutee4 = new Student("Sabine", "Leleu", 5.5, 1, 1);
-		tutee5 = new Student("Gabriel", "Marin", 9, 1, 0);
-		tutee6 = new Student("Juliette", "Traore", 12, 1, 30);
-		tutee7 = new Student("Franck", "Hebert", 2.5, 1, 5);
+		BufferedReader reader = new BufferedReader(new FileReader("./res/eleves.csv"));
+		String line = reader.readLine();
+		Scanner student = new Scanner("");
+		
+		while (line != null) {
+			student = new Scanner(line);
+			student.useDelimiter(";");
+			Student tmp = new Student(student.next(), student.next(), student.nextInt(), student.nextInt(), Double.parseDouble(student.next()),
+					Double.parseDouble(student.next()), Double.parseDouble(student.next()), Double.parseDouble(student.next()));
+			tutoring.addStudent(tmp);
+			tutoring.addStudentMotivation(tmp, Motivation.valueOf(student.next()));
+			line = reader.readLine();
+		}
+		
+		student.close();
+		reader.close();
+	}
+	
+	@BeforeEach
+	/**
+	 * 
+	 * @throws ExceptionPromo
+	 */
+	public void initialization2() throws ExceptionPromo {
+		tutoringShort = new Tutoring(Subject.R101);
+
+		tutor1 = new Student("Sophie", "Vallee", 2, 3, 15.5);
+		tutor2 = new Student("Nicolas", "Roche", 3, 6, 16.5);
+		tutor3 = new Student("Maurice", "Fernandez", 3, 4, 14.5);
+		tutor4 = new Student("William", "Letellier", 2, 2, 18.5);
+		tutor5 = new Student("Paul", "Sanchez", 3, 0, 13.7);
+		
+		tutee1 = new Student("Charles", "Letellier", 1, 0, 8);
+		tutee2 = new Student("Daniel", "Daniel", 1, 3, 9);
+		tutee3 = new Student("François", "Bertin", 1, 9, 7);
+		tutee4 = new Student("Sabine", "Leleu", 1, 1, 5.5);
+		tutee5 = new Student("Gabriel", "Marin", 1, 0, 9);
+		tutee6 = new Student("Juliette", "Traore", 1, 30, 12);
+		tutee7 = new Student("Franck", "Hebert", 1, 5, 2.5);
 	}
 	
 	@Test
@@ -74,7 +95,7 @@ public class TutoringTest {
 	
 	@Test
 	void emptyTutorOrTutee() {
-		Tutoring tutoring2 = new Tutoring();
+		Tutoring tutoring2 = new Tutoring(Subject.R101);
 		
 		boolean res = true;
 		
@@ -91,7 +112,7 @@ public class TutoringTest {
 		
 		// Liste de tuteurs vide uniquement
 		try {
-			tutoring2.addStudent(new Student("", "", 10, 1, 0));
+			tutoring2.addStudent(new Student("", "", 1, 0, 10));
 			tutoring2.createAssignments();
 		} catch (ExceptionPromo e) {
 			res = false;
@@ -99,13 +120,13 @@ public class TutoringTest {
 		
 		assertTrue(res);
 		
-		tutoring2 = new Tutoring();
+		tutoring2 = new Tutoring(Subject.R101);
 		
 		res = true;
 		
 		// Liste de tutorés vide uniquement
 		try {
-			tutoring2.addStudent(new Student("", "", 10, 3, 0));
+			tutoring2.addStudent(new Student("", "", 3, 0, 10));
 			tutoring2.createAssignments();
 		} catch (ExceptionPromo e) {
 			res = false;

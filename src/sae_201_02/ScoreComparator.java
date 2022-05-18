@@ -26,7 +26,7 @@ public class ScoreComparator implements Comparator<Student> {
 	 * il prendra donc les poids par défaut de la classe
 	 */
 	public ScoreComparator() {
-		this(new Tutoring());
+		this(new Tutoring(Subject.R101));
 	}
 	
 	@Override

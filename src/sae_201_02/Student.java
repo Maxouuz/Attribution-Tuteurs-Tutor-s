@@ -1,5 +1,8 @@
 package sae_201_02;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Classe abstraite qui représente un étudiant avec une moyenne et une promo
  * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
@@ -7,7 +10,7 @@ package sae_201_02;
  */
 public class Student extends Person {
 	/** Représente la moyenne de l'étudiant */
-	private double moyenne;
+	private final Map<Subject, Double> moyennes;
 	/** Année de promo de l'étudiant */
 	private final int PROMO;
 	/**Nombre abscences de l'etudiant */
@@ -27,14 +30,41 @@ public class Student extends Person {
 	 * @param absence
 	 * @throws ExceptionPromo 
 	 */
-	public Student(String FORENAME, String NAME, double moyenne, int PROMO, int nbAbsences) throws ExceptionPromo {
+	public Student(String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
 		super(FORENAME, NAME);
-		this.moyenne = moyenne;
+		this.moyennes = new HashMap<>(moyennes);
 		this.nbAbsences = nbAbsences;
 		if (PROMO < 1 || PROMO > 3) {
 			throw new ExceptionPromo("La promo de l'étudiant doit être compris entre 1 et 3!");
 		}
 		this.PROMO = PROMO;
+	}
+	
+	/**
+	 * Second constructeur de Student sans donner les moyennes
+	 * @param FORENAME
+	 * @param NAME
+	 * @param PROMO
+	 * @param nbAbsences
+	 * @throws ExceptionPromo
+	 */
+	public Student(String FORENAME, String NAME, int PROMO, int nbAbsences) throws ExceptionPromo {
+		this(FORENAME, NAME, PROMO, nbAbsences, new HashMap<>());
+	}
+	
+	/**
+	 * Second constructeur de Student sans donner les moyennes
+	 * @param FORENAME
+	 * @param NAME
+	 * @param PROMO
+	 * @param nbAbsences
+	 * @throws ExceptionPromo
+	 */
+	public Student(String FORENAME, String NAME, int PROMO, int nbAbsences, double... moyennes) throws ExceptionPromo {
+		this(FORENAME, NAME, PROMO, nbAbsences);
+		for (int i = 0; i < moyennes.length && i < Subject.values().length; i++) {
+			setMoyenne(Subject.values()[i], moyennes[i]);
+		}
 	}
 	
 	/**
@@ -49,7 +79,12 @@ public class Student extends Person {
 	 * Retourne la moyenne de l'étudiant
 	 * @return
 	 */
-	public double getMoyenne() {
+	public double getMoyenne(Subject subject) {
+		double moyenne;
+		if (moyennes.containsKey(subject))
+			moyenne = moyennes.get(subject);
+		else
+			moyenne = 0;
 		return moyenne;
 	}
 	
@@ -57,8 +92,8 @@ public class Student extends Person {
 	 * Changer la moyenne d'un étudiant
 	 * @param moyenne
 	 */
-	public void setMoyenne(double moyenne) {
-		this.moyenne = moyenne;
+	public void setMoyenne(Subject subject, double moyenne) {
+		this.moyennes.put(subject, moyenne);
 	}
 
 	/**
@@ -87,7 +122,7 @@ public class Student extends Person {
 	
 	@Override
 	public String toString() {
-		return super.toString() + " (moyenne: " + this.moyenne + ", promo: " + this.PROMO + ", absences: " + this.nbAbsences + ")";
+		return super.toString() + " (moyenne: " + this.moyennes + ", promo: " + this.PROMO + ", absences: " + this.nbAbsences + ")";
 	}
 	
 	/**
@@ -108,7 +143,7 @@ public class Student extends Person {
 		if (nbAbsencesCopy > SCORE_MAX_ABSENCES) {
 			nbAbsencesCopy = SCORE_MAX_ABSENCES;
 		}
-		return PROMO * promoScoreGap + moyenne * tutoring.getMoyenneWidth()- (nbAbsencesCopy / tutoring.getAbsenceWidth());
+		return PROMO * promoScoreGap + getMoyenne(tutoring.getSubject()) * tutoring.getMoyenneWidth()- (nbAbsencesCopy / tutoring.getAbsenceWidth());
 	}
 	
 	/**
@@ -116,7 +151,7 @@ public class Student extends Person {
 	 * @return
 	 */
 	public double getScore() {
-		return getScore(new Tutoring());
+		return getScore(new Tutoring(Subject.R101));
 	}
 
 	/**

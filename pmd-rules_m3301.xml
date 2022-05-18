@@ -186,15 +186,6 @@
 <rule ref="category/java/errorprone.xml/CloneMethodMustBePublic"/>
 <rule ref="category/java/errorprone.xml/CloneMethodMustImplementCloneable"/>
 <rule ref="category/java/errorprone.xml/CloneMethodReturnTypeMustMatchClassName"/>
-<rule ref="category/java/errorprone.xml/CloseResource">
-<properties>
-<property name="closeTargets" value=""/>
-<property name="types" value="java.lang.AutoCloseable,java.sql.Connection,java.sql.Statement,java.sql.ResultSet"/>
-<property name="closeAsDefaultTarget" value="true"/>
-<property name="allowedResourceTypes" value=""/>
-<property name="closeNotInFinally" value="false"/>
-</properties>
-</rule>
 <rule ref="category/java/errorprone.xml/CompareObjectsWithEquals"/>
 <rule ref="category/java/errorprone.xml/ConstructorCallsOverridableMethod"/>
 <rule ref="category/java/errorprone.xml/DetachedTestCase"/>
@@ -251,7 +242,6 @@
 <rule ref="category/java/performance.xml/AddEmptyString"/>
 <rule ref="category/java/performance.xml/AvoidArrayLoops"/>
 <rule ref="category/java/performance.xml/AvoidCalendarDateCreation"/>
-<rule ref="category/java/performance.xml/AvoidFileStream"/>
 <rule ref="category/java/performance.xml/ConsecutiveAppendsShouldReuse"/>
 <rule ref="category/java/performance.xml/ConsecutiveLiteralAppends"/>
 <rule ref="category/java/performance.xml/StringInstantiation"/>
