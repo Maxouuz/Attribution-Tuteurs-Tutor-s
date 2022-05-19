@@ -79,6 +79,20 @@ public class TutoringTest {
 		tutee7 = new Student("Franck", "Hebert", 1, 5, 2.5);
 	}
 	
+	@BeforeEach
+	/**
+	 * Utilise un groupe d'étudiant exemples de DonneesPourTester
+	 */
+	public void initializationStudentGroup() throws ExceptionPromo {
+		// Création d'un groupe d'étudiant
+		tutoringShort.addStudent(tutee1);
+		tutoringShort.addStudent(tutee2);
+		tutoringShort.addStudent(tutee3);
+		tutoringShort.addStudent(tutor1);
+		tutoringShort.addStudent(tutor2);
+		tutoringShort.addStudent(tutor3);
+	}
+	
 	@Test
 	void onlyFirstYearInTuteesTest() {
 		for (Student student: tutoring.getTutees()) {
@@ -154,6 +168,118 @@ public class TutoringTest {
 		
 		assertEquals(exemple1Tutees.size(), exemple1Tutors.size());
 	}
+	
+	@Test
+	void testforceAssignmentTuteeTutor()
+			throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
+		/**
+		 * forceAssigment est une méthode qui permet de forcer une association entre un
+		 * tuteur et un tutoré. Si l'association n'est pas possible, il retourne une
+		 * exception avec la cause de l'impossibilité.
+		 * 
+		 * removeForceAssigment, est une méthode qui retire, à partir d'un étudiant,
+		 * l'association forcée dans laquelle il se trouve, dans le cas où elle existe.
+		 */
+
+		boolean res = false;
+
+		// test de forceAssigment et exemples de removeForceAssigment
+
+		try {
+			// On essaye de forcer un tutoré à un autre, ce qui est impossible
+			tutoringShort.forceAssignment(tutee1, tutee2);
+		} catch (ExceptionPromo e) {
+			res = true;
+		}
+		assertTrue(res);
+		res = false;
+
+		try {
+			// Même chose, mais avec des tuteurs
+			tutoringShort.forceAssignment(tutor1, tutor2);
+		} catch (ExceptionPromo e) {
+			res = true;
+		}
+		assertTrue(res);
+	}
+
+	@Test
+	void testforceAssignmentTooManyTutees()
+			throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
+
+		boolean res = false;
+		try {
+			// On utilise un tuteur de deuxieme année, qui ne peut avoir qu'un seul tutoré
+			tutoringShort.forceAssignment(tutee1, tutor1);
+			tutoringShort.forceAssignment(tutee2, tutor1);
+		} catch (ExceptionTooManyAssignments e) {
+			res = true;
+		}
+		assertTrue(res);
+		res = false;
+		// je retire l'assignation pour pouvoir réutiliser le tutoré et le tuteur dans
+		// d'autres tests
+		tutoringShort.removeForcedAssignment(tutee1);
+
+		try {
+			// On utilise un tuteur de troisième année, qui a pour nombre de tutoré limite
+			// la valeur décider par le professeur.
+			// ici, la valeur est 2.
+			tutoringShort.forceAssignment(tutee1, tutor2);
+			tutoringShort.forceAssignment(tutee2, tutor2);
+			tutoringShort.forceAssignment(tutee3, tutor2);
+		} catch (ExceptionTooManyAssignments e) {
+			res = true;
+		}
+		assertTrue(res);
+		tutoringShort.removeForcedAssignment(tutee1);
+		tutoringShort.removeForcedAssignment(tutee2);
+	}
+
+	@Test
+	void testforceAssignmentAlreadyHaveATutor()
+			throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
+
+		boolean res = false;
+
+		try {
+			// On essaye d'assigner un tutoré deux fois à deux tuteurs différends
+			// Le tutee étant assigner une première fois ne sera plus dans la
+			// liste de tutee en attente et donc ne pourra plus etre assigner dans un autre
+			// groupe.
+			tutoringShort.forceAssignment(tutee1, tutor1);
+			tutoringShort.forceAssignment(tutee1, tutor2);
+		} catch (ExceptionTooManyAssignments e) {
+			res = true;
+		}
+		assertTrue(res);
+		tutoringShort.removeForcedAssignment(tutee1);
+	}
+
+	@Test
+	void testforceAssignmentStudentNotInList()
+			throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
+
+		boolean res = false;
+		try {
+			// On essaye d'assigner un étudiant qui existe, mais qui n'est dans aucune liste,
+			// à un tuteur présent dans la liste des tuteurs.
+			tutoringShort.forceAssignment(tutee4, tutor1);
+		} catch (ExceptionNotInTutoring e) {
+			res = true;
+		}
+		assertTrue(res);
+		res = false;
+
+		try {
+			// Même chose mais avec un tutoré existant et un tutoré pas présent dans les
+			// listes
+			tutoringShort.forceAssignment(tutee4, tutor1);
+		} catch (ExceptionNotInTutoring e) {
+			res = true;
+		}
+		assertTrue(res);
+	}
 
 	@Test
 	void testAddFakeStudentLessTutorThanTutees() throws ExceptionPromo {
@@ -173,7 +299,7 @@ public class TutoringTest {
 	}
 	
 	@AfterAll
-	static void showExemple() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyTutees {
+	static void showExemple() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
 		tutoringShort.addAllStudents(tutor1, tutor2, tutor3, tutor4, tutor5,
 									 tutee1, tutee2, tutee3, tutee4, tutee5, tutee6, tutee7);
 		

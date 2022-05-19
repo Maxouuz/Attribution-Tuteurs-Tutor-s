@@ -137,9 +137,9 @@ public class Tutoring {
 	 * @param tutor
 	 * @throws ExceptionPromo
 	 * @throws ExceptionNotInTutoring
-	 * @throws ExceptionTooManyTutees 
+	 * @throws ExceptionTooManyAssignments  
 	 */
-	public void forceAssignment(Student tutee, Student tutor) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyTutees {
+	public void forceAssignment(Student tutee, Student tutor) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
 		// Retourne une erreur si le tutoré n'est pas en première année
 		if (!tutee.canBeTutee()) {
 			throw new ExceptionPromo("Le tutoré doit être en première année!");
@@ -149,9 +149,14 @@ public class Tutoring {
 		// Retourne une erreur si le tutoré ou le tuteur n'est pas dans la liste des candidats
 		} else if (!tutees.contains(tutee) || !tutors.contains(tutor)) {
 			throw new ExceptionNotInTutoring();
-		} else if (Collections.frequency(forcedAssignment.values(), tutor) == MAX_TUTEES_FOR_TUTOR) {
-			throw new ExceptionTooManyTutees();
 		} else {
+			int nbTutee = Collections.frequency(forcedAssignment.values(), tutor);
+			if (tutor.getPROMO() == 2 && nbTutee == 1 || nbTutee == MAX_TUTEES_FOR_TUTOR) {
+				throw new ExceptionTooManyAssignments(tutor + " a déjà atteint son nombre maximal de tutoré.");
+			}
+			if (forcedAssignment.containsKey(tutee)) {
+				throw new ExceptionTooManyAssignments("Vous ne pouvez pas associer deux fois " + tutee);
+			}
 			// Ajoute l'affectation forcée si tout est valide
 			forcedAssignment.put(tutee, tutor);
 		}
