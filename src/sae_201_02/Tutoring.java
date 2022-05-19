@@ -35,13 +35,11 @@ public class Tutoring {
 	/** Variable pour filtrer les étudiants qui ont trop d'absences */
 	private Integer nbAbsencesMax;
 	
-	/** Map qui donne le tuteur associé au tutoré */
-	private final Map<Student, Student> tuteeToTutor;
-	/** Map qui donne le/les tutoré(s) associé au tuteur */
-	private final Map<Student, Set<Student>> tutorToTutees;
+	/** Map qui associe les tuteurs aux tutorés */
+	private final Map<Student, Set<Student>> studentAssignment;
 	
 	/** Map qui enregistre toutes les associations forcées par les professeurs */
-	private final Map<Student, Student> forcedAssignment;
+	private final Map<Student, Set<Student>> forcedAssignment;
 	
 	/** Variable qui définit combien de tutorés un tuteur peut gérer */
 	public final static int MAX_TUTEES_FOR_TUTOR = 2;
@@ -58,8 +56,7 @@ public class Tutoring {
 	 */
 	public Tutoring(Subject subject, double moyenneWidth, double absenceWidth) {
 		this.subject = subject;
-		this.tuteeToTutor = new HashMap<>();
-		this.tutorToTutees = new HashMap<>();
+		this.studentAssignment = new HashMap<>();
 		this.forcedAssignment = new HashMap<>();
 		this.motivations = new HashMap<>();
 		this.tutees = new LinkedHashSet<>();
@@ -101,24 +98,15 @@ public class Tutoring {
 	public double getMoyenneWidth() { return moyenneWidth; }
 
 	public void setMoyenneWidth(double moyenneWidth) { this.moyenneWidth = moyenneWidth; }
-
-	/**
-	 * Retourne le tuteur affecté au tutoré donné en entrée
-	 * @param tutee
-	 * @return
-	 */
-	public Student getTuteeAssignment(Student tutee) {
-		return tuteeToTutor.get(tutee);
-	}
 	
 	/**
-	 * Retourne la liste des affectations pour un tuteur
+	 * Retourne la liste des affectations pour un étudiant
 	 * Renvoie une liste vide si il y a pas de tutorés associés
 	 * @param tutor
 	 * @return
 	 */
-	public Set<Student> getTutorAssignment(Student tutor) {
-		return tutorToTutees.containsKey(tutor) ? tutorToTutees.get(tutor) : new LinkedHashSet<>();
+	public Set<Student> getStudentAssignment(Student student) {
+		return studentAssignment.containsKey(student) ? studentAssignment.get(student) : new LinkedHashSet<>();
 	}
 	
 	/**
@@ -150,15 +138,20 @@ public class Tutoring {
 		} else if (!tutees.contains(tutee) || !tutors.contains(tutor)) {
 			throw new ExceptionNotInTutoring();
 		} else {
-			int nbTutee = Collections.frequency(forcedAssignment.values(), tutor);
-			if (tutor.getPROMO() == 2 && nbTutee == 1 || nbTutee == MAX_TUTEES_FOR_TUTOR) {
+			if ((tutor.getPROMO() == 2 && forcedAssignment.containsKey(tutor) && forcedAssignment.get(tutor).size() == 1) 
+			   || forcedAssignment.containsKey(tutor) && forcedAssignment.get(tutor).size() == MAX_TUTEES_FOR_TUTOR - 1) {
 				throw new ExceptionTooManyAssignments(tutor + " a déjà atteint son nombre maximal de tutoré.");
 			}
 			if (forcedAssignment.containsKey(tutee)) {
 				throw new ExceptionTooManyAssignments("Vous ne pouvez pas associer deux fois " + tutee);
 			}
 			// Ajoute l'affectation forcée si tout est valide
-			forcedAssignment.put(tutee, tutor);
+			forcedAssignment.put(tutee, new LinkedHashSet<>());
+			forcedAssignment.get(tutee).add(tutor);
+			if (!forcedAssignment.containsKey(tutor)) {
+				forcedAssignment.put(tutor, new LinkedHashSet<>());
+			}
+			forcedAssignment.get(tutor).add(tutee);
 		}
 	}
 	
@@ -176,12 +169,12 @@ public class Tutoring {
 	 * Réinitialise les deux maps d'affectations tout en préservant les affectations forcées
 	 */
 	public void clearAssignments() {
-		tuteeToTutor.clear();
-		tutorToTutees.clear();
+		studentAssignment.clear();
 		
-		// Remet la lisee des affectations forcées
-		for (Student tutee: forcedAssignment.keySet()) {
-			addAssignment(tutee, forcedAssignment.get(tutee));
+		// Remet la liste des affectations forcées
+		for (Student student: forcedAssignment.keySet()) {
+			if (student.canBeTutee())
+				addAssignment(student, (Student) forcedAssignment.get(student).toArray()[0]);
 		}
 	}
 	
@@ -268,10 +261,10 @@ public class Tutoring {
 		for (Student tutor: tutors) {
 			if (this.canParticipate(tutor)) {
 				// Un étudiant de 2ème année ne peut aider qu'un seul tutoré
-				if (tutor.getPROMO() == 2 && getTutorAssignment(tutor).size() != 1) {
+				if (tutor.getPROMO() == 2 && getStudentAssignment(tutor).size() != 1) {
 					eligibleTutors.add(tutor);
 				// Même vérification pour les élèves de 3ème année
-				} else if (tutor.getPROMO() == 3 && getTutorAssignment(tutor).size() != MAX_TUTEES_FOR_TUTOR) {
+				} else if (tutor.getPROMO() == 3 && getStudentAssignment(tutor).size() != MAX_TUTEES_FOR_TUTOR) {
 					eligibleTutors.add(tutor);
 				}
 			}
@@ -286,7 +279,7 @@ public class Tutoring {
 	private Set<Student> getEligibleTutees() {
 		Set<Student> eligibleTutees = new LinkedHashSet<>();
 		for (Student tutee: tutees) {
-			if (this.canParticipate(tutee) && !tuteeToTutor.containsKey(tutee))
+			if (this.canParticipate(tutee) && !studentAssignment.containsKey(tutee))
 				eligibleTutees.add(tutee);
 		}
 		return eligibleTutees;
@@ -353,11 +346,12 @@ public class Tutoring {
 	 * Méthode qui ajoute une association dans les deux maps
 	 */
 	void addAssignment(Student tutee, Student tutor) {
-		tuteeToTutor.put(tutee, tutor);
-		if (!tutorToTutees.containsKey(tutor)) {
-			tutorToTutees.put(tutor, new LinkedHashSet<>());
+		studentAssignment.put(tutee, new LinkedHashSet<>());
+		if (!studentAssignment.containsKey(tutor)) {
+			studentAssignment.put(tutor, new LinkedHashSet<>());
 		}
-		tutorToTutees.get(tutor).add(tutee);
+		studentAssignment.get(tutee).add(tutor);
+		studentAssignment.get(tutor).add(tutee);
 	}
 	
 	/**
@@ -395,15 +389,15 @@ public class Tutoring {
 	 * @param map
 	 * @return
 	 */
-	private String toStringMap(Map<Student, ?> map) {
+	private String toStringStudentAssignment(Set<Student> students) {
 		StringBuilder res = new StringBuilder();
-		List<Student> students = new ArrayList<>();
-		students.addAll(map.keySet());
-		Collections.sort(students, new ScoreComparator(this));
+		List<Student> studentsList = new ArrayList<>();
+		studentsList.addAll(students);
+		Collections.sort(studentsList, new ScoreComparator(this));
 		
-		for (Student student : students) {
-			if (map.containsKey(student)) {
-				res.append(student + " --> " + map.get(student) + "\n");
+		for (Student student : studentsList) {
+			if (studentAssignment.containsKey(student)) {
+				res.append(student + " --> " + studentAssignment.get(student) + "\n");
 			}
 		}
 		return res.toString();
@@ -413,13 +407,13 @@ public class Tutoring {
 	 * Chaîne de caractère donnant pour chaque tutoré le tuteur associé
 	 * @return
 	 */
-	public String toStringTutees() {return toStringMap(tuteeToTutor);}
+	public String toStringTutees() {return toStringStudentAssignment(tutees);}
 	
 	/**
 	 * Chaîne de caractère donnant pour chaque tuteur le/les tutoré(s) associé(s)
 	 * @return
 	 */
-	public String toStringTutors() {return toStringMap(tutorToTutees);}
+	public String toStringTutors() {return toStringStudentAssignment(tutors);}
 	
 	/**
 	 * Par défaut le toString renvoie vers toStringTutees()
