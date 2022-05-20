@@ -36,10 +36,10 @@ public class Tutoring {
 	private Integer nbAbsencesMax;
 	
 	/** Map qui associe les tuteurs aux tutorés */
-	private final Map<Student, Set<Student>> studentAssignment;
+	private final StudentsAssignment studentAssignment;
 	
 	/** Map qui enregistre toutes les associations forcées par les professeurs */
-	private final Map<Student, Set<Student>> forcedAssignment;
+	private final StudentsAssignment forcedAssignment;
 	
 	/** Variable qui définit combien de tutorés un tuteur peut gérer */
 	public final static int MAX_TUTEES_FOR_TUTOR = 2;
@@ -56,8 +56,8 @@ public class Tutoring {
 	 */
 	public Tutoring(Subject subject, double moyenneWidth, double absenceWidth) {
 		this.subject = subject;
-		this.studentAssignment = new HashMap<>();
-		this.forcedAssignment = new HashMap<>();
+		this.studentAssignment = new StudentsAssignment();
+		this.forcedAssignment = new StudentsAssignment();
 		this.motivations = new HashMap<>();
 		this.tutees = new LinkedHashSet<>();
 		this.tutors = new LinkedHashSet<>();
@@ -100,16 +100,6 @@ public class Tutoring {
 	public void setMoyenneWidth(double moyenneWidth) { this.moyenneWidth = moyenneWidth; }
 	
 	/**
-	 * Retourne la liste des affectations pour un étudiant
-	 * Renvoie une liste vide si il y a pas de tutorés associés
-	 * @param tutor
-	 * @return
-	 */
-	public Set<Student> getStudentAssignment(Student student) {
-		return studentAssignment.containsKey(student) ? studentAssignment.get(student) : new LinkedHashSet<>();
-	}
-	
-	/**
 	 * Méthode pour avoir les points bonus de motivation d'un étudiant.
 	 * @param student
 	 * @return
@@ -138,31 +128,37 @@ public class Tutoring {
 		} else if (!tutees.contains(tutee) || !tutors.contains(tutor)) {
 			throw new ExceptionNotInTutoring();
 		} else {
-			if ((tutor.getPROMO() == 2 && forcedAssignment.containsKey(tutor) && forcedAssignment.get(tutor).size() == 1) 
-			   || forcedAssignment.containsKey(tutor) && forcedAssignment.get(tutor).size() == MAX_TUTEES_FOR_TUTOR - 1) {
+			if ((tutor.getPROMO() == 2 && forcedAssignment.get(tutor).size() == 1) 
+			   || forcedAssignment.get(tutor).size() == MAX_TUTEES_FOR_TUTOR - 1) {
+				
 				throw new ExceptionTooManyAssignments(tutor + " a déjà atteint son nombre maximal de tutoré.");
 			}
-			if (forcedAssignment.containsKey(tutee)) {
+			if (forcedAssignment.contains(tutee)) {
 				throw new ExceptionTooManyAssignments("Vous ne pouvez pas associer deux fois " + tutee);
 			}
 			// Ajoute l'affectation forcée si tout est valide
-			forcedAssignment.put(tutee, new LinkedHashSet<>());
-			forcedAssignment.get(tutee).add(tutor);
-			if (!forcedAssignment.containsKey(tutor)) {
-				forcedAssignment.put(tutor, new LinkedHashSet<>());
-			}
-			forcedAssignment.get(tutor).add(tutee);
+			forcedAssignment.add(tutee, tutor);
 		}
 	}
 	
 	/**
-	 * Méthode qui permet d'annuler une association entre un tuteur et un tutoré qui était forcée
-	 * @param tutee
+	 * Retire l'affectation d'un tutoré
+	 * @param student
 	 */
-	public void removeForcedAssignment(Student tutee) {
-		if (forcedAssignment.containsKey(tutee)) {
-			forcedAssignment.remove(tutee);
-		}
+	public void removeForcedAssignment(Student student) {
+		forcedAssignment.removeAssignments(student);
+	}
+	
+	/**
+	 * Méthode qui permet de forcer une association entre un tuteur et un tutoré
+	 * @param tutee
+	 * @param tutor
+	 * @throws ExceptionPromo
+	 * @throws ExceptionNotInTutoring
+	 * @throws ExceptionTooManyAssignments  
+	 */
+	public void removeForcedAssignment(Student tutee, Student tutor) {
+		forcedAssignment.removeAssignment(tutee, tutor);
 	}
 	
 	/**
@@ -172,9 +168,9 @@ public class Tutoring {
 		studentAssignment.clear();
 		
 		// Remet la liste des affectations forcées
-		for (Student student: forcedAssignment.keySet()) {
+		for (Student student: forcedAssignment.getTutees()) {
 			if (student.canBeTutee())
-				addAssignment(student, (Student) forcedAssignment.get(student).toArray()[0]);
+				studentAssignment.add(student, (Student) forcedAssignment.get(student).toArray()[0]);
 		}
 	}
 	
@@ -221,14 +217,14 @@ public class Tutoring {
 			// Retire de la liste le tutoré
 			tutees.remove(student);
 			// Retire éventuellement l'affectation concernant le tutoré
-			forcedAssignment.remove(student);
+			forcedAssignment.removeAssignments(student);
 		} else {
 			// Retire de la liste le tuteur
 			tutors.remove(student);
 			// Retire éventuellement toutes les affectations concernant le tuteur
-			for (Student tutee : forcedAssignment.keySet()) {
+			for (Student tutee : forcedAssignment.getTutees()) {
 				if (forcedAssignment.get(tutee) == student) {
-					forcedAssignment.remove(tutee);
+					forcedAssignment.removeAssignments(tutee);
 				}
 			}
 		}
@@ -261,10 +257,10 @@ public class Tutoring {
 		for (Student tutor: tutors) {
 			if (this.canParticipate(tutor)) {
 				// Un étudiant de 2ème année ne peut aider qu'un seul tutoré
-				if (tutor.getPROMO() == 2 && getStudentAssignment(tutor).size() != 1) {
+				if (tutor.getPROMO() == 2 && studentAssignment.get(tutor).size() != 1) {
 					eligibleTutors.add(tutor);
 				// Même vérification pour les élèves de 3ème année
-				} else if (tutor.getPROMO() == 3 && getStudentAssignment(tutor).size() != MAX_TUTEES_FOR_TUTOR) {
+				} else if (tutor.getPROMO() == 3 && studentAssignment.get(tutor).size() != MAX_TUTEES_FOR_TUTOR) {
 					eligibleTutors.add(tutor);
 				}
 			}
@@ -279,7 +275,7 @@ public class Tutoring {
 	private Set<Student> getEligibleTutees() {
 		Set<Student> eligibleTutees = new LinkedHashSet<>();
 		for (Student tutee: tutees) {
-			if (this.canParticipate(tutee) && !studentAssignment.containsKey(tutee))
+			if (this.canParticipate(tutee) && !studentAssignment.contains(tutee))
 				eligibleTutees.add(tutee);
 		}
 		return eligibleTutees;
@@ -342,17 +338,7 @@ public class Tutoring {
 		return new CalculAffectation<>(graphe, new ArrayList<Student>(tuteesListCopy), new ArrayList<Student>(tutorsListCopy));
 	}
 	
-	/**
-	 * Méthode qui ajoute une association dans les deux maps
-	 */
-	void addAssignment(Student tutee, Student tutor) {
-		studentAssignment.put(tutee, new LinkedHashSet<>());
-		if (!studentAssignment.containsKey(tutor)) {
-			studentAssignment.put(tutor, new LinkedHashSet<>());
-		}
-		studentAssignment.get(tutee).add(tutor);
-		studentAssignment.get(tutor).add(tutee);
-	}
+	
 	
 	/**
 	 * Méthode qui crée les affectations
@@ -378,7 +364,7 @@ public class Tutoring {
 				
 				// Vérifie si l'affectation n'est pas avec un faux étudiant
 				if (eligibleTutors.contains(tutor) && eligibleTutees.contains(tutee)) {
-					addAssignment(tutee, tutor);
+					studentAssignment.add(tutee, tutor);
 				}
 			}
 		} while (!eligibleTutees.isEmpty() && !eligibleTutors.isEmpty());
@@ -396,7 +382,7 @@ public class Tutoring {
 		Collections.sort(studentsList, new ScoreComparator(this));
 		
 		for (Student student : studentsList) {
-			if (studentAssignment.containsKey(student)) {
+			if (studentAssignment.contains(student)) {
 				res.append(student + " --> " + studentAssignment.get(student) + "\n");
 			}
 		}
