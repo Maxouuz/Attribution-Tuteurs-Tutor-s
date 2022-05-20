@@ -317,5 +317,10 @@ public class TutoringTest {
 		tutoringShort.forceAssignment(tutee6, tutor5);
 		tutoringShort.createAssignments();
 		System.out.println(tutoringShort.toStringTutors());
+		
+		System.out.println("\n--- AFFECTATION AVEC AFFECTATION ANNULÉE ---\n");
+		tutoringShort.doNotAssign(tutee4, tutor3);
+		tutoringShort.createAssignments();
+		System.out.println(tutoringShort.toStringTutors());
 	}
 }

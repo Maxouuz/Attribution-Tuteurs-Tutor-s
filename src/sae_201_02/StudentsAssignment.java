@@ -24,6 +24,7 @@ public class StudentsAssignment {
 	
 	/**
 	 * Méthode qui ajoute une association dans les deux maps
+	 * @throws ExceptionPromo 
 	 */
 	void add(Student tutee, Student tutor) {
 		assignments.put(tutee, new LinkedHashSet<>());
@@ -105,6 +106,20 @@ public class StudentsAssignment {
 			if (student.canBeTutor()) {
 				res.add(student);
 			}
+		}
+		return res;
+	}
+	
+	/**
+	 * Retourne true si le couple tuteur-tutoré existe dans la map
+	 * @param tutee
+	 * @param tutor
+	 * @return
+	 */
+	public boolean coupleExists(Student tutee, Student tutor) {
+		boolean res = false;
+		if (assignments.containsKey(tutee)) {
+			res = assignments.get(tutee).contains(tutor);
 		}
 		return res;
 	}

@@ -99,11 +99,6 @@
 </rule>
 <rule ref="category/java/design.xml/DataClass"/>
 <rule ref="category/java/design.xml/ExceptionAsFlowControl"/>
-<rule ref="category/java/design.xml/ExcessiveClassLength">
-<properties>
-<property name="minimum" value="400.0"/>
-</properties>
-</rule>
 <rule ref="category/java/design.xml/ExcessiveImports"/>
 <rule ref="category/java/design.xml/FinalFieldCouldBeStatic"/>
 <rule ref="category/java/design.xml/ImmutableField"/>
@@ -129,16 +124,6 @@
 <rule ref="category/java/design.xml/SwitchDensity">
 <properties>
 <property name="minimum" value="10.0"/>
-</properties>
-</rule>
-<rule ref="category/java/design.xml/TooManyFields">
-<properties>
-<property name="maxfields" value="10"/>
-</properties>
-</rule>
-<rule ref="category/java/design.xml/TooManyMethods">
-<properties>
-<property name="maxmethods" value="16"/>
 </properties>
 </rule>
 <rule ref="category/java/design.xml/UselessOverridingMethod"/>
