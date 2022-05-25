@@ -5,12 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
 
+import org.json.JSONException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -322,5 +324,14 @@ public class TutoringTest {
 		tutoringShort.doNotAssign(tutee4, tutor3);
 		tutoringShort.createAssignments();
 		System.out.println(tutoringShort.toStringTutors());
+		
+		File path = new File(System.getProperty("user.dir") + File.separator + "res" + File.separator + "tutoring_save.json");
+		try {
+			tutoringShort.save(path);
+			Tutoring.load(path);
+		} catch (JSONException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

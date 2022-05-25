@@ -1,5 +1,12 @@
 package sae_201_02;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,6 +14,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.json.CDL;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import fr.ulille.but.sae2_02.graphes.Arete;
 import fr.ulille.but.sae2_02.graphes.CalculAffectation;
@@ -45,7 +57,8 @@ public class Tutoring {
 	private final StudentsAssignment studentsToNotAssign;
 	
 	/** Variable qui définit combien de tutorés un tuteur peut gérer */
-	public final static int MAX_TUTEES_FOR_TUTOR = 2;
+	public int maxTuteesForTutor;
+
 	/** Variable qui représente le poids de la moyenne dans le calcul du score */
 	private double moyenneWidth;
 	/** Variable qui représente le nombre d'absences qu'il faut pour perdre un point de score */
@@ -57,7 +70,7 @@ public class Tutoring {
 	 * @param moyenneWidth
 	 * @param absenceWidth
 	 */
-	public Tutoring(Subject subject, double moyenneWidth, double absenceWidth) {
+	public Tutoring(Subject subject, int maxTuteesForTutor, double moyenneWidth, double absenceWidth) {
 		this.subject = subject;
 		this.studentsAssignment = new StudentsAssignment();
 		this.forcedAssignment = new StudentsAssignment();
@@ -66,6 +79,7 @@ public class Tutoring {
 		this.tutees = new LinkedHashSet<>();
 		this.tutors = new LinkedHashSet<>();
 		
+		setMaxTuteesForTutor(maxTuteesForTutor);
 		setMoyenneWidth(moyenneWidth);
 		setAbsenceWidth(absenceWidth);
 	}
@@ -74,7 +88,7 @@ public class Tutoring {
 	 * Constructeur tutoring sans paramètres
 	 */
 	public Tutoring(Subject subject) {
-		this(subject, 1.0, 3.0);
+		this(subject, 2, 1.0, 3.0);
 	}
 	
 	public Subject getSubject() { return this.subject; };
@@ -102,6 +116,10 @@ public class Tutoring {
 	public double getMoyenneWidth() { return moyenneWidth; }
 
 	public void setMoyenneWidth(double moyenneWidth) { this.moyenneWidth = moyenneWidth; }
+	
+	public int getMaxTuteesForTutor() { return maxTuteesForTutor; }
+
+	public void setMaxTuteesForTutor(int maxTuteesForTutor) { this.maxTuteesForTutor = maxTuteesForTutor; }
 	
 	/**
 	 * Méthode pour avoir les points bonus de motivation d'un étudiant.
@@ -146,7 +164,7 @@ public class Tutoring {
 	public void forceAssignment(Student tutee, Student tutor) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
 		checkTuteeTutorParameters(tutee, tutor);
 		if ((tutor.getPROMO() == 2 && forcedAssignment.get(tutor).size() == 1) 
-			   || forcedAssignment.get(tutor).size() == MAX_TUTEES_FOR_TUTOR - 1) {
+			   || forcedAssignment.get(tutor).size() == maxTuteesForTutor - 1) {
 				
 			throw new ExceptionTooManyAssignments(tutor + " a déjà atteint son nombre maximal de tutoré.");
 		} else if (forcedAssignment.contains(tutee)) {
@@ -295,7 +313,7 @@ public class Tutoring {
 				if (tutor.getPROMO() == 2 && studentsAssignment.get(tutor).size() != 1) {
 					eligibleTutors.add(tutor);
 				// Même vérification pour les élèves de 3ème année
-				} else if (tutor.getPROMO() == 3 && studentsAssignment.get(tutor).size() != MAX_TUTEES_FOR_TUTOR) {
+				} else if (tutor.getPROMO() == 3 && studentsAssignment.get(tutor).size() != maxTuteesForTutor) {
 					eligibleTutors.add(tutor);
 				}
 			}
@@ -406,6 +424,57 @@ public class Tutoring {
 				}
 			}
 		} while (!eligibleTutees.isEmpty() && !eligibleTutors.isEmpty());
+	}
+	
+	/**
+	 * Méthode pour sauvegarder le tutorat dans un fichier json
+	 * @param path
+	 * @throws IOException 
+	 * @throws JSONException 
+	 */
+	public void save(File path) throws JSONException, IOException {
+		JSONObject json = new JSONObject();
+		json.put("subject", subject);
+		json.put("tutees", tutees);
+		json.put("tutors", tutors);
+		
+		JSONObject motivationJSON = new JSONObject();
+		for (Student std: motivations.keySet()) {
+			motivationJSON.put(String.valueOf(std.getINE()), motivations.get(std));
+		}
+		json.put("motivations", motivationJSON);
+		
+		json.put("moyenneMaxTutee", moyenneMaxTutee);
+		json.put("moyenneMinTutor", moyenneMinTutor);
+		json.put("nbAbsencesMax", nbAbsencesMax);
+		
+		json.put("forcedAssignment", forcedAssignment);
+		json.put("studentsToNotAssign", studentsToNotAssign);
+		json.put("maxTuteesForTutor", maxTuteesForTutor);
+		json.put("moyenneWidth", moyenneWidth);
+		json.put("absenceWidth", absenceWidth);
+		
+		Writer writer = new FileWriter(path);
+		json.write(writer, 4, 0);
+		writer.close();
+	}
+	
+	public static void load(File path) throws IOException {
+		// Récupère le fichier json
+		BufferedReader reader = new BufferedReader(new FileReader(path));
+		
+		StringBuilder text = new StringBuilder();
+		while (reader.ready()) {
+			text.append(reader.readLine());
+		}
+		
+		JSONObject json = new JSONObject(text.toString());
+		Tutoring tutoring = new Tutoring(
+				Subject.valueOf(json.get("subject").toString()),
+				Integer.valueOf(json.get("maxTuteesForTutor").toString()),
+				Double.valueOf(json.get("moyenneWidth").toString()),
+				Double.valueOf(json.get("absenceWidth").toString())
+		);
 	}
 	
 	/**

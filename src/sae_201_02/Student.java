@@ -3,12 +3,15 @@ package sae_201_02;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
+import org.json.JSONString;
+
 /**
  * Classe abstraite qui représente un étudiant avec une moyenne et une promo
  * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  *
  */
-public class Student extends Person {
+public class Student extends Person implements JSONString {
 	/** Représente la moyenne de l'étudiant */
 	private final Map<Subject, Double> moyennes;
 	/** Année de promo de l'étudiant */
@@ -170,5 +173,14 @@ public class Student extends Person {
 		if (nbAbsences <= 0)
 			throw new IllegalArgumentException("Le nombre d'absences doit être un nombre positif!");
 		this.nbAbsences = nbAbsences;
+	}
+
+	@Override
+	public String toJSONString() {
+		JSONObject json = new JSONObject(super.toJSONString());
+		json.put("moyennes", moyennes);
+		json.put("promo", PROMO);
+		json.put("nbAbsences", nbAbsences);
+		return json.toString();
 	}
 }

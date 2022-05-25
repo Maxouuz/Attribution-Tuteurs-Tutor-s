@@ -5,13 +5,16 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONObject;
+import org.json.JSONString;
+
 /**
  * Méthode permettant d'associer les tutorés aux tuteurs.
  * On peut accéder aux affectations à partir du tuteur ou du tutoré
  * @author nathan.hallez.etu
  *
  */
-public class StudentsAssignment {
+public class StudentsAssignment implements JSONString {
 	/** Map qui associe les tuteurs et les tutorés dans les deux sens */
 	private final Map<Student, Set<Student>> assignments;
 	
@@ -122,5 +125,15 @@ public class StudentsAssignment {
 			res = assignments.get(tutee).contains(tutor);
 		}
 		return res;
+	}
+
+	@Override
+	public String toJSONString() {
+		JSONObject json = new JSONObject();
+		for (Student tutee: getTutees()) {
+			Student tutor = (Student) assignments.get(tutee).toArray()[0];
+			json.put(String.valueOf(tutee.getINE()), String.valueOf(tutor.getINE()));
+		}
+		return json.toString();
 	}
 }

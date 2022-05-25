@@ -1,10 +1,13 @@
 package sae_201_02;
 
+import org.json.JSONObject;
+import org.json.JSONString;
+
 /**
  * Classe abstraite qui représente une personne avec un identifiant unique.
  * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  */
-public abstract class Person implements Comparable<Person> {
+public abstract class Person implements Comparable<Person>, JSONString {
 	/** Prénom de la personne */
 	private final String FORENAME;
 	/** Nom de la personne */
@@ -78,4 +81,12 @@ public abstract class Person implements Comparable<Person> {
 		return diff;
 	}
 	
+	@Override
+	public String toJSONString() {
+		JSONObject json = new JSONObject();
+		json.put("forename", FORENAME);
+		json.put("name", NAME);
+		json.put("ine", INE);
+		return json.toString();
+	}
 }
