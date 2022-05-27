@@ -3,6 +3,7 @@ package sae_201_02;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -325,10 +326,12 @@ public class TutoringTest {
 		tutoringShort.createAssignments();
 		System.out.println(tutoringShort.toStringTutors());
 		
-		File path = new File(System.getProperty("user.dir") + File.separator + "res" + File.separator + "tutoring_save.json");
+		String path = System.getProperty("user.dir") + File.separator + "res" + File.separator;
+		File save1 = new File(path + "tutoring_save.json");
+		File save2 = new File(path + "tutoring_save2.json");
 		try {
-			tutoringShort.save(path);
-			Tutoring.load(path);
+			tutoringShort.save(save1);
+			Tutoring loaded = Tutoring.load(save1);
 		} catch (JSONException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

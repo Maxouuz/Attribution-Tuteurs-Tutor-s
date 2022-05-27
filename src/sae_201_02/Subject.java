@@ -33,7 +33,7 @@ public enum Subject {
 	/**
 	 * Affiche l'identifiant de la matière suivi de son intitulé.
 	 */
-	public String toString() {
-		return this.name() + " - " + this.NOM_MAT;
+	public String getName() {
+		return this.name();
 	}
 }
