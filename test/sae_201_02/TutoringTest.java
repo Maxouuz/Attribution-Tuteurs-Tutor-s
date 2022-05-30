@@ -48,7 +48,7 @@ public class TutoringTest {
 		while (line != null) {
 			student = new Scanner(line);
 			student.useDelimiter(";");
-			Student tmp = new Student(student.next(), student.next(), student.nextInt(), student.nextInt(), Double.parseDouble(student.next()),
+			Student tmp = Student.createStudent(student.next(), student.next(), student.nextInt(), student.nextInt(), Double.parseDouble(student.next()),
 					Double.parseDouble(student.next()), Double.parseDouble(student.next()), Double.parseDouble(student.next()));
 			tutoring.addStudent(tmp);
 			tutoring.addStudentMotivation(tmp, Motivation.valueOf(student.next()));
@@ -67,19 +67,19 @@ public class TutoringTest {
 	public void initialization2() throws ExceptionPromo {
 		tutoringShort = new Tutoring(Subject.R101);
 
-		tutor1 = new Student("Sophie", "Vallee", 2, 3, 15.5);
-		tutor2 = new Student("Nicolas", "Roche", 3, 6, 16.5);
-		tutor3 = new Student("Maurice", "Fernandez", 3, 4, 14.5);
-		tutor4 = new Student("William", "Letellier", 2, 2, 18.5);
-		tutor5 = new Student("Paul", "Sanchez", 3, 0, 13.7);
+		tutor1 = Student.createStudent("Sophie", "Vallee", 2, 3, 15.5);
+		tutor2 = Student.createStudent("Nicolas", "Roche", 3, 6, 16.5);
+		tutor3 = Student.createStudent("Maurice", "Fernandez", 3, 4, 14.5);
+		tutor4 = Student.createStudent("William", "Letellier", 2, 2, 18.5);
+		tutor5 = Student.createStudent("Paul", "Sanchez", 3, 0, 13.7);
 		
-		tutee1 = new Student("Charles", "Letellier", 1, 0, 8);
-		tutee2 = new Student("Daniel", "Daniel", 1, 3, 9);
-		tutee3 = new Student("François", "Bertin", 1, 9, 7);
-		tutee4 = new Student("Sabine", "Leleu", 1, 1, 5.5);
-		tutee5 = new Student("Gabriel", "Marin", 1, 0, 9);
-		tutee6 = new Student("Juliette", "Traore", 1, 30, 12);
-		tutee7 = new Student("Franck", "Hebert", 1, 5, 2.5);
+		tutee1 = Student.createStudent("Charles", "Letellier", 1, 0, 8);
+		tutee2 = Student.createStudent("Daniel", "Daniel", 1, 3, 9);
+		tutee3 = Student.createStudent("François", "Bertin", 1, 9, 7);
+		tutee4 = Student.createStudent("Sabine", "Leleu", 1, 1, 5.5);
+		tutee5 = Student.createStudent("Gabriel", "Marin", 1, 0, 9);
+		tutee6 = Student.createStudent("Juliette", "Traore", 1, 30, 12);
+		tutee7 = Student.createStudent("Franck", "Hebert", 1, 5, 2.5);
 	}
 	
 	@BeforeEach
@@ -129,7 +129,7 @@ public class TutoringTest {
 		
 		// Liste de tuteurs vide uniquement
 		try {
-			tutoring2.addStudent(new Student("", "", 1, 0, 10));
+			tutoring2.addStudent(Student.createStudent("", "", 1, 0, 10));
 			tutoring2.createAssignments();
 		} catch (ExceptionPromo e) {
 			res = false;
@@ -143,7 +143,7 @@ public class TutoringTest {
 		
 		// Liste de tutorés vide uniquement
 		try {
-			tutoring2.addStudent(new Student("", "", 3, 0, 10));
+			tutoring2.addStudent(Student.createStudent("", "", 3, 0, 10));
 			tutoring2.createAssignments();
 		} catch (ExceptionPromo e) {
 			res = false;

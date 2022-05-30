@@ -11,7 +11,7 @@ import org.json.JSONString;
  * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  *
  */
-public class Student extends Person implements JSONString {
+public abstract class Student extends Person implements JSONString {
 	/** Représente la moyenne de l'étudiant */
 	private final Map<Subject, Double> moyennes;
 	/** Année de promo de l'étudiant */
@@ -25,7 +25,7 @@ public class Student extends Person implements JSONString {
 	private final static double SCORE_MAX_ABSENCES = 365;
 	
 	/**
-	 * Constructeur de la classe Student
+	 * Factory de la classe Student
 	 * @param FORENAME
 	 * @param NAME
 	 * @param moyenne
@@ -33,7 +33,7 @@ public class Student extends Person implements JSONString {
 	 * @param absence
 	 * @throws ExceptionPromo 
 	 */
-	public Student(String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
+	protected Student(String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
 		super(FORENAME, NAME);
 		this.moyennes = new HashMap<>(moyennes);
 		this.nbAbsences = nbAbsences;
@@ -44,15 +44,22 @@ public class Student extends Person implements JSONString {
 	}
 	
 	/**
-	 * Second constructeur de Student sans donner les moyennes
+	 * Constructeur de la classe Student
 	 * @param FORENAME
 	 * @param NAME
+	 * @param moyenne
 	 * @param PROMO
-	 * @param nbAbsences
-	 * @throws ExceptionPromo
+	 * @param absence
+	 * @throws ExceptionPromo 
 	 */
-	public Student(String FORENAME, String NAME, int PROMO, int nbAbsences) throws ExceptionPromo {
-		this(FORENAME, NAME, PROMO, nbAbsences, new HashMap<>());
+	public static Student createStudent(String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
+		Student res;
+		if (PROMO == 1) {
+			res = new Tutee(FORENAME, NAME, PROMO, nbAbsences, moyennes);
+		} else {
+			res = new Tutor(FORENAME, NAME, PROMO, nbAbsences, moyennes);
+		}
+		return res;
 	}
 	
 	/**
@@ -63,11 +70,24 @@ public class Student extends Person implements JSONString {
 	 * @param nbAbsences
 	 * @throws ExceptionPromo
 	 */
-	public Student(String FORENAME, String NAME, int PROMO, int nbAbsences, double... moyennes) throws ExceptionPromo {
-		this(FORENAME, NAME, PROMO, nbAbsences);
+	public static Student createStudent(String FORENAME, String NAME, int PROMO, int nbAbsences) throws ExceptionPromo {
+		return createStudent(FORENAME, NAME, PROMO, nbAbsences, new HashMap<>());
+	}
+	
+	/**
+	 * Second constructeur de Student sans donner les moyennes
+	 * @param FORENAME
+	 * @param NAME
+	 * @param PROMO
+	 * @param nbAbsences
+	 * @throws ExceptionPromo
+	 */
+	public static Student createStudent(String FORENAME, String NAME, int PROMO, int nbAbsences, double... moyennes) throws ExceptionPromo {
+		Student res = createStudent(FORENAME, NAME, PROMO, nbAbsences);
 		for (int i = 0; i < moyennes.length && i < Subject.values().length; i++) {
-			setMoyenne(Subject.values()[i], moyennes[i]);
+			res.setMoyenne(Subject.values()[i], moyennes[i]);
 		}
+		return res;
 	}
 	
 	/**

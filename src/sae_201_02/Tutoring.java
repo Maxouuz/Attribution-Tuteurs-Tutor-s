@@ -31,9 +31,9 @@ public class Tutoring {
 	/** Matière dédiée du tutorat */
 	private final Subject subject;
 	/** Liste des tutorés */
-	private final Set<Student> tutees;
+	private final Set<Tutee> tutees;
 	/** Liste des tuteurs */
-	private final Set<Student> tutors;
+	private final Set<Tutor> tutors;
 	
 	/** Map de motivation des élèves */
 	private final Map<Student, Motivation> motivations;
@@ -245,9 +245,9 @@ public class Tutoring {
 	public boolean addStudent(Student student) {
 		boolean res;
 		if (student.canBeTutee()) {
-			res =  tutees.add(student);
+			res =  tutees.add((Tutee) student);
 		} else {
-			res = tutors.add(student);
+			res = tutors.add((Tutor) student);
 		}
 		return res;
 	}
@@ -351,13 +351,13 @@ public class Tutoring {
 		
 		// Ajoute les tuteurs manquants
 		while (tuteesList.size() > tutorsList.size()) {
-			Student fakeStudent = new Student("", "", 2, Integer.MAX_VALUE);
+			Student fakeStudent = Student.createStudent("", "", 2, Integer.MAX_VALUE);
 			tutorsList.add(fakeStudent);
 		}
 		
 		// Ajoute les tutorés manquants
 		while (tutorsList.size() > tuteesList.size()) {
-			Student fakeStudent = new Student("", "", 1, Integer.MAX_VALUE);
+			Student fakeStudent = Student.createStudent("", "", 1, Integer.MAX_VALUE);
 			tuteesList.add(fakeStudent);
 		}
 	}
@@ -422,6 +422,8 @@ public class Tutoring {
 				}
 			}
 		} while (!eligibleTutees.isEmpty() && !eligibleTutors.isEmpty());
+		
+		Tutor test = new Tutor("truc", "truc", 0, 0, null);
 	}
 	
 	/**
@@ -462,7 +464,8 @@ public class Tutoring {
 		students.putAll(json.get("tutors"));
 		for (Object element: students) {
 			JSONObject elementJSON = (JSONObject) element;
-			Student studentCopy = new Student(elementJSON.getString("forename"),
+			Student studentCopy;
+			studentCopy = Student.createStudent(elementJSON.getString("forename"),
 									  elementJSON.getString("name"),
 									  elementJSON.getInt("promo"),
 									  elementJSON.getInt("nbAbsences"));
@@ -542,7 +545,7 @@ public class Tutoring {
 	 * @param map
 	 * @return
 	 */
-	private String toStringStudentAssignment(Set<Student> students) {
+	private String toStringStudentAssignment(Set<? extends Student> students) {
 		StringBuilder res = new StringBuilder();
 		List<Student> studentsList = new ArrayList<>();
 		studentsList.addAll(students);

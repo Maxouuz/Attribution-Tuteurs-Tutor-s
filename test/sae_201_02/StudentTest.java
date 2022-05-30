@@ -21,8 +21,8 @@ class StudentTest {
 
 	@Test
 	void equalsTest() throws ExceptionPromo {
-		Student st1 = new Student("Jean", "Dupont", 1, 0, 6.9);
-		Student st2 = new Student("Jean", "Dupont", 1, 0, 6.9);
+		Student st1 = Student.createStudent("Jean", "Dupont", 1, 0, 6.9);
+		Student st2 = Student.createStudent("Jean", "Dupont", 1, 0, 6.9);
 
 		// Même instance
 		assertEquals(st1, st1);
@@ -36,9 +36,9 @@ class StudentTest {
 		 * Rappel: Plus le score est haut, plus l'étudiant est considéré comme meilleur
 		 */
 
-		Student st1 = new Student("Jean", "Dupont", 3, 0, 10);
-		Student st2 = new Student("Hugues", "Bigot", 3, 0, 9);
-		Student st3 = new Student("Franck", "Hebert", 3, 1, 10);
+		Student st1 = Student.createStudent("Jean", "Dupont", 3, 0, 10);
+		Student st2 = Student.createStudent("Hugues", "Bigot", 3, 0, 9);
+		Student st3 = Student.createStudent("Franck", "Hebert", 3, 1, 10);
 
 		// Note supérieure
 		assertTrue(st1.getScore() > st2.getScore());
@@ -51,7 +51,7 @@ class StudentTest {
 		// Promo inférieur à 1
 		boolean res = false;
 		try {
-			new Student("Jean", "Dupont", 0, 0);
+			Student.createStudent("Jean", "Dupont", 0, 0);
 		} catch (ExceptionPromo e) {
 			res = true;
 		}
@@ -60,7 +60,7 @@ class StudentTest {
 		// Promo supérieur à 3
 		res = false;
 		try {
-			new Student("Jean", "Dupont", 4, 0);
+			Student.createStudent("Jean", "Dupont", 4, 0);
 		} catch (ExceptionPromo e) {
 			res = true;
 		}
@@ -69,9 +69,9 @@ class StudentTest {
 		// Promo entre 1 et 3
 		res = false;
 		try {
-			new Student("Jean", "Dupont", 1, 0);
-			new Student("Hugues", "Bigot", 2, 0);
-			new Student("Franck", "Hebert", 3, 0);
+			Student.createStudent("Jean", "Dupont", 1, 0);
+			Student.createStudent("Hugues", "Bigot", 2, 0);
+			Student.createStudent("Franck", "Hebert", 3, 0);
 		} catch (ExceptionPromo e) {
 			res = true;
 		}
@@ -81,16 +81,16 @@ class StudentTest {
 	@Test
 	void youngerStudentAlwaysLowerScoreTest() throws ExceptionPromo {
 		// Étudiant de 1ère année avec le score le plus haut possible
-		Student st1 = new Student("Jean", "Dupont", 1, 0, 20);
+		Student st1 = Student.createStudent("Jean", "Dupont", 1, 0, 20);
 		// Étudiant de 2ème année avec le score le plus mauvais possible
-		Student st2 = new Student("Hugues", "Bigot", 2, Integer.MAX_VALUE, 0);
+		Student st2 = Student.createStudent("Hugues", "Bigot", 2, Integer.MAX_VALUE, 0);
 
 		assertTrue(st1.getScore() < st2.getScore());
 
 		// Étudiant de 2ème année avec le score le plus haut possible
-		Student st3 = new Student("Charles", "Letellier", 2, 0, 20);
+		Student st3 = Student.createStudent("Charles", "Letellier", 2, 0, 20);
 		// Étudiant de 3èle année avec le score le plus mauvais possible
-		Student st4 = new Student("Franck", "Hebert", 3, Integer.MAX_VALUE, 0);
+		Student st4 = Student.createStudent("Franck", "Hebert", 3, Integer.MAX_VALUE, 0);
 		assertTrue(st3.getScore() < st4.getScore());
 	}
 
@@ -102,11 +102,11 @@ class StudentTest {
 		 */
 
 		// Étudiant de 1ère année avec paramètres aléatoire
-		Student st10 = new Student("Jean", "Dupont", 1, 0, 16);
+		Student st10 = Student.createStudent("Jean", "Dupont", 1, 0, 16);
 		// Étudiant de 2ème année avec paramètres aléatoire
-		Student st20 = new Student("Jordan", "Coubert", 2, 0, 15);
+		Student st20 = Student.createStudent("Jordan", "Coubert", 2, 0, 15);
 		// Étudiant de 3ème année avec paramètres aléatoire
-		Student st30 = new Student("jacques", "Petard", 3, 0, 12);
+		Student st30 = Student.createStudent("jacques", "Petard", 3, 0, 12);
 
 		// Vérification pour les 1ere année
 		assertTrue(st10.canBeTutee());
@@ -127,8 +127,8 @@ class StudentTest {
 		 */
 		boolean res = false;
 		// Étudiants avec nombre d'absence nul ou positif
-		Student st1 = new Student("Jean", "Dupont", 1, 0, 16);
-		Student st2 = new Student("Jean", "Dupont", 1, 2, 16);
+		Student st1 = Student.createStudent("Jean", "Dupont", 1, 0, 16);
+		Student st2 = Student.createStudent("Jean", "Dupont", 1, 2, 16);
 
 		// Test du getNbAbsences()
 		assertEquals(st1.getNbAbsences(), 0);
@@ -156,9 +156,9 @@ class StudentTest {
 		
 		
 		//Initialisation des étudiants de 1ere année
-		Student st1 = new Student("Jean", "Dupont", 1, 0, 12);
-		Student st2 = new Student("Jordan", "Coubert", 1, 0, 15);
-		Student st3 = new Student("Franck", "Michalak", 1, 0, 19);
+		Student st1 = Student.createStudent("Jean", "Dupont", 1, 0, 12);
+		Student st2 = Student.createStudent("Jordan", "Coubert", 1, 0, 15);
+		Student st3 = Student.createStudent("Franck", "Michalak", 1, 0, 19);
 		
 		//Remplissage d'un tableau sans trier : 
 		groupeDe1ereAnnee.add(st3);
@@ -187,9 +187,9 @@ class StudentTest {
 		List<Student> groupeDe2Et3emeAnneeTrie = new ArrayList<>();
 
 		//Même chose mais avec des étudiants de 2eme et 3eme année :
-		Student st11 = new Student("Jean", "Dupont", 2, 0, 12);
-		Student st21 = new Student("Jordan", "Coubert", 3, 0, 16);
-		Student st31 = new Student("Franck", "Michalak", 2, 0, 20);
+		Student st11 = Student.createStudent("Jean", "Dupont", 2, 0, 12);
+		Student st21 = Student.createStudent("Jordan", "Coubert", 3, 0, 16);
+		Student st31 = Student.createStudent("Franck", "Michalak", 2, 0, 20);
 
 		groupeDe2Et3emeAnnee.add(st31);
 		groupeDe2Et3emeAnnee.add(st11);
@@ -209,10 +209,10 @@ class StudentTest {
 		 * S'ils sont identiques, la fonction renvoie 0, sinon, un nombres inférieures à 0.
 		 */
 		//Je créé 2 fois 2 personnes, avec les memes prénom et nom
-		Student std1 = new Student("Maxence","Stievenard", 3, 11, 15);
-		Student std1bis = new Student("Maxence","Stievenard", 2, 0, 12);
-		Student std2 = new Student("Nathan","Hallez", 3, 9, 10);
-		Student std2bis = new Student("Nathan","Hallez", 1, 0, 8);
+		Student std1 = Student.createStudent("Maxence","Stievenard", 3, 11, 15);
+		Student std1bis = Student.createStudent("Maxence","Stievenard", 2, 0, 12);
+		Student std2 = Student.createStudent("Nathan","Hallez", 3, 9, 10);
+		Student std2bis = Student.createStudent("Nathan","Hallez", 1, 0, 8);
 		// je compare les personnes deux par deux, et je vérifie si la fonction envoie 0 en cas d'égalité.
 		assertEquals(0,std1.compareTo(std1bis));
 		assertEquals(0,std2.compareTo(std2bis));
@@ -223,8 +223,8 @@ class StudentTest {
 	
 	@Test
 	void compareToDifferentTest() throws ExceptionPromo {
-		Student std1 = new Student("Maxence","Stievenard", 3, 11, 15);
-		Student std2 = new Student("Nathan","Hallez", 3, 9, 10);
+		Student std1 = Student.createStudent("Maxence","Stievenard", 3, 11, 15);
+		Student std2 = Student.createStudent("Nathan","Hallez", 3, 9, 10);
 		
 		// Je vérifie si la fonction ne renvoie pas 0 en cas d'inégalité
 		assertNotEquals(0,std1.compareTo(std2));
