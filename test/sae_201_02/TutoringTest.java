@@ -198,8 +198,7 @@ public class TutoringTest {
 	}
 
 	@Test
-	void testforceAssignmentTooManyTutees()
-			throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
+	void testforceAssignmentTooManyTutees() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
 
 		boolean res = false;
 		try {
@@ -210,7 +209,6 @@ public class TutoringTest {
 			res = true;
 		}
 		assertTrue(res);
-		res = false;
 		// je retire l'assignation pour pouvoir réutiliser le tutoré et le tuteur dans
 		// d'autres tests
 		tutee1.removeForcedAssignment(tutoringShort);
@@ -258,6 +256,7 @@ public class TutoringTest {
 		try {
 			// On essaye d'assigner un étudiant qui existe, mais qui n'est dans aucune liste,
 			// à un tuteur présent dans la liste des tuteurs.
+			tutee4.removeForcedAssignment(tutoring);
 			tutee4.forceAssignment(tutoringShort, tutor1);
 		} catch (ExceptionNotInTutoring e) {
 			res = true;
@@ -268,6 +267,8 @@ public class TutoringTest {
 		try {
 			// Même chose mais avec un tutoré existant et un tutoré pas présent dans les
 			// listes
+			tutee4.removeForcedAssignment(tutoringShort);
+			tutor1.removeForcedAssignment(tutoringShort);
 			tutee4.forceAssignment(tutoringShort, tutor1);
 		} catch (ExceptionNotInTutoring e) {
 			res = true;

@@ -5,6 +5,7 @@ package sae_201_02;
  * @author nathan.hallez.etu
  */
 public class ExceptionPromo extends Exception {
+	/** Exception sans message */
 	public ExceptionPromo() { super(); }
 	
 	/** Exception avec message */

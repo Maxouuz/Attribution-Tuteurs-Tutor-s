@@ -5,19 +5,33 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Classe représentant un candidat pour être tutoré de première année
+ * @author nathan.hallez.etu
+ *
+ */
 public class Tutee extends Student {
-	
-	private Map<Tutoring, Tutor> association;
+	/** Map qui associe pour chaque tutorat un tuteur */
+	private final Map<Tutoring, Tutor> assignments;
 	/** Map qui enregistre toutes les associations forcées par les professeurs */
-	private Map<Tutoring, Tutor> forcedAssignment;
-	private Map<Tutoring, Set<Tutor>> doNotAssign;
+	private final Map<Tutoring, Tutor> forcedAssignment;
 	
+	/**
+	 * Constructeur permettant de créer un tutoré
+	 * @param FORENAME
+	 * @param NAME
+	 * @param PROMO
+	 * @param nbAbsences
+	 * @param moyennes
+	 * @throws ExceptionPromo
+	 */
 	protected Tutee(String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
 		super(FORENAME, NAME, PROMO, nbAbsences, moyennes);
 		if (PROMO != 1) {
 			throw new ExceptionPromo("Vous ne pouvez pas créer un tutoré qui n'est pas en première année");
 		}
-		forcedAssignment = new HashMap<>();
+		this.assignments = new HashMap<>();
+		this.forcedAssignment = new HashMap<>();
 	}
 
 	@Override
@@ -29,52 +43,42 @@ public class Tutee extends Student {
 	public boolean isTutee() {
 		return true;
 	}
-	
-	/**
-	 * Méthode qui permet de forcer une association entre un tuteur et un tutoré
-	 * @param tutee
-	 * @param tutor
-	 * @throws ExceptionPromo
-	 * @throws ExceptionNotInTutoring
-	 * @throws ExceptionTooManyAssignments  
-	 */
+
+	@Override
 	public void forceAssignment(Tutoring tutoring, Student other) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
-		/**if (!other.isTutor()) {
+		if (other.isTutee()) {
 			throw new ExceptionPromo();
-		} else if (!forcedAssignment.containsKey(tutoring) || forcedAssignment.get(tutoring).size() == 1)
-		
-		if ((other.getPROMO() == 2 && forcedAssignment.get(other).size() == 1) 
-			   || forcedAssignment.get(other).size() == maxTuteesForTutor - 1) {
-				
-			throw new ExceptionTooManyAssignments(other + " a déjà atteint son nombre maximal de tutoré.");
-		} else if (forcedAssignment.contains(other)) {
-			throw new ExceptionTooManyAssignments("Vous ne pouvez pas associer deux fois " + tutee);
+		} else if (!tutoring.getTutors().contains(other)) {
+			throw new ExceptionNotInTutoring();
+		} else if (getPROMO() == 1 && getForcedAssignments(tutoring).size() == 1) {
+			throw new ExceptionTooManyAssignments();
 		}
-		// Ajoute l'affectation forcée si tout est valide
-		forcedAssignment.add(tutee, tutor);*/
+		
+		forcedAssignment.put(tutoring, (Tutor) other);
+		
+		if (!other.getForcedAssignments(tutoring).contains(this))
+			other.forceAssignment(tutoring, this);
 	}
 
 	@Override
 	public void removeForcedAssignment(Tutoring tutoring) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void clearAssignment(Tutoring tutoring) {
-		if (association.containsKey(tutoring)) association.remove(tutoring);
-		if (forcedAssignment.containsKey(tutoring)) association.put(tutoring, forcedAssignment.get(tutoring));
-	}
-	
-	public void removeTutoring(Tutoring tutoring) {
-		if (forcedAssignment.containsKey(tutoring)) forcedAssignment.remove(tutoring);
-		if (doNotAssign.containsKey(tutoring)) doNotAssign.remove(tutoring);
+		if (forcedAssignment.containsKey(tutoring)) forcedAssignment.remove(tutoring);		
 	}
 
 	@Override
 	public Set<Student> getAssignments(Tutoring tutoring) {
 		Set<Student> res = new HashSet<>();
-		if (association.containsKey(tutoring)) {
-			res.add(association.get(tutoring));
+		if (assignments.containsKey(tutoring)) {
+			res.add(assignments.get(tutoring));
+		}
+		return res;
+	}
+	
+	@Override
+	public Set<Student> getForcedAssignments(Tutoring tutoring) {
+		Set<Student> res = new HashSet<>();
+		if (forcedAssignment.containsKey(tutoring)) {
+			res.add(forcedAssignment.get(tutoring));
 		}
 		return res;
 	}
@@ -82,19 +86,14 @@ public class Tutee extends Student {
 	@Override
 	public Set<Student> getStudentsToNotAssign(Tutoring tutoring) {
 		Set<Student> res = new HashSet<>();
-		if (doNotAssign.containsKey(tutoring)) {
-			res.addAll(doNotAssign.get(tutoring));
+		if (studentsToNotAssign.containsKey(tutoring)) {
+			res.addAll(studentsToNotAssign.get(tutoring));
 		}
 		return res;
 	}
 	
-	public void addAssignment(Tutoring tutoring, Student other) {
-		// TODO: PAS FINI
-		association.put(tutoring, (Tutor) other);
-	}
-
 	@Override
-	public void doNotAssign(Tutoring tutoring, Student other) {
-		doNotAssign.get(tutoring).add((Tutor) other);
+	public void addAssignment(Tutoring tutoring, Student other) {
+		assignments.put(tutoring, (Tutor) other);
 	}
 }

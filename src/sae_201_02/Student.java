@@ -1,6 +1,7 @@
 package sae_201_02;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,6 +22,13 @@ public abstract class Student extends Person implements JSONString {
 	private int nbAbsences;
 	/** Map de motivation des élèves */
 	private final Map<Tutoring, Motivation> motivations;
+	/** Liste des étudiants à ne pas associer avec l'étudiant courant (pour chaque Tutorat) */
+	protected Map<Tutoring, Set<Student>> studentsToNotAssign;
+	/** Liste des étudiants à associer absolument avec l'étudiant courant (pour chaque Tutorat) */
+	protected Map<Tutoring, Object> forcedAssignment;
+	/** Liste des associations de l'étudiant */
+	protected Map<Tutoring, Object> assignments;
+	
 	/** 
 	 * Variable qui représente la limite du nombre d'absences
 	 * pris en compte dans le calcul du score
@@ -44,8 +52,24 @@ public abstract class Student extends Person implements JSONString {
 			throw new ExceptionPromo("La promo de l'étudiant doit être compris entre 1 et 3!");
 		}
 		this.PROMO = PROMO;
+		
+		this.assignments = new HashMap<>();
+		this.forcedAssignment = new HashMap<>();
 		this.motivations = new HashMap<>();
+		this.studentsToNotAssign = new HashMap<>();
 	}
+	
+	/**
+	 * Retourne true si l'étudiant peut dispenser le tutorat sur une ressource
+	 * @return
+	 */
+	public abstract boolean isTutor();
+	
+	/**
+	 * Retourne true si l'étudiant peut bénéficier du tutorat pour une ressource
+	 * @return
+	 */
+	public abstract boolean isTutee();
 	
 	/**
 	 * Constructeur de la classe Student
@@ -131,18 +155,6 @@ public abstract class Student extends Person implements JSONString {
 		return PROMO;
 	}
 	
-	/**
-	 * Retourne true si l'étudiant peut dispenser le tutorat sur une ressource
-	 * @return
-	 */
-	public abstract boolean isTutor();
-	
-	/**
-	 * Retourne true si l'étudiant peut bénéficier du tutorat pour une ressource
-	 * @return
-	 */
-	public abstract boolean isTutee();
-	
 	@Override
 	public String toString() {
 		return super.toString() + " (moyenne: " + this.moyennes + ", promo: " + this.PROMO + ", absences: " + this.nbAbsences + ")";
@@ -222,6 +234,52 @@ public abstract class Student extends Person implements JSONString {
 		return motivations.containsKey(tutoring) ? motivations.get(tutoring).getBonusPoints() : Motivation.NEUTRAL.getBonusPoints();
 	}
 	
+	/**
+	 * Méthode permettant d'effacer toutes les associations précédemments faites
+	 * Remets toutes les affectations forcées dans les associations
+	 * @param tutoring
+	 */
+	public void clearAssignment(Tutoring tutoring) {
+		if (assignments.containsKey(tutoring)) assignments.remove(tutoring);
+		if (forcedAssignment.containsKey(tutoring)) assignments.put(tutoring, forcedAssignment.get(tutoring));
+	}
+	
+	/**
+	 * Permet de retirer un étudiant du tutorat
+	 * @param tutoring
+	 */
+	public void removeTutoring(Tutoring tutoring) {
+		// TODO: Faire en sorte que si on enlève l'étudiant du tutorat, on enlève les associations pour les étudiants associés aussi
+		if (forcedAssignment.containsKey(tutoring)) forcedAssignment.remove(tutoring);
+		if (studentsToNotAssign.containsKey(tutoring)) studentsToNotAssign.remove(tutoring);
+		if (assignments.containsKey(tutoring)) assignments.remove(tutoring);
+	}
+	
+	public void doNotAssign(Tutoring tutoring, Student other) {
+		if (!studentsToNotAssign.containsKey(tutoring)) {
+			studentsToNotAssign.put(tutoring, new HashSet<>());
+		}
+		studentsToNotAssign.get(tutoring).add(other);		
+	}
+	
+	public Set<Student> getStudentsToNotAssign(Tutoring tutoring) {
+		Set<Student> res = new HashSet<>();
+		if (studentsToNotAssign.containsKey(tutoring)) {
+			res.addAll(studentsToNotAssign.get(tutoring));
+		}
+		return res;
+	}
+	
+	public abstract Set<Student> getForcedAssignments(Tutoring tutoring);
+	
+	/**
+	 * Méthode qui permet de forcer une association entre un tuteur et un tutoré
+	 * @param tutee
+	 * @param tutor
+	 * @throws ExceptionPromo
+	 * @throws ExceptionNotInTutoring
+	 * @throws ExceptionTooManyAssignments  
+	 */
 	public abstract void forceAssignment(Tutoring tutoring, Student tutor) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments;
 	
 	/**
@@ -230,17 +288,8 @@ public abstract class Student extends Person implements JSONString {
 	 */
 	public abstract void removeForcedAssignment(Tutoring tutoring);
 	
-	public abstract void removeTutoring(Tutoring tutoring);
-	
 	public abstract Set<Student> getAssignments(Tutoring tutoring);
 	
-	public abstract Set<Student> getStudentsToNotAssign(Tutoring tutoring);
-	
-	public abstract void doNotAssign(Tutoring tutoring, Student other);
-	
-	public abstract void clearAssignment(Tutoring tutoring);
-	
 	public abstract void addAssignment(Tutoring tutoring, Student other);
-	
 	
 }
