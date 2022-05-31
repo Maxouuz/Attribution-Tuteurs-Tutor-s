@@ -29,6 +29,8 @@ public class Tutoring {
 	private Double moyenneMinTutor;
 	/** Variable pour filtrer les étudiants qui ont trop d'absences */
 	private Integer nbAbsencesMax;
+	/** Variable qui définit combien de tutorés un tuteur peut gérer */
+	public int maxTuteesForTutor;
 	
 	/** Map qui associe les tuteurs aux tutorés */
 	// private final StudentsAssignment studentsAssignment;
@@ -52,6 +54,7 @@ public class Tutoring {
 		this.tutees = new LinkedHashSet<>();
 		this.tutors = new LinkedHashSet<>();
 		
+		setMaxTuteesForTutor(maxTuteesForTutor);
 		setMoyenneWidth(moyenneWidth);
 		setAbsenceWidth(absenceWidth);
 	}
@@ -88,6 +91,10 @@ public class Tutoring {
 	public double getMoyenneWidth() { return moyenneWidth; }
 
 	public void setMoyenneWidth(double moyenneWidth) { this.moyenneWidth = moyenneWidth; }
+	
+	public int getMaxTuteesForTutor() { return maxTuteesForTutor; }
+
+	public void setMaxTuteesForTutor(int maxTuteesForTutor) { this.maxTuteesForTutor = maxTuteesForTutor; }
 	
 	/**
 	 * Prend en paramètres un couple d'étudiant
@@ -179,19 +186,19 @@ public class Tutoring {
 	 * Retourne la liste de tous les tuteurs qui peuvent encore être affectés
 	 * @return
 	 */
-	private Set<Student> getEligibleTutors() {
-		Set<Student> eligibleTutors = new LinkedHashSet<>();
-		/*for (Student tutor: tutors) {
+	private Set<Tutor> getEligibleTutors() {
+		Set<Tutor> eligibleTutors = new LinkedHashSet<>();
+		for (Tutor tutor: tutors) {
 			if (this.canParticipate(tutor)) {
 				// Un étudiant de 2ème année ne peut aider qu'un seul tutoré
-				if (tutor.getPROMO() == 2 && studentsAssignment.get(tutor).size() != 1) {
+				if (tutor.getPROMO() == 2 && tutor.getAssignments(this).size() != 1) {
 					eligibleTutors.add(tutor);
 				// Même vérification pour les élèves de 3ème année
-				} else if (tutor.getPROMO() == 3 && studentsAssignment.get(tutor).size() != maxTuteesForTutor) {
+				} else if (tutor.getPROMO() == 3 && tutor.getAssignments(this).size() != maxTuteesForTutor) {
 					eligibleTutors.add(tutor);
 				}
 			}
-		}*/
+		}
 		return eligibleTutors;
 	}
 	
@@ -199,12 +206,12 @@ public class Tutoring {
 	 * Retourne la liste de tous les tutorés qui peuvent encore être affectés
 	 * @return
 	 */
-	private Set<Student> getEligibleTutees() {
-		Set<Student> eligibleTutees = new LinkedHashSet<>();
-		/*for (Student tutee: tutees) {
-			if (this.canParticipate(tutee) && !studentsAssignment.contains(tutee))
+	private Set<Tutee> getEligibleTutees() {
+		Set<Tutee> eligibleTutees = new LinkedHashSet<>();
+		for (Tutee tutee: tutees) {
+			if (this.canParticipate(tutee) && tutee.getAssignments(this).size() == 0)
 				eligibleTutees.add(tutee);
-		}*/
+		}
 		return eligibleTutees;
 	}
 	
@@ -239,6 +246,15 @@ public class Tutoring {
 	}
 	
 	/**
+	 * Réinitialise les deux maps d'affectations tout en préservant les affectations forcées
+	 */
+	public void clearAssignments() {
+		for (Student student: tutees) {
+			student.clearAssignment(this);
+		}
+	}
+	
+	/**
 	 * Méthode qui résout le problème d'affectation (ne crée que des couples)
 	 * @return
 	 * @throws ExceptionPromo 
@@ -258,7 +274,7 @@ public class Tutoring {
 		// Ajout des arêtes
 		for (Student tutee: tuteesListCopy) {
 			for (Student tutor: tutorsListCopy) {
-				if (!studentsToNotAssign.coupleExists(tutee, tutor)) 
+				if (!tutee.getStudentsToNotAssign(this).contains(tutor)) 
 					graphe.ajouterArete(tutee, tutor, this.getWidthArete(tutee, tutor));
 				else
 					graphe.ajouterArete(tutee, tutor, Double.MAX_VALUE);
@@ -276,9 +292,10 @@ public class Tutoring {
 	 * @throws ExceptionPromo 
 	 */
 	public void createAssignments() throws ExceptionPromo {
-		/*clearAssignments();
+		clearAssignments();
 		
-		Set<Student> eligibleTutors, eligibleTutees;
+		Set<Tutor> eligibleTutors;
+		Set<Tutee> eligibleTutees;
 		
 		// Fait des affectations tant qu'il y a toujours des tutorés à affecter
 		// et tant qu'il n'y a pas eu trop de répétitions
@@ -294,10 +311,10 @@ public class Tutoring {
 				
 				// Vérifie si l'affectation n'est pas avec un faux étudiant
 				if (eligibleTutors.contains(tutor) && eligibleTutees.contains(tutee)) {
-					studentsAssignment.add(tutee, tutor);
+					tutee.addAssignment(this, tutor);
 				}
 			}
-		} while (!eligibleTutees.isEmpty() && !eligibleTutors.isEmpty());*/
+		} while (!eligibleTutees.isEmpty() && !eligibleTutors.isEmpty());
 	}
 	
 	/*

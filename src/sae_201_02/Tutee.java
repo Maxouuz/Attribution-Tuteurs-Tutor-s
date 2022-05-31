@@ -10,7 +10,7 @@ public class Tutee extends Student {
 	private Map<Tutoring, Tutor> association;
 	/** Map qui enregistre toutes les associations forcées par les professeurs */
 	private Map<Tutoring, Tutor> forcedAssignment;
-	private Map<Tutoring, Tutor> doNotAssign;
+	private Map<Tutoring, Set<Tutor>> doNotAssign;
 	
 	protected Tutee(String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
 		super(FORENAME, NAME, PROMO, nbAbsences, moyennes);
@@ -39,10 +39,9 @@ public class Tutee extends Student {
 	 * @throws ExceptionTooManyAssignments  
 	 */
 	public void forceAssignment(Tutoring tutoring, Student other) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
-		/*if (!other.isTutor()) {
+		/**if (!other.isTutor()) {
 			throw new ExceptionPromo();
-		}
-		if ()
+		} else if (!forcedAssignment.containsKey(tutoring) || forcedAssignment.get(tutoring).size() == 1)
 		
 		if ((other.getPROMO() == 2 && forcedAssignment.get(other).size() == 1) 
 			   || forcedAssignment.get(other).size() == maxTuteesForTutor - 1) {
@@ -61,6 +60,11 @@ public class Tutee extends Student {
 		
 	}
 	
+	public void clearAssignment(Tutoring tutoring) {
+		if (association.containsKey(tutoring)) association.remove(tutoring);
+		if (forcedAssignment.containsKey(tutoring)) association.put(tutoring, forcedAssignment.get(tutoring));
+	}
+	
 	public void removeTutoring(Tutoring tutoring) {
 		if (forcedAssignment.containsKey(tutoring)) forcedAssignment.remove(tutoring);
 		if (doNotAssign.containsKey(tutoring)) doNotAssign.remove(tutoring);
@@ -73,5 +77,24 @@ public class Tutee extends Student {
 			res.add(association.get(tutoring));
 		}
 		return res;
+	}
+
+	@Override
+	public Set<Student> getStudentsToNotAssign(Tutoring tutoring) {
+		Set<Student> res = new HashSet<>();
+		if (doNotAssign.containsKey(tutoring)) {
+			res.addAll(doNotAssign.get(tutoring));
+		}
+		return res;
+	}
+	
+	public void addAssignment(Tutoring tutoring, Student other) {
+		// TODO: PAS FINI
+		association.put(tutoring, (Tutor) other);
+	}
+
+	@Override
+	public void doNotAssign(Tutoring tutoring, Student other) {
+		doNotAssign.get(tutoring).add((Tutor) other);
 	}
 }

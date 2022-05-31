@@ -1,6 +1,5 @@
 package sae_201_02;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -22,8 +21,6 @@ public abstract class Student extends Person implements JSONString {
 	private int nbAbsences;
 	/** Map de motivation des élèves */
 	private final Map<Tutoring, Motivation> motivations;
-	/** Variable qui définit combien de tutorés un tuteur peut gérer */
-	public int maxTuteesForTutor;
 	/** 
 	 * Variable qui représente la limite du nombre d'absences
 	 * pris en compte dans le calcul du score
@@ -48,7 +45,6 @@ public abstract class Student extends Person implements JSONString {
 		}
 		this.PROMO = PROMO;
 		this.motivations = new HashMap<>();
-		setMaxTuteesForTutor(maxTuteesForTutor);
 	}
 	
 	/**
@@ -97,10 +93,6 @@ public abstract class Student extends Person implements JSONString {
 		}
 		return res;
 	}
-	
-	public int getMaxTuteesForTutor() { return maxTuteesForTutor; }
-
-	public void setMaxTuteesForTutor(int maxTuteesForTutor) { this.maxTuteesForTutor = maxTuteesForTutor; }
 	
 	/**
 	 * Retourne le login de la personne avec un .etu à la fin du login
@@ -241,4 +233,14 @@ public abstract class Student extends Person implements JSONString {
 	public abstract void removeTutoring(Tutoring tutoring);
 	
 	public abstract Set<Student> getAssignments(Tutoring tutoring);
+	
+	public abstract Set<Student> getStudentsToNotAssign(Tutoring tutoring);
+	
+	public abstract void doNotAssign(Tutoring tutoring, Student other);
+	
+	public abstract void clearAssignment(Tutoring tutoring);
+	
+	public abstract void addAssignment(Tutoring tutoring, Student other);
+	
+	
 }

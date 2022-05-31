@@ -190,16 +190,7 @@ public class TutoringTest {
 
 		try {
 			// On essaye de forcer un tutoré à un autre, ce qui est impossible
-			tutoringShort.forceAssignment(tutee1, tutee2);
-		} catch (ExceptionPromo e) {
-			res = true;
-		}
-		assertTrue(res);
-		res = false;
-
-		try {
-			// Même chose, mais avec des tuteurs
-			tutoringShort.forceAssignment(tutor1, tutor2);
+			tutor1.forceAssignment(tutoringShort, tutor2);
 		} catch (ExceptionPromo e) {
 			res = true;
 		}
@@ -213,8 +204,8 @@ public class TutoringTest {
 		boolean res = false;
 		try {
 			// On utilise un tuteur de deuxieme année, qui ne peut avoir qu'un seul tutoré
-			tutoringShort.forceAssignment(tutee1, tutor1);
-			tutoringShort.forceAssignment(tutee2, tutor1);
+			tutee1.forceAssignment(tutoringShort, tutor1);
+			tutee2.forceAssignment(tutoringShort, tutor1);
 		} catch (ExceptionTooManyAssignments e) {
 			res = true;
 		}
@@ -222,21 +213,21 @@ public class TutoringTest {
 		res = false;
 		// je retire l'assignation pour pouvoir réutiliser le tutoré et le tuteur dans
 		// d'autres tests
-		tutoringShort.removeForcedAssignment(tutee1);
+		tutee1.removeForcedAssignment(tutoringShort);
 
 		try {
 			// On utilise un tuteur de troisième année, qui a pour nombre de tutoré limite
 			// la valeur décider par le professeur.
 			// ici, la valeur est 2.
-			tutoringShort.forceAssignment(tutee1, tutor2);
-			tutoringShort.forceAssignment(tutee2, tutor2);
-			tutoringShort.forceAssignment(tutee3, tutor2);
+			tutee1.forceAssignment(tutoringShort, tutor2);
+			tutee2.forceAssignment(tutoringShort, tutor2);
+			tutee3.forceAssignment(tutoringShort, tutor2);
 		} catch (ExceptionTooManyAssignments e) {
 			res = true;
 		}
 		assertTrue(res);
-		tutoringShort.removeForcedAssignment(tutee1);
-		tutoringShort.removeForcedAssignment(tutee2);
+		tutee1.removeForcedAssignment(tutoringShort);
+		tutee2.removeForcedAssignment(tutoringShort);
 	}
 
 	@Test
@@ -250,13 +241,13 @@ public class TutoringTest {
 			// Le tutee étant assigner une première fois ne sera plus dans la
 			// liste de tutee en attente et donc ne pourra plus etre assigner dans un autre
 			// groupe.
-			tutoringShort.forceAssignment(tutee1, tutor1);
-			tutoringShort.forceAssignment(tutee1, tutor2);
+			tutee1.forceAssignment(tutoringShort, tutor1);
+			tutee1.forceAssignment(tutoringShort, tutor2);
 		} catch (ExceptionTooManyAssignments e) {
 			res = true;
 		}
 		assertTrue(res);
-		tutoringShort.removeForcedAssignment(tutee1);
+		tutee1.removeForcedAssignment(tutoringShort);
 	}
 
 	@Test
@@ -267,7 +258,7 @@ public class TutoringTest {
 		try {
 			// On essaye d'assigner un étudiant qui existe, mais qui n'est dans aucune liste,
 			// à un tuteur présent dans la liste des tuteurs.
-			tutoringShort.forceAssignment(tutee4, tutor1);
+			tutee4.forceAssignment(tutoringShort, tutor1);
 		} catch (ExceptionNotInTutoring e) {
 			res = true;
 		}
@@ -277,7 +268,7 @@ public class TutoringTest {
 		try {
 			// Même chose mais avec un tutoré existant et un tutoré pas présent dans les
 			// listes
-			tutoringShort.forceAssignment(tutee4, tutor1);
+			tutee4.forceAssignment(tutoringShort, tutor1);
 		} catch (ExceptionNotInTutoring e) {
 			res = true;
 		}
@@ -317,12 +308,12 @@ public class TutoringTest {
 		System.out.println(tutoringShort.toStringTutors());
 		
 		System.out.println("\n--- AFFECTATION AVEC AFFECTATION MANUELLE ---\n");
-		tutoringShort.forceAssignment(tutee6, tutor5);
+		tutee6.forceAssignment(tutoringShort, tutor5);
 		tutoringShort.createAssignments();
 		System.out.println(tutoringShort.toStringTutors());
 		
 		System.out.println("\n--- AFFECTATION AVEC AFFECTATION ANNULÉE ---\n");
-		tutoringShort.doNotAssign(tutee4, tutor3);
+		tutee4.doNotAssign(tutoringShort, tutor3);
 		tutoringShort.createAssignments();
 		System.out.println(tutoringShort.toStringTutors());
 		
