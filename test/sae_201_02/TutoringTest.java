@@ -51,7 +51,7 @@ public class TutoringTest {
 			Student tmp = Student.createStudent(student.next(), student.next(), student.nextInt(), student.nextInt(), Double.parseDouble(student.next()),
 					Double.parseDouble(student.next()), Double.parseDouble(student.next()), Double.parseDouble(student.next()));
 			tutoring.addStudent(tmp);
-			tutoring.addStudentMotivation(tmp, Motivation.valueOf(student.next()));
+			tmp.addStudentMotivation(tutoring, Motivation.valueOf(student.next()));
 			line = reader.readLine();
 		}
 		
@@ -306,11 +306,11 @@ public class TutoringTest {
 		tutoringShort.addAllStudents(tutor1, tutor2, tutor3, tutor4, tutor5,
 									 tutee1, tutee2, tutee3, tutee4, tutee5, tutee6, tutee7);
 		
-		tutoringShort.addStudentMotivation(tutor4, Motivation.MOTIVATED);
-		tutoringShort.addStudentMotivation(tutee2, Motivation.NOT_MOTIVATED);
-		tutoringShort.addStudentMotivation(tutee3, Motivation.MOTIVATED);
-		tutoringShort.addStudentMotivation(tutee5, Motivation.NOT_MOTIVATED);
-		tutoringShort.addStudentMotivation(tutee6, Motivation.MOTIVATED);
+		tutor4.addStudentMotivation(tutoringShort, Motivation.MOTIVATED);
+		tutee2.addStudentMotivation(tutoringShort, Motivation.NOT_MOTIVATED);
+		tutee3.addStudentMotivation(tutoringShort, Motivation.MOTIVATED);
+		tutee5.addStudentMotivation(tutoringShort, Motivation.NOT_MOTIVATED);
+		tutee6.addStudentMotivation(tutoringShort, Motivation.MOTIVATED);
 		
 		System.out.println("--- AFFECTATION PAR DÉFAUT ---\n");
 		tutoringShort.createAssignments();
@@ -329,12 +329,12 @@ public class TutoringTest {
 		String path = System.getProperty("user.dir") + File.separator + "res" + File.separator;
 		File save1 = new File(path + "tutoring_save.json");
 		File save2 = new File(path + "tutoring_save2.json");
-		try {
+		/**try {
 			tutoringShort.save(save1);
 			Tutoring loaded = Tutoring.load(save1);
 		} catch (JSONException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 }

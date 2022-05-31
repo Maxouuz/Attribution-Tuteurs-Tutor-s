@@ -1,7 +1,9 @@
 package sae_201_02;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONObject;
 import org.json.JSONString;
@@ -18,6 +20,10 @@ public abstract class Student extends Person implements JSONString {
 	private final int PROMO;
 	/**Nombre abscences de l'etudiant */
 	private int nbAbsences;
+	/** Map de motivation des élèves */
+	private final Map<Tutoring, Motivation> motivations;
+	/** Variable qui définit combien de tutorés un tuteur peut gérer */
+	public int maxTuteesForTutor;
 	/** 
 	 * Variable qui représente la limite du nombre d'absences
 	 * pris en compte dans le calcul du score
@@ -41,6 +47,8 @@ public abstract class Student extends Person implements JSONString {
 			throw new ExceptionPromo("La promo de l'étudiant doit être compris entre 1 et 3!");
 		}
 		this.PROMO = PROMO;
+		this.motivations = new HashMap<>();
+		setMaxTuteesForTutor(maxTuteesForTutor);
 	}
 	
 	/**
@@ -90,6 +98,10 @@ public abstract class Student extends Person implements JSONString {
 		return res;
 	}
 	
+	public int getMaxTuteesForTutor() { return maxTuteesForTutor; }
+
+	public void setMaxTuteesForTutor(int maxTuteesForTutor) { this.maxTuteesForTutor = maxTuteesForTutor; }
+	
 	/**
 	 * Retourne le login de la personne avec un .etu à la fin du login
 	 * @return
@@ -131,17 +143,13 @@ public abstract class Student extends Person implements JSONString {
 	 * Retourne true si l'étudiant peut dispenser le tutorat sur une ressource
 	 * @return
 	 */
-	public boolean canBeTutor() {
-		return PROMO >= 2;
-	}
+	public abstract boolean isTutor();
 	
 	/**
 	 * Retourne true si l'étudiant peut bénéficier du tutorat pour une ressource
 	 * @return
 	 */
-	public boolean canBeTutee() {
-		return ! this.canBeTutor();
-	}
+	public abstract boolean isTutee();
 	
 	@Override
 	public String toString() {
@@ -203,4 +211,34 @@ public abstract class Student extends Person implements JSONString {
 		json.put("nbAbsences", nbAbsences);
 		return json.toString();
 	}
+	
+	/**
+	 * Méthode pour informer la motivation d'un étudiant pour ce tutorat
+	 * @param student
+	 * @param motivation
+	 */
+	public void addStudentMotivation(Tutoring tutoring, Motivation motivation) {
+		this.motivations.put(tutoring, motivation);
+	}
+	
+	/**
+	 * Méthode pour avoir les points bonus de motivation d'un étudiant.
+	 * @param student
+	 * @return
+	 */
+	public double getBonusPoints(Tutoring tutoring) {
+		return motivations.containsKey(tutoring) ? motivations.get(tutoring).getBonusPoints() : Motivation.NEUTRAL.getBonusPoints();
+	}
+	
+	public abstract void forceAssignment(Tutoring tutoring, Student tutor) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments;
+	
+	/**
+	 * Retire l'affectation forcée d'un étudiant
+	 * @param student
+	 */
+	public abstract void removeForcedAssignment(Tutoring tutoring);
+	
+	public abstract void removeTutoring(Tutoring tutoring);
+	
+	public abstract Set<Student> getAssignments(Tutoring tutoring);
 }

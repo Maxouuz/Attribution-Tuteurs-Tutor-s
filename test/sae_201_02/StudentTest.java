@@ -109,14 +109,14 @@ class StudentTest {
 		Student st30 = Student.createStudent("jacques", "Petard", 3, 0, 12);
 
 		// Vérification pour les 1ere année
-		assertTrue(st10.canBeTutee());
-		assertFalse(st10.canBeTutor());
+		assertTrue(st10.isTutee());
+		assertFalse(st10.isTutor());
 
 		// Vérification pour les 2eme/3eme année
-		assertTrue(st20.canBeTutor());
-		assertTrue(st30.canBeTutor());
-		assertFalse(st20.canBeTutee());
-		assertFalse(st30.canBeTutee());
+		assertTrue(st20.isTutor());
+		assertTrue(st30.isTutor());
+		assertFalse(st20.isTutee());
+		assertFalse(st30.isTutee());
 	}
 
 	@Test

@@ -92,7 +92,7 @@ public class StudentsAssignment implements JSONString {
 	public Set<Student> getTutees() {
 		Set<Student> res = new LinkedHashSet<>();
 		for (Student student: assignments.keySet()) {
-			if (student.canBeTutee()) {
+			if (student.isTutee()) {
 				res.add(student);
 			}
 		}
@@ -106,7 +106,7 @@ public class StudentsAssignment implements JSONString {
 	public Set<Student> getTutors() {
 		Set<Student> res = new LinkedHashSet<>();
 		for (Student student: assignments.keySet()) {
-			if (student.canBeTutor()) {
+			if (student.isTutor()) {
 				res.add(student);
 			}
 		}
