@@ -13,7 +13,7 @@ public class SubjectTest {
 	/**
 	 * Test de la méthode toString de Subject Test
 	 */
-	public void testToString() {
-		assertEquals("R101 - Initiation au développement", Subject.R101.toString());
+	public void testGetName() {
+		assertEquals("Initiation au développement", Subject.R101.getName());
 	}
 }

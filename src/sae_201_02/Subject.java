@@ -34,6 +34,6 @@ public enum Subject {
 	 * Affiche l'identifiant de la matière suivi de son intitulé.
 	 */
 	public String getName() {
-		return this.name();
+		return this.NOM_MAT;
 	}
 }

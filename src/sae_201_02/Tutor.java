@@ -90,6 +90,12 @@ public class Tutor extends Student {
 	
 	@Override
 	public void addAssignment(Tutoring tutoring, Student other) {
+		if (!assignments.containsKey(tutoring)) {
+			assignments.put(tutoring, new HashSet<>());
+		}
 		assignments.get(tutoring).add((Tutee) other);
+		if (!other.getAssignments(tutoring).contains(this)) {
+			other.addAssignment(tutoring, this);
+		}
 	}
 }

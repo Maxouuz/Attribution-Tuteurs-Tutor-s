@@ -95,5 +95,8 @@ public class Tutee extends Student {
 	@Override
 	public void addAssignment(Tutoring tutoring, Student other) {
 		assignments.put(tutoring, (Tutor) other);
+		if (!other.getAssignments(tutoring).contains(this)) {
+			other.addAssignment(tutoring, this);
+		}
 	}
 }
