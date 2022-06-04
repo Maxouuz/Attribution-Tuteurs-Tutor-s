@@ -118,6 +118,10 @@ public class Tutoring {
 		}
 	}
 	
+	public boolean isInTutoring(Student student) {
+		return tutees.contains(student) || tutors.contains(student);
+	}
+	
 	/**
 	 * Méthode permettant d'ajouter un étudiant au tutorat
 	 * Il appelle soit addStudent(Tutor) soit addStudent(Tutee)
@@ -284,10 +288,11 @@ public class Tutoring {
 		// Ajout des arêtes
 		for (Student tutee: tuteesListCopy) {
 			for (Student tutor: tutorsListCopy) {
-				if (!tutee.getStudentsToNotAssign(this).contains(tutor)) 
-					graphe.ajouterArete(tutee, tutor, this.getWidthArete(tutee, tutor));
-				else
+				if (tutee.getStudentsToNotAssign(this).contains(tutor)) {
 					graphe.ajouterArete(tutee, tutor, Double.MAX_VALUE);
+				} else {
+					graphe.ajouterArete(tutee, tutor, this.getWidthArete(tutee, tutor));
+				}
 			}
 		}
 		

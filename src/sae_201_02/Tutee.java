@@ -45,19 +45,8 @@ public class Tutee extends Student {
 	}
 
 	@Override
-	public void forceAssignment(Tutoring tutoring, Student other) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
-		if (other.isTutee()) {
-			throw new ExceptionPromo();
-		} else if (!tutoring.getTutors().contains(other)) {
-			throw new ExceptionNotInTutoring();
-		} else if (getPROMO() == 1 && getForcedAssignments(tutoring).size() == 1) {
-			throw new ExceptionTooManyAssignments();
-		}
-		
-		forcedAssignment.put(tutoring, (Tutor) other);
-		
-		if (!other.getForcedAssignments(tutoring).contains(this))
-			other.forceAssignment(tutoring, this);
+	public boolean canAddMoreForcedAssignment(Tutoring tutoring) {
+		return getForcedAssignments(tutoring).isEmpty();
 	}
 
 	@Override
@@ -82,15 +71,6 @@ public class Tutee extends Student {
 		}
 		return res;
 	}
-
-	@Override
-	public Set<Student> getStudentsToNotAssign(Tutoring tutoring) {
-		Set<Student> res = new HashSet<>();
-		if (studentsToNotAssign.containsKey(tutoring)) {
-			res.addAll(studentsToNotAssign.get(tutoring));
-		}
-		return res;
-	}
 	
 	@Override
 	public void addAssignment(Tutoring tutoring, Student other) {
@@ -98,5 +78,20 @@ public class Tutee extends Student {
 		if (!other.getAssignments(tutoring).contains(this)) {
 			other.addAssignment(tutoring, this);
 		}
+	}
+
+	@Override
+	public void clearAssignment(Tutoring tutoring) {
+		clearAssignment(assignments, forcedAssignment, tutoring);
+	}
+
+	@Override
+	public void removeTutoring(Tutoring tutoring) {
+		removeTutoring(assignments, forcedAssignment, tutoring);
+	}
+
+	@Override
+	protected void addForcedAssignment(Tutoring tutoring, Student other) {
+		forcedAssignment.put(tutoring, (Tutor) other);
 	}
 }

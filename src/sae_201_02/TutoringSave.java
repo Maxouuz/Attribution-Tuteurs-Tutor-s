@@ -1,12 +1,26 @@
 package sae_201_02;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class TutoringSave {
-	/*
+	/**
 	 * Méthode pour sauvegarder le tutorat dans un fichier json
 	 * @param path
 	 * @throws IOException 
 	 * @throws JSONException 
-	 */ /**
+	 */
+	/**
 	public void save(File path) throws JSONException, IOException {
 		JSONObject json = new JSONObject();
 		json.put("subject", subject);
@@ -56,8 +70,8 @@ public class TutoringSave {
 	private static void loadForcedAssignment(Tutoring tutoring, JSONObject json, Map<Integer, Student> oldINEToStudent) throws JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
 		JSONObject forcedAssignment = (JSONObject) json.get("forcedAssignment");
 		for (String element: forcedAssignment.keySet()) {
-				tutoring.forceAssignment(oldINEToStudent.get(Integer.parseInt(element)),
-										 oldINEToStudent.get(Integer.parseInt((String) forcedAssignment.get(element))));
+			oldINEToStudent.get(Integer.parseInt(element)).forceAssignment(tutoring,
+										 					oldINEToStudent.get(Integer.parseInt((String) forcedAssignment.get(element))));
 		}
 	}
 	
@@ -75,7 +89,7 @@ public class TutoringSave {
 			tutoring.doNotAssign(oldINEToStudent.get(Integer.parseInt(element)),
 								 oldINEToStudent.get(Integer.parseInt((String) studentsToNotAssign.get(element))));
 		}
-	}
+	}*/
 	
 	/**
 	 * Méthode pour charger un tutorat précédemment sauvegardé dans un fichier json
@@ -86,7 +100,6 @@ public class TutoringSave {
 	 * @throws ExceptionPromo
 	 * @throws ExceptionNotInTutoring
 	 * @throws ExceptionTooManyAssignments
-	 *
 	public static Tutoring load(File path) throws IOException, JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
 		// Récupère le fichier json
 		BufferedReader reader = new BufferedReader(new FileReader(path));
@@ -113,5 +126,5 @@ public class TutoringSave {
 		loadStudentsToNotAssign(tutoring, json, oldINEToStudent);
 		
 		return tutoring;
-	} */
+	}*/
 }

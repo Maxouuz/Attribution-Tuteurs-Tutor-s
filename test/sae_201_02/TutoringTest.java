@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -294,7 +295,7 @@ public class TutoringTest {
 	}
 	
 	@AfterAll
-	static void showExemple() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
+	static void showExemple() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {		
 		tutoringShort.addAllStudents(tutor1, tutor2, tutor3, tutor4, tutor5,
 									 tutee1, tutee2, tutee3, tutee4, tutee5, tutee6, tutee7);
 		

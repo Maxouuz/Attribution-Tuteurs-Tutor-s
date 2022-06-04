@@ -21,13 +21,9 @@ public abstract class Student extends Person implements JSONString {
 	/**Nombre abscences de l'etudiant */
 	private int nbAbsences;
 	/** Map de motivation des élèves */
-	private final Map<Tutoring, Motivation> motivations;
+	protected final Map<Tutoring, Motivation> motivations;
 	/** Liste des étudiants à ne pas associer avec l'étudiant courant (pour chaque Tutorat) */
 	protected Map<Tutoring, Set<Student>> studentsToNotAssign;
-	/** Liste des étudiants à associer absolument avec l'étudiant courant (pour chaque Tutorat) */
-	protected Map<Tutoring, Object> forcedAssignment;
-	/** Liste des associations de l'étudiant */
-	protected Map<Tutoring, Object> assignments;
 	
 	/** 
 	 * Variable qui représente la limite du nombre d'absences
@@ -53,23 +49,9 @@ public abstract class Student extends Person implements JSONString {
 		}
 		this.PROMO = PROMO;
 		
-		this.assignments = new HashMap<>();
-		this.forcedAssignment = new HashMap<>();
 		this.motivations = new HashMap<>();
 		this.studentsToNotAssign = new HashMap<>();
 	}
-	
-	/**
-	 * Retourne true si l'étudiant peut dispenser le tutorat sur une ressource
-	 * @return
-	 */
-	public abstract boolean isTutor();
-	
-	/**
-	 * Retourne true si l'étudiant peut bénéficier du tutorat pour une ressource
-	 * @return
-	 */
-	public abstract boolean isTutee();
 	
 	/**
 	 * Constructeur de la classe Student
@@ -239,7 +221,7 @@ public abstract class Student extends Person implements JSONString {
 	 * Remets toutes les affectations forcées dans les associations
 	 * @param tutoring
 	 */
-	public void clearAssignment(Tutoring tutoring) {
+	protected <T> void clearAssignment(Map<Tutoring, T> assignments, Map<Tutoring, T> forcedAssignment, Tutoring tutoring) {
 		if (assignments.containsKey(tutoring)) assignments.remove(tutoring);
 		if (forcedAssignment.containsKey(tutoring)) assignments.put(tutoring, forcedAssignment.get(tutoring));
 	}
@@ -248,7 +230,7 @@ public abstract class Student extends Person implements JSONString {
 	 * Permet de retirer un étudiant du tutorat
 	 * @param tutoring
 	 */
-	public void removeTutoring(Tutoring tutoring) {
+	protected <T> void removeTutoring(Map<Tutoring, T> assignments, Map<Tutoring, T> forcedAssignment, Tutoring tutoring) {
 		// TODO: Faire en sorte que si on enlève l'étudiant du tutorat, on enlève les associations pour les étudiants associés aussi
 		if (forcedAssignment.containsKey(tutoring)) forcedAssignment.remove(tutoring);
 		if (studentsToNotAssign.containsKey(tutoring)) studentsToNotAssign.remove(tutoring);
@@ -259,7 +241,12 @@ public abstract class Student extends Person implements JSONString {
 		if (!studentsToNotAssign.containsKey(tutoring)) {
 			studentsToNotAssign.put(tutoring, new HashSet<>());
 		}
-		studentsToNotAssign.get(tutoring).add(other);		
+		studentsToNotAssign.get(tutoring).add(other);
+		
+		if (!other.getStudentsToNotAssign(tutoring).contains(this)) {
+			other.doNotAssign(tutoring, this);
+		}
+		System.out.println(other.getStudentsToNotAssign(tutoring));
 	}
 	
 	public Set<Student> getStudentsToNotAssign(Tutoring tutoring) {
@@ -270,8 +257,6 @@ public abstract class Student extends Person implements JSONString {
 		return res;
 	}
 	
-	public abstract Set<Student> getForcedAssignments(Tutoring tutoring);
-	
 	/**
 	 * Méthode qui permet de forcer une association entre un tuteur et un tutoré
 	 * @param tutee
@@ -280,8 +265,47 @@ public abstract class Student extends Person implements JSONString {
 	 * @throws ExceptionNotInTutoring
 	 * @throws ExceptionTooManyAssignments  
 	 */
-	public abstract void forceAssignment(Tutoring tutoring, Student tutor) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments;
+	public void forceAssignment(Tutoring tutoring, Student other) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
+		boolean addedForOther = other.getForcedAssignments(tutoring).contains(this);
+
+		if (!addedForOther) {
+			if (getClass() == other.getClass()) {
+				throw new ExceptionPromo();
+			} else if (!tutoring.isInTutoring(this) || !tutoring.isInTutoring(other)) {
+				throw new ExceptionNotInTutoring();
+			} else if (!canAddMoreForcedAssignment(tutoring) || !other.canAddMoreForcedAssignment(tutoring)) {
+				throw new ExceptionTooManyAssignments();
+			}
+		}
+		
+		addForcedAssignment(tutoring, other);
+		
+		if (!addedForOther)
+			other.forceAssignment(tutoring, this);
+	}
 	
+	protected abstract void addForcedAssignment(Tutoring tutoring, Student other);
+
+	/**
+	 * Retourne true si l'étudiant peut dispenser le tutorat sur une ressource
+	 * @return
+	 */
+	public abstract boolean isTutor();
+	
+	/**
+	 * Retourne true si l'étudiant peut bénéficier du tutorat pour une ressource
+	 * @return
+	 */
+	public abstract boolean isTutee();
+	
+	public abstract void removeTutoring(Tutoring tutoring);
+	
+	public abstract void clearAssignment(Tutoring tutoring);
+	
+	public abstract boolean canAddMoreForcedAssignment(Tutoring tutoring);
+	
+	public abstract Set<Student> getForcedAssignments(Tutoring tutoring);
+		
 	/**
 	 * Retire l'affectation forcée d'un étudiant
 	 * @param student

@@ -44,25 +44,9 @@ public class Tutor extends Student {
 		return false;
 	}
 	
-	@Override
-	public void forceAssignment(Tutoring tutoring, Student other) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
-		if (other.isTutor()) {
-			throw new ExceptionPromo();
-		} else if (!tutoring.getTutees().contains(other)) {
-			throw new ExceptionNotInTutoring();
-		} else if (getPROMO() == 2 && getForcedAssignments(tutoring).size() == 1
-				  || getForcedAssignments(tutoring).size() == tutoring.getMaxTuteesForTutor()) {
-			throw new ExceptionTooManyAssignments();
-		}
-		
-		if (!forcedAssignment.containsKey(tutoring)) {
-			forcedAssignment.put(tutoring, new HashSet<>());
-		}
-		
-		forcedAssignment.get(tutoring).add((Tutee) other);
-		
-		if (!other.getForcedAssignments(tutoring).contains(this))
-			other.forceAssignment(tutoring, this);
+	
+	public boolean canAddMoreForcedAssignment(Tutoring tutoring) {
+		return (getPROMO() == 2 && getForcedAssignments(tutoring).isEmpty()) || (getPROMO() == 3 && getForcedAssignments(tutoring).size() < tutoring.getMaxTuteesForTutor());
 	}
 
 	@Override
@@ -97,5 +81,24 @@ public class Tutor extends Student {
 		if (!other.getAssignments(tutoring).contains(this)) {
 			other.addAssignment(tutoring, this);
 		}
+	}
+
+	@Override
+	public void clearAssignment(Tutoring tutoring) {
+		clearAssignment(assignments, forcedAssignment, tutoring);
+	}
+
+	@Override
+	public void removeTutoring(Tutoring tutoring) {
+		removeTutoring(assignments, forcedAssignment, tutoring);
+	}
+
+	@Override
+	protected void addForcedAssignment(Tutoring tutoring, Student other) {
+		if (!forcedAssignment.containsKey(tutoring)) {
+			forcedAssignment.put(tutoring, new HashSet<>());
+		}
+		
+		forcedAssignment.get(tutoring).add((Tutee) other);
 	}
 }
