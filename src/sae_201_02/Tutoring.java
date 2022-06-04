@@ -31,12 +31,6 @@ public class Tutoring {
 	private Integer nbAbsencesMax;
 	/** Variable qui définit combien de tutorés un tuteur peut gérer */
 	public int maxTuteesForTutor;
-	
-	/** Map qui associe les tuteurs aux tutorés */
-	// private final StudentsAssignment studentsAssignment;
-	
-	/** Map qui enregistre toutes les associations qui ne doit pas être faites */
-	// private final StudentsAssignment studentsToNotAssign;
 
 	/** Variable qui représente le poids de la moyenne dans le calcul du score */
 	private double moyenneWidth;
@@ -321,11 +315,15 @@ public class Tutoring {
 			for (Arete<Student> arete : calcul.getAffectation()) {
 				Student tutee = arete.getExtremite1();
 				Student tutor = arete.getExtremite2();
+
+				
 				
 				// Vérifie si l'affectation n'est pas avec un faux étudiant
 				if (eligibleTutors.contains(tutor) && eligibleTutees.contains(tutee)) {
 					tutee.addAssignment(this, tutor);
 				}
+
+				
 			}
 		} while (!eligibleTutees.isEmpty() && !eligibleTutors.isEmpty());
 	}

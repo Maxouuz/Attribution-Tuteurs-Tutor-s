@@ -13,6 +13,21 @@
 <property name="maximumAsserts" value="6"/>
 </properties>
 </rule>
+<rule ref="category/java/design.xml/ExcessiveClassLength">
+<properties>
+<property name="minimum" value="400.0"/>
+</properties>
+</rule>
+<rule ref="category/java/design.xml/TooManyFields">
+<properties>
+<property name="maxfields" value="10"/>
+</properties>
+</rule>
+<rule ref="category/java/design.xml/TooManyMethods">
+<properties>
+<property name="maxmethods" value="16"/>
+</properties>
+</rule>
 <rule ref="category/java/bestpractices.xml/JUnitTestsShouldIncludeAssert"/>
 <rule ref="category/java/bestpractices.xml/JUnitUseExpected"/>
 <rule ref="category/java/bestpractices.xml/LiteralsFirstInComparisons"/>

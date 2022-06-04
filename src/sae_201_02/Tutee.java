@@ -82,7 +82,8 @@ public class Tutee extends Student {
 
 	@Override
 	public void clearAssignment(Tutoring tutoring) {
-		clearAssignment(assignments, forcedAssignment, tutoring);
+		if (assignments.containsKey(tutoring)) assignments.remove(tutoring);
+		if (forcedAssignment.containsKey(tutoring)) assignments.put(tutoring, forcedAssignment.get(tutoring));
 	}
 
 	@Override

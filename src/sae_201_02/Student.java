@@ -217,16 +217,6 @@ public abstract class Student extends Person implements JSONString {
 	}
 	
 	/**
-	 * Méthode permettant d'effacer toutes les associations précédemments faites
-	 * Remets toutes les affectations forcées dans les associations
-	 * @param tutoring
-	 */
-	protected <T> void clearAssignment(Map<Tutoring, T> assignments, Map<Tutoring, T> forcedAssignment, Tutoring tutoring) {
-		if (assignments.containsKey(tutoring)) assignments.remove(tutoring);
-		if (forcedAssignment.containsKey(tutoring)) assignments.put(tutoring, forcedAssignment.get(tutoring));
-	}
-	
-	/**
 	 * Permet de retirer un étudiant du tutorat
 	 * @param tutoring
 	 */
@@ -246,7 +236,6 @@ public abstract class Student extends Person implements JSONString {
 		if (!other.getStudentsToNotAssign(tutoring).contains(this)) {
 			other.doNotAssign(tutoring, this);
 		}
-		System.out.println(other.getStudentsToNotAssign(tutoring));
 	}
 	
 	public Set<Student> getStudentsToNotAssign(Tutoring tutoring) {
@@ -270,7 +259,7 @@ public abstract class Student extends Person implements JSONString {
 
 		if (!addedForOther) {
 			if (getClass() == other.getClass()) {
-				throw new ExceptionPromo();
+				throw new ExceptionPromo(); 
 			} else if (!tutoring.isInTutoring(this) || !tutoring.isInTutoring(other)) {
 				throw new ExceptionNotInTutoring();
 			} else if (!canAddMoreForcedAssignment(tutoring) || !other.canAddMoreForcedAssignment(tutoring)) {
