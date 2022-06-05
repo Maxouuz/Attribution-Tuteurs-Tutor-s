@@ -5,15 +5,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.json.JSONObject;
-import org.json.JSONString;
-
 /**
  * Classe représentant un candidat pour être tuteur de deuxième ou troisième année
  * @author nathan.hallez.etu
  *
  */
-public class Tutor extends Student implements JSONString {
+public class Tutor extends Student {
 	/** Map qui associe pour chaque tutorat une liste de tutorés associés */
 	private final Map<Tutoring, Set<Tutee>> assignments;
 	/** Map qui associe pour chaque tutorat une liste de tutorés à associer absolument */
@@ -28,8 +25,8 @@ public class Tutor extends Student implements JSONString {
 	 * @param moyennes
 	 * @throws ExceptionPromo
 	 */
-	protected Tutor(String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
-		super(FORENAME, NAME, PROMO, nbAbsences, moyennes);
+	protected Tutor(int INE, String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
+		super(INE, FORENAME, NAME, PROMO, nbAbsences, moyennes);
 		if (PROMO < 2 || PROMO > 3) {
 			throw new ExceptionPromo("Vous ne pouvez pas créer un tutoré qui n'est pas en deuxième ou troisième année!");
 		}
@@ -104,13 +101,5 @@ public class Tutor extends Student implements JSONString {
 		}
 		
 		forcedAssignment.get(tutoring).add((Tutee) other);
-	}
-	
-	@Override
-	public String toJSONString() {
-		JSONObject json = new JSONObject(super.toJSONString());
-		//json.put("assignments", assignments);
-		//json.put("forcedAssignment", forcedAssignment);
-		return json.toString();
 	}
 }

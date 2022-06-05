@@ -318,6 +318,7 @@ public class TutoringTest {
 		System.out.println(tutoringShort.toStringTutors());
 		
 		String path = System.getProperty("user.dir") + File.separator + "res" + File.separator;
+		Person.resetUsedINE();
 		File save1 = new File(path + "tutoring_save.json");
 		File save2 = new File(path + "tutoring_save2.json");
 		try {

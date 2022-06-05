@@ -1,13 +1,13 @@
 package sae_201_02;
 
-import org.json.JSONObject;
-import org.json.JSONString;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Classe abstraite qui représente une personne avec un identifiant unique.
  * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  */
-public abstract class Person implements Comparable<Person>, JSONString {
+public abstract class Person implements Comparable<Person> {
 	/** Prénom de la personne */
 	private final String FORENAME;
 	/** Nom de la personne */
@@ -16,24 +16,27 @@ public abstract class Person implements Comparable<Person>, JSONString {
 	private final int INE;
 	/** Numéro automatique pour générer les identifiants */
 	private static int loginCounter = 0;
+	/** Liste qui contient tous les INE des personnes afin d'éviter les doublons */
+	private final static Set<Integer> ineGenerated = new TreeSet<>();
 	
 	/**
 	 * Constructeur de la classe personne
 	 * @param FORENAME
 	 * @param NAME
 	 */
-	public Person(String FORENAME, String NAME) {
+	public Person(int INE, String FORENAME, String NAME) {
+		// Aucun doublon d'INE ne doit être crée
+		if (ineGenerated.contains(INE)) {
+			throw new IllegalArgumentException("L'INE existe déjà pour un autre étudiant");
+		}
 		this.FORENAME = FORENAME;
-		this.NAME = NAME;
-		this.INE = loginCounter;
-		this.loginCounterIncrement();
-	}
-	
-	/**
-	 * Méthode qui incrémente le compteur pour générer les logins
-	 */
-	private void loginCounterIncrement() {
-		loginCounter++;
+		this.NAME = NAME;		
+		this.INE = INE;
+		ineGenerated.add(INE);
+		// On fait en sorte que le numéro automatique soit toujours supérieur à tous les autres INE
+		if (INE >= loginCounter) {
+			loginCounter = INE + 1;
+		}
 	}
 	
 	/**
@@ -41,6 +44,22 @@ public abstract class Person implements Comparable<Person>, JSONString {
 	 */
 	public int getINE() {
 		return INE;
+	}
+	
+	/**
+	 * Retourne le prochain INE qui sera généré automatiquement
+	 * @return
+	 */
+	public static int getNonUsedINE() {
+		return loginCounter;
+	}
+	
+	/**
+	 * Réinitialise la liste contenant tous les INE crées
+	 * @return
+	 */
+	public static void resetUsedINE() {
+		ineGenerated.clear();
 	}
 	
 	/**
@@ -79,14 +98,5 @@ public abstract class Person implements Comparable<Person>, JSONString {
 			diff = this.NAME.compareTo(otherPerson.getName());
 		}
 		return diff;
-	}
-	
-	@Override
-	public String toJSONString() {
-		JSONObject json = new JSONObject();
-		json.put("forename", FORENAME);
-		json.put("name", NAME);
-		json.put("ine", INE);
-		return json.toString();
 	}
 }

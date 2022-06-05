@@ -70,12 +70,13 @@ public class TutoringSave {
 		writer.close();
 	}
 	
-	private static void loadStudents(Tutoring tutoring, JSONObject json, Map<Integer, Student> oldINEToStudent) throws JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
+	private static void loadStudents(Tutoring tutoring, JSONObject json, Map<Integer, Student> ineToStudent) throws JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
 		JSONArray students = (JSONArray) json.get("students");
 		for (Object element: students) {
 			JSONObject elementJSON = (JSONObject) element;
 			Student studentCopy;
-			studentCopy = Student.createStudent(elementJSON.getString("forename"),
+			studentCopy = Student.createStudent(elementJSON.getInt("ine"),
+									  elementJSON.getString("forename"),
 									  elementJSON.getString("name"),
 									  elementJSON.getInt("promo"),
 									  elementJSON.getInt("nbAbsences"));
@@ -84,19 +85,19 @@ public class TutoringSave {
 				studentCopy.setMoyenne(Subject.valueOf(moyenne), moyennes.getDouble(moyenne));
 			}
 			tutoring.addStudent(studentCopy);
-			oldINEToStudent.put(elementJSON.getInt("ine"), studentCopy);
+			ineToStudent.put(elementJSON.getInt("ine"), studentCopy);
 
 			studentCopy.addMotivation(tutoring, Motivation.valueOf(elementJSON.getString("motivation")));
 		}
 	}
 	
-	private static void loadAssignments(Tutoring tutoring, JSONObject json, Map<Integer, Student> oldINEToStudent) throws JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
+	private static void loadAssignments(Tutoring tutoring, JSONObject json, Map<Integer, Student> ineToStudent) throws JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
 		for (Object student: (JSONArray) json.get("students")) {
 			for (Object element: (JSONArray) ((JSONObject) student).get("forcedAssignments")) {
-				oldINEToStudent.get(((JSONObject) student).getInt("ine")).forceAssignment(tutoring, oldINEToStudent.get(element));
+				ineToStudent.get(((JSONObject) student).getInt("ine")).forceAssignment(tutoring, ineToStudent.get(element));
 			}
 			for (Object element: (JSONArray) ((JSONObject) student).get("studentsToNotAssign")) {
-				oldINEToStudent.get(((JSONObject) student).getInt("ine")).doNotAssign(tutoring, oldINEToStudent.get(element));
+				ineToStudent.get(((JSONObject) student).getInt("ine")).doNotAssign(tutoring, ineToStudent.get(element));
 			}
 		}
 	}
@@ -129,10 +130,10 @@ public class TutoringSave {
 				json.getDouble("absenceWidth")
 		);
 		
-		Map<Integer, Student> oldINEToStudent = new HashMap<>();
+		Map<Integer, Student> ineToStudent = new HashMap<>();
 		
-		loadStudents(tutoring, json, oldINEToStudent);
-		loadAssignments(tutoring, json, oldINEToStudent);		
+		loadStudents(tutoring, json, ineToStudent);
+		loadAssignments(tutoring, json, ineToStudent);		
 		return tutoring;
 	}
 }

@@ -5,15 +5,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.json.JSONObject;
-import org.json.JSONString;
-
 /**
  * Classe abstraite qui représente un étudiant avec une moyenne et une promo
  * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  *
  */
-public abstract class Student extends Person implements JSONString {
+public abstract class Student extends Person {
 	/** Représente la moyenne de l'étudiant */
 	private final Map<Subject, Double> moyennes;
 	/** Année de promo de l'étudiant */
@@ -32,28 +29,6 @@ public abstract class Student extends Person implements JSONString {
 	private final static double SCORE_MAX_ABSENCES = 365;
 	
 	/**
-	 * Factory de la classe Student
-	 * @param FORENAME
-	 * @param NAME
-	 * @param moyenne
-	 * @param PROMO
-	 * @param absence
-	 * @throws ExceptionPromo 
-	 */
-	protected Student(String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
-		super(FORENAME, NAME);
-		this.moyennes = new HashMap<>(moyennes);
-		this.nbAbsences = nbAbsences;
-		if (PROMO < 1 || PROMO > 3) {
-			throw new ExceptionPromo("La promo de l'étudiant doit être compris entre 1 et 3!");
-		}
-		this.PROMO = PROMO;
-		
-		this.motivations = new HashMap<>();
-		this.studentsToNotAssign = new HashMap<>();
-	}
-	
-	/**
 	 * Constructeur de la classe Student
 	 * @param FORENAME
 	 * @param NAME
@@ -62,30 +37,66 @@ public abstract class Student extends Person implements JSONString {
 	 * @param absence
 	 * @throws ExceptionPromo 
 	 */
-	public static Student createStudent(String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
+	protected Student(int INE, String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
+		super(INE, FORENAME, NAME);
+		this.moyennes = new HashMap<>(moyennes);
+		this.nbAbsences = nbAbsences;
+		this.PROMO = PROMO;
+		
+		this.motivations = new HashMap<>();
+		this.studentsToNotAssign = new HashMap<>();
+	}
+	
+	/**
+	 * Factory de la classe Student avec l'INE donné par l'utilisateur
+	 * @param FORENAME
+	 * @param NAME
+	 * @param moyenne
+	 * @param PROMO
+	 * @param absence
+	 * @throws ExceptionPromo 
+	 */
+	public static Student createStudent(int INE, String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
 		Student res;
 		if (PROMO == 1) {
-			res = new Tutee(FORENAME, NAME, PROMO, nbAbsences, moyennes);
+			res = new Tutee(INE, FORENAME, NAME, PROMO, nbAbsences, moyennes);
 		} else {
-			res = new Tutor(FORENAME, NAME, PROMO, nbAbsences, moyennes);
+			res = new Tutor(INE, FORENAME, NAME, PROMO, nbAbsences, moyennes);
 		}
 		return res;
 	}
 	
 	/**
-	 * Second constructeur de Student sans donner les moyennes
+	 * Factory de la classe Student
+	 * @param FORENAME
+	 * @param NAME
+	 * @param moyenne
+	 * @param PROMO
+	 * @param absence
+	 * @throws ExceptionPromo 
+	 */
+	public static Student createStudent(String FORENAME, String NAME, int PROMO, int nbAbsences, Map<Subject, Double> moyennes) throws ExceptionPromo {
+		return createStudent(Person.getNonUsedINE(), FORENAME, NAME, PROMO, nbAbsences, moyennes);
+	}
+	
+	/**
+	 * Factory de Student en donnant les moyennes sous forme de varargs avec l'INE donné par l'utilisateur
 	 * @param FORENAME
 	 * @param NAME
 	 * @param PROMO
 	 * @param nbAbsences
 	 * @throws ExceptionPromo
 	 */
-	public static Student createStudent(String FORENAME, String NAME, int PROMO, int nbAbsences) throws ExceptionPromo {
-		return createStudent(FORENAME, NAME, PROMO, nbAbsences, new HashMap<>());
+	public static Student createStudent(int INE, String FORENAME, String NAME, int PROMO, int nbAbsences, double... moyennes) throws ExceptionPromo {
+		Student res = createStudent(INE, FORENAME, NAME, PROMO, nbAbsences, new HashMap<>());
+		for (int i = 0; i < moyennes.length && i < Subject.values().length; i++) {
+			res.setMoyenne(Subject.values()[i], moyennes[i]);
+		}
+		return res;
 	}
 	
 	/**
-	 * Second constructeur de Student sans donner les moyennes
+	 * Factory de Student en donnant les moyennes sous forme de varargs
 	 * @param FORENAME
 	 * @param NAME
 	 * @param PROMO
@@ -93,11 +104,7 @@ public abstract class Student extends Person implements JSONString {
 	 * @throws ExceptionPromo
 	 */
 	public static Student createStudent(String FORENAME, String NAME, int PROMO, int nbAbsences, double... moyennes) throws ExceptionPromo {
-		Student res = createStudent(FORENAME, NAME, PROMO, nbAbsences);
-		for (int i = 0; i < moyennes.length && i < Subject.values().length; i++) {
-			res.setMoyenne(Subject.values()[i], moyennes[i]);
-		}
-		return res;
+		return createStudent(Person.getNonUsedINE(), FORENAME, NAME, PROMO, nbAbsences, moyennes);
 	}
 	
 	/**
@@ -187,16 +194,6 @@ public abstract class Student extends Person implements JSONString {
 		if (nbAbsences <= 0)
 			throw new IllegalArgumentException("Le nombre d'absences doit être un nombre positif!");
 		this.nbAbsences = nbAbsences;
-	}
-
-	@Override
-	public String toJSONString() {
-		JSONObject json = new JSONObject(super.toJSONString());
-		json.put("moyennes", moyennes);
-		json.put("promo", PROMO);
-		json.put("nbAbsences", nbAbsences);
-		json.put("motivations", motivations);
-		return json.toString();
 	}
 	
 	/**
@@ -339,6 +336,11 @@ public abstract class Student extends Person implements JSONString {
 	 */
 	public abstract boolean canAddMoreForcedAssignment(Tutoring tutoring);
 	
+	/**
+	 * Méthode pour récupérer toutes les affectations forcées d'un étudiant pour un tutorat
+	 * @param tutoring
+	 * @return
+	 */
 	public abstract Set<Student> getForcedAssignments(Tutoring tutoring);
 		
 	/**

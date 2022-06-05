@@ -20,7 +20,7 @@ public class Teacher extends Person {
 	 * @param subjectsTeached
 	 */
 	public Teacher(String FORENAME, String NAME, Collection<? extends Subject> subjectsTeached) {
-		super(FORENAME, NAME);
+		super(Person.getNonUsedINE(), FORENAME, NAME);
 		this.subjectsTeached = new LinkedHashSet<>(subjectsTeached);
 	}
 	
