@@ -3,13 +3,11 @@ package sae_201_02;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -327,7 +325,6 @@ public class TutoringTest {
 			Tutoring loaded = TutoringSave.load(save1);
 			TutoringSave.save(loaded, save2);
 		} catch (JSONException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

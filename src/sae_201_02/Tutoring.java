@@ -112,6 +112,11 @@ public class Tutoring {
 		}
 	}
 	
+	/**
+	 * Retourne true si l'étudiant est inscrit dans un tutorat
+	 * @param student
+	 * @return
+	 */
 	public boolean isInTutoring(Student student) {
 		return tutees.contains(student) || tutors.contains(student);
 	}

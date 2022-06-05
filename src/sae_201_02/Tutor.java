@@ -47,7 +47,7 @@ public class Tutor extends Student implements JSONString {
 		return false;
 	}
 	
-	
+	@Override
 	public boolean canAddMoreForcedAssignment(Tutoring tutoring) {
 		return (getPromo() == 2 && getForcedAssignments(tutoring).isEmpty()) || (getPromo() == 3 && getForcedAssignments(tutoring).size() < tutoring.getMaxTuteesForTutor());
 	}

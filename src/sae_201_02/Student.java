@@ -1,6 +1,5 @@
 package sae_201_02;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -209,6 +208,11 @@ public abstract class Student extends Person implements JSONString {
 		this.motivations.put(tutoring, motivation);
 	}
 	
+	/**
+	 * Méthode pour récupérer la motivation d'un étudiant pour un tutorat
+	 * @param tutoring
+	 * @return
+	 */
 	public Motivation getMotivation(Tutoring tutoring) {
 		return motivations.containsKey(tutoring) ? motivations.get(tutoring) : Motivation.NEUTRAL;
 	}
@@ -233,6 +237,11 @@ public abstract class Student extends Person implements JSONString {
 		if (assignments.containsKey(tutoring)) assignments.remove(tutoring);
 	}
 	
+	/**
+	 * Méthode pour ne pas assigner un étudiant avec un autre
+	 * @param tutoring
+	 * @param other
+	 */
 	public void doNotAssign(Tutoring tutoring, Student other) {
 		if (!studentsToNotAssign.containsKey(tutoring)) {
 			studentsToNotAssign.put(tutoring, new HashSet<>());
@@ -244,6 +253,11 @@ public abstract class Student extends Person implements JSONString {
 		}
 	}
 	
+	/**
+	 * Méthode pour récupérer tous les étudiants à ne pas assigner avec lui pour un tutorat
+	 * @param tutoring
+	 * @return
+	 */
 	public Set<Student> getStudentsToNotAssign(Tutoring tutoring) {
 		Set<Student> res = new HashSet<>();
 		if (studentsToNotAssign.containsKey(tutoring)) {
@@ -279,6 +293,19 @@ public abstract class Student extends Person implements JSONString {
 			other.forceAssignment(tutoring, this);
 	}
 	
+	public Map<Subject, Double> getMoyennes() {
+		Map<Subject, Double> copy = new HashMap<>();
+		for (Subject subject: moyennes.keySet()) {
+			copy.put(subject, moyennes.get(subject));
+		}
+		return copy;
+	}
+	
+	/**
+	 * Méthode pour forcer une affectation entre deux étudiants
+	 * @param tutoring
+	 * @param other
+	 */
 	protected abstract void addForcedAssignment(Tutoring tutoring, Student other);
 
 	/**
@@ -293,10 +320,23 @@ public abstract class Student extends Person implements JSONString {
 	 */
 	public abstract boolean isTutee();
 	
+	/**
+	 * Méthode pour retirer un élève d'un tutorat
+	 * @param tutoring
+	 */
 	public abstract void removeTutoring(Tutoring tutoring);
 	
+	/**
+	 * Méthode pour supprimer les affectations calculées
+	 * @param tutoring
+	 */
 	public abstract void clearAssignment(Tutoring tutoring);
 	
+	/**
+	 * Retourne true si l'étudiant peut encore avoir une affectation forcée
+	 * @param tutoring
+	 * @return
+	 */
 	public abstract boolean canAddMoreForcedAssignment(Tutoring tutoring);
 	
 	public abstract Set<Student> getForcedAssignments(Tutoring tutoring);
@@ -307,16 +347,17 @@ public abstract class Student extends Person implements JSONString {
 	 */
 	public abstract void removeForcedAssignment(Tutoring tutoring);
 	
+	/**
+	 * Méthodes pour récupérer toutes les affectations d'un étudiant
+	 * @param tutoring
+	 * @return
+	 */
 	public abstract Set<Student> getAssignments(Tutoring tutoring);
 	
+	/**
+	 * Méthode pour ajouter une affectation à un étudiant
+	 * @param tutoring
+	 * @param other
+	 */
 	public abstract void addAssignment(Tutoring tutoring, Student other);
-
-	protected Map<Subject, Double> getMoyennes() {
-		Map<Subject, Double> copy = new HashMap<>();
-		for (Subject subject: moyennes.keySet()) {
-			copy.put(subject, moyennes.get(subject));
-		}
-		return copy;
-	}
-	
 }
