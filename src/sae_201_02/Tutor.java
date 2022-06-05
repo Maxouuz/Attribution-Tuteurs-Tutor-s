@@ -5,12 +5,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONObject;
+import org.json.JSONString;
+
 /**
  * Classe représentant un candidat pour être tuteur de deuxième ou troisième année
  * @author nathan.hallez.etu
  *
  */
-public class Tutor extends Student {
+public class Tutor extends Student implements JSONString {
 	/** Map qui associe pour chaque tutorat une liste de tutorés associés */
 	private final Map<Tutoring, Set<Tutee>> assignments;
 	/** Map qui associe pour chaque tutorat une liste de tutorés à associer absolument */
@@ -46,7 +49,7 @@ public class Tutor extends Student {
 	
 	
 	public boolean canAddMoreForcedAssignment(Tutoring tutoring) {
-		return (getPROMO() == 2 && getForcedAssignments(tutoring).isEmpty()) || (getPROMO() == 3 && getForcedAssignments(tutoring).size() < tutoring.getMaxTuteesForTutor());
+		return (getPromo() == 2 && getForcedAssignments(tutoring).isEmpty()) || (getPromo() == 3 && getForcedAssignments(tutoring).size() < tutoring.getMaxTuteesForTutor());
 	}
 
 	@Override
@@ -101,5 +104,13 @@ public class Tutor extends Student {
 		}
 		
 		forcedAssignment.get(tutoring).add((Tutee) other);
+	}
+	
+	@Override
+	public String toJSONString() {
+		JSONObject json = new JSONObject(super.toJSONString());
+		//json.put("assignments", assignments);
+		//json.put("forcedAssignment", forcedAssignment);
+		return json.toString();
 	}
 }

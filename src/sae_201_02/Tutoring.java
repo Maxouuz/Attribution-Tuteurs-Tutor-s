@@ -62,9 +62,9 @@ public class Tutoring {
 	
 	public Subject getSubject() { return this.subject; };
 	
-	public List<Student> getTutees() { return new ArrayList<>(tutees); }
+	public Set<Student> getTutees() { return new LinkedHashSet<>(tutees); }
 	
-	public List<Student> getTutors() { return new ArrayList<>(tutors); }
+	public Set<Student> getTutors() { return new LinkedHashSet<>(tutors); }
 	
 	public Double getMoyenneMaxTutee() { return moyenneMaxTutee; }
 
@@ -196,10 +196,10 @@ public class Tutoring {
 		for (Tutor tutor: tutors) {
 			if (this.canParticipate(tutor)) {
 				// Un étudiant de 2ème année ne peut aider qu'un seul tutoré
-				if (tutor.getPROMO() == 2 && tutor.getAssignments(this).size() != 1) {
+				if (tutor.getPromo() == 2 && tutor.getAssignments(this).size() != 1) {
 					eligibleTutors.add(tutor);
 				// Même vérification pour les élèves de 3ème année
-				} else if (tutor.getPROMO() == 3 && tutor.getAssignments(this).size() != maxTuteesForTutor) {
+				} else if (tutor.getPromo() == 3 && tutor.getAssignments(this).size() != maxTuteesForTutor) {
 					eligibleTutors.add(tutor);
 				}
 			}

@@ -1,5 +1,6 @@
 package sae_201_02;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -133,7 +134,7 @@ public abstract class Student extends Person implements JSONString {
 	 * Retourne l'année de la promo d'un étudiant
 	 * @return
 	 */
-	public int getPROMO() {
+	public int getPromo() {
 		return PROMO;
 	}
 	
@@ -195,6 +196,7 @@ public abstract class Student extends Person implements JSONString {
 		json.put("moyennes", moyennes);
 		json.put("promo", PROMO);
 		json.put("nbAbsences", nbAbsences);
+		json.put("motivations", motivations);
 		return json.toString();
 	}
 	
@@ -203,8 +205,12 @@ public abstract class Student extends Person implements JSONString {
 	 * @param student
 	 * @param motivation
 	 */
-	public void addStudentMotivation(Tutoring tutoring, Motivation motivation) {
+	public void addMotivation(Tutoring tutoring, Motivation motivation) {
 		this.motivations.put(tutoring, motivation);
+	}
+	
+	public Motivation getMotivation(Tutoring tutoring) {
+		return motivations.containsKey(tutoring) ? motivations.get(tutoring) : Motivation.NEUTRAL;
 	}
 	
 	/**
@@ -304,5 +310,13 @@ public abstract class Student extends Person implements JSONString {
 	public abstract Set<Student> getAssignments(Tutoring tutoring);
 	
 	public abstract void addAssignment(Tutoring tutoring, Student other);
+
+	protected Map<Subject, Double> getMoyennes() {
+		Map<Subject, Double> copy = new HashMap<>();
+		for (Subject subject: moyennes.keySet()) {
+			copy.put(subject, moyennes.get(subject));
+		}
+		return copy;
+	}
 	
 }

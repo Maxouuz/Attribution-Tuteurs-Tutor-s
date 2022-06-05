@@ -7,4 +7,4 @@ rapport.html
 .eclipse-pmd
 .vscode
 lib/junit-platform-console-standalone-*.jar
-res/tutoring_save.json
+res/tutoring_save*.json

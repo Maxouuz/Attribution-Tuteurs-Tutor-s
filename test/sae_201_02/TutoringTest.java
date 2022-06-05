@@ -52,7 +52,7 @@ public class TutoringTest {
 			Student tmp = Student.createStudent(student.next(), student.next(), student.nextInt(), student.nextInt(), Double.parseDouble(student.next()),
 					Double.parseDouble(student.next()), Double.parseDouble(student.next()), Double.parseDouble(student.next()));
 			tutoring.addStudent(tmp);
-			tmp.addStudentMotivation(tutoring, Motivation.valueOf(student.next()));
+			tmp.addMotivation(tutoring, Motivation.valueOf(student.next()));
 			line = reader.readLine();
 		}
 		
@@ -100,14 +100,14 @@ public class TutoringTest {
 	@Test
 	void onlyFirstYearInTuteesTest() {
 		for (Student student: tutoring.getTutees()) {
-			assertEquals(1, student.getPROMO());
+			assertEquals(1, student.getPromo());
 		}
 	}
 	
 	@Test
 	void noFirstYearInTutorsTest() {
 		for (Student student: tutoring.getTutors()) {
-			assertNotEquals(1, student.getPROMO());
+			assertNotEquals(1, student.getPromo());
 		}
 	}
 	
@@ -299,11 +299,11 @@ public class TutoringTest {
 		tutoringShort.addAllStudents(tutor1, tutor2, tutor3, tutor4, tutor5,
 									 tutee1, tutee2, tutee3, tutee4, tutee5, tutee6, tutee7);
 		
-		tutor4.addStudentMotivation(tutoringShort, Motivation.MOTIVATED);
-		tutee2.addStudentMotivation(tutoringShort, Motivation.NOT_MOTIVATED);
-		tutee3.addStudentMotivation(tutoringShort, Motivation.MOTIVATED);
-		tutee5.addStudentMotivation(tutoringShort, Motivation.NOT_MOTIVATED);
-		tutee6.addStudentMotivation(tutoringShort, Motivation.MOTIVATED);
+		tutor4.addMotivation(tutoringShort, Motivation.MOTIVATED);
+		tutee2.addMotivation(tutoringShort, Motivation.NOT_MOTIVATED);
+		tutee3.addMotivation(tutoringShort, Motivation.MOTIVATED);
+		tutee5.addMotivation(tutoringShort, Motivation.NOT_MOTIVATED);
+		tutee6.addMotivation(tutoringShort, Motivation.MOTIVATED);
 		
 		System.out.println("--- AFFECTATION PAR DÉFAUT ---\n");
 		tutoringShort.createAssignments();
@@ -322,12 +322,13 @@ public class TutoringTest {
 		String path = System.getProperty("user.dir") + File.separator + "res" + File.separator;
 		File save1 = new File(path + "tutoring_save.json");
 		File save2 = new File(path + "tutoring_save2.json");
-		/**try {
-			tutoringShort.save(save1);
-			Tutoring loaded = Tutoring.load(save1);
+		try {
+			TutoringSave.save(tutoringShort, save1);
+			Tutoring loaded = TutoringSave.load(save1);
+			TutoringSave.save(loaded, save2);
 		} catch (JSONException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 	}
 }

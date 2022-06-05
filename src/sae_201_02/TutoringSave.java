@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,28 +21,49 @@ public class TutoringSave {
 	 * @throws IOException 
 	 * @throws JSONException 
 	 */
-	/**
-	public void save(File path) throws JSONException, IOException {
+	public static void save(Tutoring tutoring, File path) throws JSONException, IOException {
 		JSONObject json = new JSONObject();
-		json.put("subject", subject);
-		json.put("tutees", tutees);
-		json.put("tutors", tutors);
+		json.put("subject", tutoring.getSubject());
+		// json.put("tutees", tutoring.getTutees());
+		// json.put("tutors", tutoring.getTutors());
 		
-		JSONObject motivationJSON = new JSONObject();
-		for (Student std: motivations.keySet()) {
-			motivationJSON.put(String.valueOf(std.getINE()), motivations.get(std));
+		json.put("moyenneMaxTutee", tutoring.getMoyenneMaxTutee());
+		json.put("moyenneMinTutor", tutoring.getMoyenneMinTutor());
+		json.put("nbAbsencesMax", tutoring.getNbAbsencesMax());
+		
+		json.put("maxTuteesForTutor", tutoring.getMaxTuteesForTutor());
+		json.put("moyenneWidth", tutoring.getMoyenneWidth());
+		json.put("absenceWidth", tutoring.getAbsenceWidth());
+		
+		Set<Student> students = tutoring.getTutees();
+		students.addAll(tutoring.getTutors());
+		
+		JSONArray jsonStudents = new JSONArray();
+		for (Student student: students) {
+			JSONObject jsonStudent = new JSONObject();
+			jsonStudent.put("forename", student.getForename());
+			jsonStudent.put("name", student.getName());
+			jsonStudent.put("ine", student.getINE());
+			jsonStudent.put("promo", student.getPromo());
+			jsonStudent.put("nbAbsences", student.getNbAbsences());
+			jsonStudent.put("motivation", student.getMotivation(tutoring));
+			jsonStudent.put("moyennes", student.getMoyennes());
+			
+			JSONArray jsonForcedAssignments = new JSONArray();
+			for (Student other: student.getForcedAssignments(tutoring)) {
+				jsonForcedAssignments.put(other.getINE());
+			}
+			jsonStudent.put("forcedAssignments", jsonForcedAssignments);
+			
+			JSONArray jsonStudentsToNotAssign = new JSONArray();
+			for (Student other: student.getStudentsToNotAssign(tutoring)) {
+				jsonStudentsToNotAssign.put(other.getINE());
+			}
+			jsonStudent.put("studentsToNotAssign", jsonStudentsToNotAssign);
+			
+			jsonStudents.put(jsonStudent);
 		}
-		json.put("motivations", motivationJSON);
-		
-		json.put("moyenneMaxTutee", moyenneMaxTutee);
-		json.put("moyenneMinTutor", moyenneMinTutor);
-		json.put("nbAbsencesMax", nbAbsencesMax);
-		
-		json.put("forcedAssignment", forcedAssignment);
-		json.put("studentsToNotAssign", studentsToNotAssign);
-		json.put("maxTuteesForTutor", maxTuteesForTutor);
-		json.put("moyenneWidth", moyenneWidth);
-		json.put("absenceWidth", absenceWidth);
+		json.put("students", jsonStudents);
 		
 		Writer writer = new FileWriter(path);
 		json.write(writer, 4, 0);
@@ -49,8 +71,7 @@ public class TutoringSave {
 	}
 	
 	private static void loadStudents(Tutoring tutoring, JSONObject json, Map<Integer, Student> oldINEToStudent) throws JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
-		JSONArray students = (JSONArray) json.get("tutees");
-		students.putAll(json.get("tutors"));
+		JSONArray students = (JSONArray) json.get("students");
 		for (Object element: students) {
 			JSONObject elementJSON = (JSONObject) element;
 			Student studentCopy;
@@ -64,32 +85,21 @@ public class TutoringSave {
 			}
 			tutoring.addStudent(studentCopy);
 			oldINEToStudent.put(elementJSON.getInt("ine"), studentCopy);
+
+			studentCopy.addMotivation(tutoring, Motivation.valueOf(elementJSON.getString("motivation")));
 		}
 	}
 	
-	private static void loadForcedAssignment(Tutoring tutoring, JSONObject json, Map<Integer, Student> oldINEToStudent) throws JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
-		JSONObject forcedAssignment = (JSONObject) json.get("forcedAssignment");
-		for (String element: forcedAssignment.keySet()) {
-			oldINEToStudent.get(Integer.parseInt(element)).forceAssignment(tutoring,
-										 					oldINEToStudent.get(Integer.parseInt((String) forcedAssignment.get(element))));
+	private static void loadAssignments(Tutoring tutoring, JSONObject json, Map<Integer, Student> oldINEToStudent) throws JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
+		for (Object student: (JSONArray) json.get("students")) {
+			for (Object element: (JSONArray) ((JSONObject) student).get("forcedAssignments")) {
+				oldINEToStudent.get(((JSONObject) student).getInt("ine")).forceAssignment(tutoring, oldINEToStudent.get(element));
+			}
+			for (Object element: (JSONArray) ((JSONObject) student).get("studentsToNotAssign")) {
+				oldINEToStudent.get(((JSONObject) student).getInt("ine")).doNotAssign(tutoring, oldINEToStudent.get(element));
+			}
 		}
 	}
-	
-	private static void loadMotivations(Tutoring tutoring, JSONObject json, Map<Integer, Student> oldINEToStudent) throws JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
-		JSONObject motivations = (JSONObject) json.get("motivations");
-		for (String element: motivations.keySet()) {
-			tutoring.addStudentMotivation(oldINEToStudent.get(Integer.parseInt(element)),
-										  Motivation.valueOf((String) motivations.get(element)));
-		}
-	}
-	
-	private static void loadStudentsToNotAssign(Tutoring tutoring, JSONObject json, Map<Integer, Student> oldINEToStudent) throws JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
-		JSONObject studentsToNotAssign = (JSONObject) json.get("studentsToNotAssign");
-		for (String element: studentsToNotAssign.keySet()) {
-			tutoring.doNotAssign(oldINEToStudent.get(Integer.parseInt(element)),
-								 oldINEToStudent.get(Integer.parseInt((String) studentsToNotAssign.get(element))));
-		}
-	}*/
 	
 	/**
 	 * Méthode pour charger un tutorat précédemment sauvegardé dans un fichier json
@@ -100,6 +110,7 @@ public class TutoringSave {
 	 * @throws ExceptionPromo
 	 * @throws ExceptionNotInTutoring
 	 * @throws ExceptionTooManyAssignments
+	 */
 	public static Tutoring load(File path) throws IOException, JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
 		// Récupère le fichier json
 		BufferedReader reader = new BufferedReader(new FileReader(path));
@@ -121,10 +132,7 @@ public class TutoringSave {
 		Map<Integer, Student> oldINEToStudent = new HashMap<>();
 		
 		loadStudents(tutoring, json, oldINEToStudent);
-		loadForcedAssignment(tutoring, json, oldINEToStudent);
-		loadMotivations(tutoring, json, oldINEToStudent);
-		loadStudentsToNotAssign(tutoring, json, oldINEToStudent);
-		
+		loadAssignments(tutoring, json, oldINEToStudent);		
 		return tutoring;
-	}*/
+	}
 }
