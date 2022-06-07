@@ -201,7 +201,7 @@ public abstract class Student extends Person {
 	 * @param student
 	 * @param motivation
 	 */
-	public void addMotivation(Tutoring tutoring, Motivation motivation) {
+	public void setMotivation(Tutoring tutoring, Motivation motivation) {
 		this.motivations.put(tutoring, motivation);
 	}
 	
@@ -228,24 +228,34 @@ public abstract class Student extends Person {
 	 * @param tutoring
 	 */
 	protected <T> void removeTutoring(Map<Tutoring, T> assignments, Map<Tutoring, T> forcedAssignment, Tutoring tutoring) {
-		// TODO: Faire en sorte que si on enlève l'étudiant du tutorat, on enlève les associations pour les étudiants associés aussi
-		if (forcedAssignment.containsKey(tutoring)) forcedAssignment.remove(tutoring);
-		if (studentsToNotAssign.containsKey(tutoring)) studentsToNotAssign.remove(tutoring);
-		if (assignments.containsKey(tutoring)) assignments.remove(tutoring);
+		if (forcedAssignment.containsKey(tutoring)) removeForcedAssignments(tutoring);
+		if (studentsToNotAssign.containsKey(tutoring)) removeStudentsToNotAssign(tutoring);
 	}
 	
 	/**
 	 * Méthode pour ne pas assigner un étudiant avec un autre
 	 * @param tutoring
 	 * @param other
+	 * @throws ExceptionNotInTutoring 
+	 * @throws ExceptionPromo 
 	 */
-	public void doNotAssign(Tutoring tutoring, Student other) {
+	public void doNotAssign(Tutoring tutoring, Student other) throws ExceptionNotInTutoring, ExceptionPromo {
+		boolean addedForOther = other.getStudentsToNotAssign(tutoring).contains(this);
+		
+		if (!addedForOther) {
+			if (getClass() == other.getClass()) {
+				throw new ExceptionPromo(); 
+			} else if (!tutoring.isInTutoring(this) || !tutoring.isInTutoring(other)) {
+				throw new ExceptionNotInTutoring();
+			}
+		}
+		
 		if (!studentsToNotAssign.containsKey(tutoring)) {
 			studentsToNotAssign.put(tutoring, new HashSet<>());
 		}
 		studentsToNotAssign.get(tutoring).add(other);
 		
-		if (!other.getStudentsToNotAssign(tutoring).contains(this)) {
+		if (!addedForOther) {
 			other.doNotAssign(tutoring, this);
 		}
 	}
@@ -284,10 +294,10 @@ public abstract class Student extends Person {
 			}
 		}
 		
-		addForcedAssignment(tutoring, other);
+		forceAssignmentOneWay(tutoring, other);
 		
 		if (!addedForOther)
-			other.forceAssignment(tutoring, this);
+			other.forceAssignmentOneWay(tutoring, this);
 	}
 	
 	public Map<Subject, Double> getMoyennes() {
@@ -302,8 +312,11 @@ public abstract class Student extends Person {
 	 * Méthode pour forcer une affectation entre deux étudiants
 	 * @param tutoring
 	 * @param other
+	 *//**
+	 * Méthode pour effacer la liste des étudiants à ne pas affecter
+	 * @param tutoring
 	 */
-	protected abstract void addForcedAssignment(Tutoring tutoring, Student other);
+	protected abstract void forceAssignmentOneWay(Tutoring tutoring, Student other);
 
 	/**
 	 * Retourne true si l'étudiant peut dispenser le tutorat sur une ressource
@@ -342,12 +355,49 @@ public abstract class Student extends Person {
 	 * @return
 	 */
 	public abstract Set<Student> getForcedAssignments(Tutoring tutoring);
-		
+	
 	/**
-	 * Retire l'affectation forcée d'un étudiant
+	 * Méthode pour enlever toutes les affectations forcées d'un étudiant
+	 * @param tutoring
+	 */
+	public void removeForcedAssignments(Tutoring tutoring) {
+		for (Student other: getForcedAssignments(tutoring)) {
+			removeForcedAssignment(tutoring, other);
+		}
+	}
+	
+	/**
+	 * Méthode pour enlever une affectation forcée d'un étudiant
+	 * @param tutoring
 	 * @param student
 	 */
-	public abstract void removeForcedAssignment(Tutoring tutoring);
+	public abstract void removeForcedAssignment(Tutoring tutoring, Student student);
+	
+	/**
+	 * Méthode pour effacer la liste des étudiants à ne pas affecter
+	 * @param tutoring
+	 */
+	public void removeStudentsToNotAssign(Tutoring tutoring) {
+		if (studentsToNotAssign.containsKey(tutoring)) {
+			for (Student other: studentsToNotAssign.remove(tutoring)) {
+				other.removeStudentToNotAssign(tutoring, this);
+			}
+		}
+	}
+	
+	/**
+	 * Méthode pour donner la possibilité de réassigner à nouveau une affectation annulée
+	 * @param tutoring
+	 * @param student
+	 */
+	public void removeStudentToNotAssign(Tutoring tutoring, Student student) {
+		if (getStudentsToNotAssign(tutoring).contains(student)) {
+			studentsToNotAssign.get(tutoring).remove(student);
+			if (student.getStudentsToNotAssign(tutoring).contains(this)) {
+				student.removeStudentToNotAssign(tutoring, this);
+			}
+		}
+	}
 	
 	/**
 	 * Méthodes pour récupérer toutes les affectations d'un étudiant

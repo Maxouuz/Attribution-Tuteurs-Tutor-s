@@ -14,7 +14,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Classe statique qui permet d'enregistrer/de charger un tutorat
+ * @author nathan.hallez.etu
+ *
+ */
 public class TutoringSave {
+	
+	private TutoringSave() {};
+	
 	/**
 	 * Méthode pour sauvegarder le tutorat dans un fichier json
 	 * @param path
@@ -24,8 +32,6 @@ public class TutoringSave {
 	public static void save(Tutoring tutoring, File path) throws JSONException, IOException {
 		JSONObject json = new JSONObject();
 		json.put("subject", tutoring.getSubject());
-		// json.put("tutees", tutoring.getTutees());
-		// json.put("tutors", tutoring.getTutors());
 		
 		json.put("moyenneMaxTutee", tutoring.getMoyenneMaxTutee());
 		json.put("moyenneMinTutor", tutoring.getMoyenneMinTutor());
@@ -35,6 +41,14 @@ public class TutoringSave {
 		json.put("moyenneWidth", tutoring.getMoyenneWidth());
 		json.put("absenceWidth", tutoring.getAbsenceWidth());
 		
+		json.put("students", studentsToJSONArray(tutoring));
+		
+		Writer writer = new FileWriter(path);
+		json.write(writer, 4, 0);
+		writer.close();
+	}
+	
+	private static JSONArray studentsToJSONArray(Tutoring tutoring) {
 		Set<Student> students = tutoring.getTutees();
 		students.addAll(tutoring.getTutors());
 		
@@ -49,25 +63,29 @@ public class TutoringSave {
 			jsonStudent.put("motivation", student.getMotivation(tutoring));
 			jsonStudent.put("moyennes", student.getMoyennes());
 			
-			JSONArray jsonForcedAssignments = new JSONArray();
-			for (Student other: student.getForcedAssignments(tutoring)) {
-				jsonForcedAssignments.put(other.getINE());
-			}
-			jsonStudent.put("forcedAssignments", jsonForcedAssignments);
-			
-			JSONArray jsonStudentsToNotAssign = new JSONArray();
-			for (Student other: student.getStudentsToNotAssign(tutoring)) {
-				jsonStudentsToNotAssign.put(other.getINE());
-			}
-			jsonStudent.put("studentsToNotAssign", jsonStudentsToNotAssign);
+			jsonStudent.put("forcedAssignments", forcedAssignmentsToJSONArray(tutoring, student));			
+			jsonStudent.put("studentsToNotAssign", studentsToNotAssignToJSONArray(tutoring, student));
 			
 			jsonStudents.put(jsonStudent);
 		}
-		json.put("students", jsonStudents);
 		
-		Writer writer = new FileWriter(path);
-		json.write(writer, 4, 0);
-		writer.close();
+		return jsonStudents;
+	}
+	
+	private static JSONArray forcedAssignmentsToJSONArray(Tutoring tutoring, Student student) {
+		JSONArray jsonStudentsToNotAssign = new JSONArray();
+		for (Student other: student.getStudentsToNotAssign(tutoring)) {
+			jsonStudentsToNotAssign.put(other.getINE());
+		}
+		return jsonStudentsToNotAssign;
+	}
+	
+	private static JSONArray studentsToNotAssignToJSONArray(Tutoring tutoring, Student student) {
+		JSONArray jsonForcedAssignments = new JSONArray();
+		for (Student other: student.getForcedAssignments(tutoring)) {
+			jsonForcedAssignments.put(other.getINE());
+		}
+		return jsonForcedAssignments;
 	}
 	
 	private static void loadStudents(Tutoring tutoring, JSONObject json, Map<Integer, Student> ineToStudent) throws JSONException, ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
@@ -87,7 +105,7 @@ public class TutoringSave {
 			tutoring.addStudent(studentCopy);
 			ineToStudent.put(elementJSON.getInt("ine"), studentCopy);
 
-			studentCopy.addMotivation(tutoring, Motivation.valueOf(elementJSON.getString("motivation")));
+			studentCopy.setMotivation(tutoring, Motivation.valueOf(elementJSON.getString("motivation")));
 		}
 	}
 	

@@ -48,12 +48,7 @@ public class Tutor extends Student {
 	public boolean canAddMoreForcedAssignment(Tutoring tutoring) {
 		return (getPromo() == 2 && getForcedAssignments(tutoring).isEmpty()) || (getPromo() == 3 && getForcedAssignments(tutoring).size() < tutoring.getMaxTuteesForTutor());
 	}
-
-	@Override
-	public void removeForcedAssignment(Tutoring tutoring) {
-		if (forcedAssignment.containsKey(tutoring)) forcedAssignment.remove(tutoring);
-	}
-
+	
 	@Override
 	public Set<Student> getAssignments(Tutoring tutoring) {
 		Set<Student> res = new HashSet<>();
@@ -95,11 +90,21 @@ public class Tutor extends Student {
 	}
 
 	@Override
-	protected void addForcedAssignment(Tutoring tutoring, Student other) {
+	protected void forceAssignmentOneWay(Tutoring tutoring, Student other) {
 		if (!forcedAssignment.containsKey(tutoring)) {
 			forcedAssignment.put(tutoring, new HashSet<>());
 		}
 		
 		forcedAssignment.get(tutoring).add((Tutee) other);
+	}
+	
+	@Override
+	public void removeForcedAssignment(Tutoring tutoring, Student student) {
+		if (getForcedAssignments(tutoring).contains(student)) {
+			forcedAssignment.get(tutoring).remove(student);
+			if (student.getForcedAssignments(tutoring).contains(this)) {
+				student.removeForcedAssignment(tutoring, this);
+			}
+		}
 	}
 }

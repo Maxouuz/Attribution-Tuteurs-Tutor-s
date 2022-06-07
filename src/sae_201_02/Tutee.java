@@ -50,11 +50,6 @@ public class Tutee extends Student {
 	}
 
 	@Override
-	public void removeForcedAssignment(Tutoring tutoring) {
-		if (forcedAssignment.containsKey(tutoring)) forcedAssignment.remove(tutoring);		
-	}
-
-	@Override
 	public Set<Student> getAssignments(Tutoring tutoring) {
 		Set<Student> res = new HashSet<>();
 		if (assignments.containsKey(tutoring)) {
@@ -92,7 +87,17 @@ public class Tutee extends Student {
 	}
 
 	@Override
-	protected void addForcedAssignment(Tutoring tutoring, Student other) {
+	protected void forceAssignmentOneWay(Tutoring tutoring, Student other) {
 		forcedAssignment.put(tutoring, (Tutor) other);
+	}
+	
+	@Override
+	public void removeForcedAssignment(Tutoring tutoring, Student student) {
+		if (getForcedAssignments(tutoring).contains(student)) {
+			forcedAssignment.remove(tutoring);
+			if (student.getForcedAssignments(tutoring).contains(this)) {
+				student.removeForcedAssignment(tutoring, this);
+			}
+		}
 	}
 }

@@ -5,15 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
 
-import org.json.JSONException;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,9 +26,9 @@ public class TutoringTest {
 	/** Instance de Tutoring qui contient des exemples de graphes */
 	private static Tutoring tutoringShort;
 	/** Variables de tuteurs */
-	private static Student tutor1, tutor2, tutor3, tutor4, tutor5;
+	private static Student tutor1, tutor2, tutor3;
 	/** Variables de tutorés */
-	private static Student tutee1, tutee2, tutee3, tutee4, tutee5, tutee6, tutee7;
+	private static Student tutee1, tutee2, tutee3, tutee4;
 	
 	@BeforeEach
 	/**
@@ -50,7 +47,7 @@ public class TutoringTest {
 			Student tmp = Student.createStudent(student.next(), student.next(), student.nextInt(), student.nextInt(), Double.parseDouble(student.next()),
 					Double.parseDouble(student.next()), Double.parseDouble(student.next()), Double.parseDouble(student.next()));
 			tutoring.addStudent(tmp);
-			tmp.addMotivation(tutoring, Motivation.valueOf(student.next()));
+			tmp.setMotivation(tutoring, Motivation.valueOf(student.next()));
 			line = reader.readLine();
 		}
 		
@@ -69,16 +66,11 @@ public class TutoringTest {
 		tutor1 = Student.createStudent("Sophie", "Vallee", 2, 3, 15.5);
 		tutor2 = Student.createStudent("Nicolas", "Roche", 3, 6, 16.5);
 		tutor3 = Student.createStudent("Maurice", "Fernandez", 3, 4, 14.5);
-		tutor4 = Student.createStudent("William", "Letellier", 2, 2, 18.5);
-		tutor5 = Student.createStudent("Paul", "Sanchez", 3, 0, 13.7);
 		
 		tutee1 = Student.createStudent("Charles", "Letellier", 1, 0, 8);
 		tutee2 = Student.createStudent("Daniel", "Daniel", 1, 3, 9);
 		tutee3 = Student.createStudent("François", "Bertin", 1, 9, 7);
 		tutee4 = Student.createStudent("Sabine", "Leleu", 1, 1, 5.5);
-		tutee5 = Student.createStudent("Gabriel", "Marin", 1, 0, 9);
-		tutee6 = Student.createStudent("Juliette", "Traore", 1, 30, 12);
-		tutee7 = Student.createStudent("Franck", "Hebert", 1, 5, 2.5);
 	}
 	
 	@BeforeEach
@@ -210,7 +202,7 @@ public class TutoringTest {
 		assertTrue(res);
 		// je retire l'assignation pour pouvoir réutiliser le tutoré et le tuteur dans
 		// d'autres tests
-		tutee1.removeForcedAssignment(tutoringShort);
+		tutee1.removeForcedAssignments(tutoringShort);
 
 		try {
 			// On utilise un tuteur de troisième année, qui a pour nombre de tutoré limite
@@ -223,8 +215,8 @@ public class TutoringTest {
 			res = true;
 		}
 		assertTrue(res);
-		tutee1.removeForcedAssignment(tutoringShort);
-		tutee2.removeForcedAssignment(tutoringShort);
+		tutee1.removeForcedAssignments(tutoringShort);
+		tutee2.removeForcedAssignments(tutoringShort);
 	}
 
 	@Test
@@ -244,7 +236,7 @@ public class TutoringTest {
 			res = true;
 		}
 		assertTrue(res);
-		tutee1.removeForcedAssignment(tutoringShort);
+		tutee1.removeForcedAssignments(tutoringShort);
 	}
 
 	@Test
@@ -255,7 +247,7 @@ public class TutoringTest {
 		try {
 			// On essaye d'assigner un étudiant qui existe, mais qui n'est dans aucune liste,
 			// à un tuteur présent dans la liste des tuteurs.
-			tutee4.removeForcedAssignment(tutoring);
+			tutee4.removeForcedAssignments(tutoring);
 			tutee4.forceAssignment(tutoringShort, tutor1);
 		} catch (ExceptionNotInTutoring e) {
 			res = true;
@@ -266,8 +258,8 @@ public class TutoringTest {
 		try {
 			// Même chose mais avec un tutoré existant et un tutoré pas présent dans les
 			// listes
-			tutee4.removeForcedAssignment(tutoringShort);
-			tutor1.removeForcedAssignment(tutoringShort);
+			tutee4.removeForcedAssignments(tutoringShort);
+			tutor1.removeForcedAssignments(tutoringShort);
 			tutee4.forceAssignment(tutoringShort, tutor1);
 		} catch (ExceptionNotInTutoring e) {
 			res = true;
@@ -290,43 +282,5 @@ public class TutoringTest {
 		tutoring.addFakeStudents(exemple2Tutees, exemple2Tutors);
 
 		assertEquals(exemple2Tutees.size(), exemple2Tutors.size());
-	}
-	
-	@AfterAll
-	static void showExemple() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {		
-		tutoringShort.addAllStudents(tutor1, tutor2, tutor3, tutor4, tutor5,
-									 tutee1, tutee2, tutee3, tutee4, tutee5, tutee6, tutee7);
-		
-		tutor4.addMotivation(tutoringShort, Motivation.MOTIVATED);
-		tutee2.addMotivation(tutoringShort, Motivation.NOT_MOTIVATED);
-		tutee3.addMotivation(tutoringShort, Motivation.MOTIVATED);
-		tutee5.addMotivation(tutoringShort, Motivation.NOT_MOTIVATED);
-		tutee6.addMotivation(tutoringShort, Motivation.MOTIVATED);
-		
-		System.out.println("--- AFFECTATION PAR DÉFAUT ---\n");
-		tutoringShort.createAssignments();
-		System.out.println(tutoringShort.toStringTutors());
-		
-		System.out.println("\n--- AFFECTATION AVEC AFFECTATION MANUELLE ---\n");
-		tutee6.forceAssignment(tutoringShort, tutor5);
-		tutoringShort.createAssignments();
-		System.out.println(tutoringShort.toStringTutors());
-		
-		System.out.println("\n--- AFFECTATION AVEC AFFECTATION ANNULÉE ---\n");
-		tutee4.doNotAssign(tutoringShort, tutor3);
-		tutoringShort.createAssignments();
-		System.out.println(tutoringShort.toStringTutors());
-		
-		String path = System.getProperty("user.dir") + File.separator + "res" + File.separator;
-		Person.resetUsedINE();
-		File save1 = new File(path + "tutoring_save.json");
-		File save2 = new File(path + "tutoring_save2.json");
-		try {
-			TutoringSave.save(tutoringShort, save1);
-			Tutoring loaded = TutoringSave.load(save1);
-			TutoringSave.save(loaded, save2);
-		} catch (JSONException | IOException e) {
-			e.printStackTrace();
-		}
 	}
 }
