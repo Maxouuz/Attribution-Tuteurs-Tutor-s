@@ -309,12 +309,9 @@ public abstract class Student extends Person {
 	}
 	
 	/**
-	 * Méthode pour forcer une affectation entre deux étudiants
+	 * Méthode pour forcer une affectation entre deux étudiants (que dans un sens)
 	 * @param tutoring
 	 * @param other
-	 *//**
-	 * Méthode pour effacer la liste des étudiants à ne pas affecter
-	 * @param tutoring
 	 */
 	protected abstract void forceAssignmentOneWay(Tutoring tutoring, Student other);
 

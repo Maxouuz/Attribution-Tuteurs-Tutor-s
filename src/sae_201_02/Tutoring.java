@@ -91,28 +91,6 @@ public class Tutoring {
 	public void setMaxTuteesForTutor(int maxTuteesForTutor) { this.maxTuteesForTutor = maxTuteesForTutor; }
 	
 	/**
-	 * Prend en paramètres un couple d'étudiant
-	 * Renvoie une erreur si le tutoré n'est pas en première année et si le tuteur est en première année,
-	 * et renvoie une erreur si un des deux n'est pas inscrit au tutorat
-	 * @param tutee
-	 * @param tutor
-	 * @throws ExceptionPromo
-	 * @throws ExceptionNotInTutoring
-	 */
-	public void checkTuteeTutorParameters(Student tutee, Student tutor) throws ExceptionPromo, ExceptionNotInTutoring {
-		// Retourne une erreur si le tutoré n'est pas en première année
-		if (!tutee.isTutee()) {
-			throw new ExceptionPromo("Le tutoré doit être en première année!");
-		// Retourne une erreur si le tuteur est en première année
-		} else if (!tutor.isTutor()) {
-			throw new ExceptionPromo("Le tuteur doit être en deuxième ou troisième année!");
-		// Retourne une erreur si le tutoré ou le tuteur n'est pas dans la liste des candidats
-		} else if (!tutees.contains(tutee) || !tutors.contains(tutor)) {
-			throw new ExceptionNotInTutoring();
-		}
-	}
-	
-	/**
 	 * Retourne true si l'étudiant est inscrit dans un tutorat
 	 * @param student
 	 * @return
