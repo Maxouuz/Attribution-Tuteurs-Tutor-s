@@ -74,7 +74,7 @@ public class TutoringSave {
 	
 	private static JSONArray forcedAssignmentsToJSONArray(Tutoring tutoring, Student student) {
 		JSONArray jsonStudentsToNotAssign = new JSONArray();
-		for (Student other: student.getStudentsToNotAssign(tutoring)) {
+		for (Student other: student.getForcedAssignments(tutoring)) {
 			jsonStudentsToNotAssign.put(other.getINE());
 		}
 		return jsonStudentsToNotAssign;
@@ -82,7 +82,7 @@ public class TutoringSave {
 	
 	private static JSONArray studentsToNotAssignToJSONArray(Tutoring tutoring, Student student) {
 		JSONArray jsonForcedAssignments = new JSONArray();
-		for (Student other: student.getForcedAssignments(tutoring)) {
+		for (Student other: student.getStudentsToNotAssign(tutoring)) {
 			jsonForcedAssignments.put(other.getINE());
 		}
 		return jsonForcedAssignments;
