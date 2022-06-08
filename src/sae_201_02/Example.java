@@ -78,12 +78,9 @@ public class Example {
 		
 		String path = System.getProperty("user.dir") + File.separator + "res" + File.separator;
 		Person.resetUsedINE();
-		File save1 = new File(path + "tutoring_save.json");
-		File save2 = new File(path + "tutoring_save2.json");
+		File save = new File(path + "tutoring_save.json");
 		try {
-			TutoringSave.save(tutoringShort, save1);
-			Tutoring loaded = TutoringSave.load(save1);
-			TutoringSave.save(loaded, save2);
+			TutoringSave.save(tutoringShort, save);
 		} catch (JSONException | IOException e) {
 			e.printStackTrace();
 		}
