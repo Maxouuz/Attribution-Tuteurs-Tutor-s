@@ -22,12 +22,6 @@ public abstract class Student extends Person {
 	/** Liste des étudiants à ne pas associer avec l'étudiant courant (pour chaque Tutorat) */
 	protected Map<Tutoring, Set<Student>> studentsToNotAssign;
 	
-	/** 
-	 * Variable qui représente la limite du nombre d'absences
-	 * pris en compte dans le calcul du score
-	 */
-	private final static double SCORE_MAX_ABSENCES = 365;
-	
 	/**
 	 * Constructeur de la classe Student
 	 * @param FORENAME
@@ -148,35 +142,6 @@ public abstract class Student extends Person {
 	public String toString() {
 		return super.toString() + " (moyenne: " + this.moyennes + ", promo: " + this.PROMO + ", absences: " + this.nbAbsences + ")";
 	}
-	
-	/**
-	 * Méthode qui calcule un score pour l'étudiant pour un tutorat
-	 * Plus le score est grand, plus l'étudiant est considéré comme meilleur
-	 * Les critères pris en compte sont:
-	 * - La promo
-	 * - La moyenne
-	 * - Le nombre d'absences
-	 * @return
-	 */
-	public double getScore(Tutoring tutoring) {
-		/** Variable qui représente l'écart des scores entre les différentes promos */
-		double promoScoreGap = (SCORE_MAX_ABSENCES / tutoring.getAbsenceWidth()) + 21;
-		
-		double nbAbsencesCopy = nbAbsences;
-		
-		if (nbAbsencesCopy > SCORE_MAX_ABSENCES) {
-			nbAbsencesCopy = SCORE_MAX_ABSENCES;
-		}
-		return PROMO * promoScoreGap + getMoyenne(tutoring.getSubject()) * tutoring.getMoyenneWidth()- (nbAbsencesCopy / tutoring.getAbsenceWidth());
-	}
-	
-	/**
-	 * Méthode qui calcule un score pour l'étudiant avec les poids par défaut
-	 * @return
-	 */
-	public double getScore() {
-		return getScore(new Tutoring(Subject.R101));
-	}
 
 	/**
 	 * Retourne le nombre d'absence d'un etudiant
@@ -212,15 +177,6 @@ public abstract class Student extends Person {
 	 */
 	public Motivation getMotivation(Tutoring tutoring) {
 		return motivations.containsKey(tutoring) ? motivations.get(tutoring) : Motivation.NEUTRAL;
-	}
-	
-	/**
-	 * Méthode pour avoir les points bonus de motivation d'un étudiant.
-	 * @param student
-	 * @return
-	 */
-	public double getBonusPoints(Tutoring tutoring) {
-		return motivations.containsKey(tutoring) ? motivations.get(tutoring).getBonusPoints() : Motivation.NEUTRAL.getBonusPoints();
 	}
 	
 	/**

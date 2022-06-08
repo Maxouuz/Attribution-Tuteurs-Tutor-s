@@ -37,6 +37,12 @@ public class Tutoring {
 	/** Variable qui représente le nombre d'absences qu'il faut pour perdre un point de score */
 	private double absenceWidth;
 	
+	/** 
+	 * Variable qui représente la limite du nombre d'absences
+	 * pris en compte dans le calcul du score
+	 */
+	public final static double SCORE_MAX_ABSENCES = 365;
+	
 	/**
 	 * Constructeur Tutoring avec le poids des moyennes et absences données
 	 * en paramètre
@@ -204,10 +210,31 @@ public class Tutoring {
 	}
 	
 	/**
+	 * Méthode qui calcule un score pour l'étudiant pour un tutorat
+	 * Plus le score est grand, plus l'étudiant est considéré comme meilleur
+	 * Les critères pris en compte sont:
+	 * - La promo
+	 * - La moyenne
+	 * - Le nombre d'absences
+	 * @return
+	 */
+	public double getScore(Student student) {
+		/** Variable qui représente l'écart des scores entre les différentes promos */
+		double promoScoreGap = (SCORE_MAX_ABSENCES / absenceWidth) + 21;
+		
+		double nbAbsencesCopy = student.getNbAbsences();
+		
+		if (nbAbsencesCopy > SCORE_MAX_ABSENCES) {
+			nbAbsencesCopy = SCORE_MAX_ABSENCES;
+		}
+		return student.getPromo() * promoScoreGap + student.getMoyenne(subject) * moyenneWidth - (nbAbsencesCopy / absenceWidth);
+	}
+	
+	/**
 	 * Retourne le poids d'une arête pour un tuteur et un tutoré
 	 */
 	public double getWidthArete(Student tutee, Student tutor) {
-		return (tutor.getScore(this) + tutor.getBonusPoints(this)) * (tutee.getScore(this) - tutee.getBonusPoints(this));
+		return (getScore(tutor) + tutor.getMotivation(this).getBonusPoints()) * (getScore(tutee) - tutee.getMotivation(this).getBonusPoints());
 	}
 	
 	/**

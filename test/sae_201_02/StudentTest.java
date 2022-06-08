@@ -18,7 +18,10 @@ import org.junit.jupiter.api.Test;
  *
  */
 class StudentTest {
-
+	
+	/** Attribut tutoring utilisé pour tester les scores */
+	static Tutoring emptyTutoring = new Tutoring(Subject.R101);
+	
 	@Test
 	void equalsTest() throws ExceptionPromo {
 		Student st1 = Student.createStudent("Jean", "Dupont", 1, 0, 6.9);
@@ -41,9 +44,9 @@ class StudentTest {
 		Student st3 = Student.createStudent("Franck", "Hebert", 3, 1, 10);
 
 		// Note supérieure
-		assertTrue(st1.getScore() > st2.getScore());
+		assertTrue(emptyTutoring.getScore(st1) > emptyTutoring.getScore(st2));
 		// Score moins bon pour un étudiant ayant des absences
-		assertTrue(st3.getScore() < st1.getScore());
+		assertTrue(emptyTutoring.getScore(st3) < emptyTutoring.getScore(st1));
 	}
 
 	@Test
@@ -85,13 +88,13 @@ class StudentTest {
 		// Étudiant de 2ème année avec le score le plus mauvais possible
 		Student st2 = Student.createStudent("Hugues", "Bigot", 2, Integer.MAX_VALUE, 0);
 
-		assertTrue(st1.getScore() < st2.getScore());
+		assertTrue(emptyTutoring.getScore(st1) < emptyTutoring.getScore(st2));
 
 		// Étudiant de 2ème année avec le score le plus haut possible
 		Student st3 = Student.createStudent("Charles", "Letellier", 2, 0, 20);
 		// Étudiant de 3èle année avec le score le plus mauvais possible
 		Student st4 = Student.createStudent("Franck", "Hebert", 3, Integer.MAX_VALUE, 0);
-		assertTrue(st3.getScore() < st4.getScore());
+		assertTrue(emptyTutoring.getScore(st3) < emptyTutoring.getScore(st4));
 	}
 
 	@Test

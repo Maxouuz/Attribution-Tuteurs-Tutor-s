@@ -31,7 +31,7 @@ public class ScoreComparator implements Comparator<Student> {
 	
 	@Override
 	public int compare(Student student1, Student student2) {
-		return (int) Math.floor(student1.getScore(tutoring) - student2.getScore(tutoring));
+		return (int) Math.floor(tutoring.getScore(student1) - tutoring.getScore(student2));
 	}
 	
 }
