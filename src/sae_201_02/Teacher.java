@@ -2,6 +2,7 @@ package sae_201_02;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -12,6 +13,8 @@ import java.util.Set;
 public class Teacher extends Person {
 	/** Liste des matières que le professeur enseigne */
 	private final Set<Subject> subjectsTeached;
+	/** Hash du mot de passe du professeur pour se connecter au tutorat */
+	private final int password;
 	
 	/**
 	 * Constructeur de la classe Teacher
@@ -19,16 +22,17 @@ public class Teacher extends Person {
 	 * @param NAME
 	 * @param subjectsTeached
 	 */
-	public Teacher(String FORENAME, String NAME, Collection<? extends Subject> subjectsTeached) {
+	public Teacher(String FORENAME, String NAME, Collection<? extends Subject> subjectsTeached, String password) {
 		super(Person.getNonUsedINE(), FORENAME, NAME);
 		this.subjectsTeached = new LinkedHashSet<>(subjectsTeached);
+		this.password = Objects.hash(password);
 	}
 	
 	/**
 	 * Constructeur surchargé de la classe Teacher
 	 */
-	public Teacher(String FORENAME, String NAME) {
-		this(FORENAME, NAME, new LinkedHashSet<>());
+	public Teacher(String FORENAME, String NAME, String password) {
+		this(FORENAME, NAME, new LinkedHashSet<>(), password);
 	}
 	
 	/**
@@ -53,6 +57,15 @@ public class Teacher extends Person {
 	 */
 	public Set<Subject> getSubjectsTeached() {
 		return new LinkedHashSet<Subject>(subjectsTeached);
+	}
+
+	/**
+	 * Renvoie true si la chaîne donné en paramètre est égal au mot de passe du professeur
+	 * @param entry
+	 * @return
+	 */
+	public boolean checkPassword(String entry) {
+		return password == Objects.hash(entry);
 	}
 }
 

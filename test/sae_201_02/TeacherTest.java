@@ -20,7 +20,7 @@ class TeacherTest {
 	 * Initialisation de la variable test
 	 */
 	public void initialization() {
-		teacher = new Teacher("Jean", "Dupont");
+		teacher = new Teacher("Jean", "Dupont", "mdp123");
 	}
 	
 	@Test
@@ -36,5 +36,11 @@ class TeacherTest {
 		assertFalse(teacher.removeSubjectTeached(Subject.R102));
 		assertTrue(teacher.removeSubjectTeached(Subject.R101));
 		assertFalse(teacher.getSubjectsTeached().contains(Subject.R102));
+	}
+	
+	@Test
+	void passwordTest() {
+		assertTrue(teacher.checkPassword("mdp123"));
+		assertFalse(teacher.checkPassword("password"));
 	}
 }
