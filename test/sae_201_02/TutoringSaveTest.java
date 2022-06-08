@@ -12,6 +12,11 @@ import org.json.JSONException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Classe de test pour la classe TutoringSave
+ * @author nathan.hallez.etu
+ *
+ */
 public class TutoringSaveTest {
 	/** Variable qui représente le tutorat */
 	private static Tutoring tutoring;
