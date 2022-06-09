@@ -15,7 +15,7 @@ public class Example {
 	private Example() {};
 	
 	/** Instance de Tutoring qui contient des exemples de graphes */
-	private static Tutoring tutoringShort;
+	private static Tutoring tutoring;
 	/** Variables de tuteurs */
 	private static Student tutor1, tutor2, tutor3, tutor4, tutor5;
 	/** Variables de tutorés */
@@ -25,8 +25,8 @@ public class Example {
 	 * Initialise le tutorat et les étudiants
 	 * @throws ExceptionPromo
 	 */
-	private static void initialize() throws ExceptionPromo {
-		tutoringShort = new Tutoring(Subject.R101);
+	private static void initializeDefault() throws ExceptionPromo {
+		tutoring = new Tutoring(Subject.R101);
 
 		tutor1 = Student.createStudent("Sophie", "Vallee", 2, 3, 15.5);
 		tutor2 = Student.createStudent("Nicolas", "Roche", 3, 6, 16.5);
@@ -42,14 +42,30 @@ public class Example {
 		tutee6 = Student.createStudent("Juliette", "Traore", 1, 30, 12);
 		tutee7 = Student.createStudent("Franck", "Hebert", 1, 5, 2.5);
 		
-		tutoringShort.addAllStudents(tutor1, tutor2, tutor3, tutor4, tutor5,
+		tutoring.addAllStudents(tutor1, tutor2, tutor3, tutor4, tutor5,
 				 tutee1, tutee2, tutee3, tutee4, tutee5, tutee6, tutee7);
 	
-		tutor4.setMotivation(tutoringShort, Motivation.MOTIVATED);
-		tutee2.setMotivation(tutoringShort, Motivation.NOT_MOTIVATED);
-		tutee3.setMotivation(tutoringShort, Motivation.MOTIVATED);
-		tutee5.setMotivation(tutoringShort, Motivation.NOT_MOTIVATED);
-		tutee6.setMotivation(tutoringShort, Motivation.MOTIVATED);
+		tutor4.setMotivation(tutoring, Motivation.MOTIVATED);
+		tutee2.setMotivation(tutoring, Motivation.NOT_MOTIVATED);
+		tutee3.setMotivation(tutoring, Motivation.MOTIVATED);
+		tutee5.setMotivation(tutoring, Motivation.NOT_MOTIVATED);
+		tutee6.setMotivation(tutoring, Motivation.MOTIVATED);
+	}
+	
+	private static void loadTutoringArgs(String[] args) throws ExceptionPromo {
+		if (args.length == 0) {
+			initializeDefault();
+		} else  {
+			try {
+				tutoring = TutoringSave.load(new File(args[0]));
+			} catch (IOException e) {
+				System.out.println("Chemin invalide");
+			} catch (JSONException | ExceptionPromo | ExceptionNotInTutoring
+					| ExceptionTooManyAssignments e) {
+				System.out.println("Erreur de format:\n");
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/**
@@ -60,27 +76,29 @@ public class Example {
 	 * @throws ExceptionTooManyAssignments
 	 */
 	public static void main(String[] args) throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
-		initialize();
+		loadTutoringArgs(args);
 		
 		System.out.println("--- AFFECTATION PAR DÉFAUT ---\n");
-		tutoringShort.createAssignments();
-		System.out.println(tutoringShort.toStringTutors());
+		tutoring.createAssignments();
+		System.out.println(tutoring.toStringTutors());
 		
-		System.out.println("\n--- AFFECTATION AVEC AFFECTATION MANUELLE ---\n");
-		tutee6.forceAssignment(tutoringShort, tutor5);
-		tutoringShort.createAssignments();
-		System.out.println(tutoringShort.toStringTutors());
-		
-		System.out.println("\n--- AFFECTATION AVEC AFFECTATION ANNULÉE ---\n");
-		tutee4.doNotAssign(tutoringShort, tutor3);
-		tutoringShort.createAssignments();
-		System.out.println(tutoringShort.toStringTutors());
+		if (args.length == 0) {
+			System.out.println("\n--- AFFECTATION AVEC AFFECTATION MANUELLE ---\n");
+			tutee6.forceAssignment(tutoring, tutor5);
+			tutoring.createAssignments();
+			System.out.println(tutoring.toStringTutors());
+			
+			System.out.println("\n--- AFFECTATION AVEC AFFECTATION ANNULÉE ---\n");
+			tutee4.doNotAssign(tutoring, tutor3);
+			tutoring.createAssignments();
+			System.out.println(tutoring.toStringTutors());
+		}
 		
 		String path = System.getProperty("user.dir") + File.separator + "res" + File.separator;
-		Person.resetUsedINE();
 		File save = new File(path + "tutoring_save.json");
 		try {
-			TutoringSave.save(tutoringShort, save);
+			TutoringSave.save(tutoring, save);
+			System.out.println("Tutorat sauvegardé!");
 		} catch (JSONException | IOException e) {
 			e.printStackTrace();
 		}
