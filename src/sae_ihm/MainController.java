@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.json.JSONException;
 
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -46,7 +46,7 @@ public class MainController {
 	@FXML TableColumn<Student, String> nameCol;
 	@FXML TableColumn<Student, Integer> promoCol;
 	@FXML TableColumn<Student, Integer> absencesCol;
-	@FXML TableColumn<Student, Integer> assignmentsCol;
+	@FXML TableColumn<Student, String> assignmentsCol;
 	
 	@FXML VBox rightSide;
 	@FXML VBox profileView;
@@ -239,7 +239,7 @@ public class MainController {
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 		promoCol.setCellValueFactory(new PropertyValueFactory<>("promo"));
 		absencesCol.setCellValueFactory(new PropertyValueFactory<>("nbAbsences"));
-		assignmentsCol.setCellValueFactory(param -> new SimpleIntegerProperty(param.getValue().getAssignments(tutoring).size()).asObject());
+		assignmentsCol.setCellValueFactory(student -> new SimpleStringProperty(toStringAssignmentsCol(student.getValue())));
 		
 		studentsTable.getSelectionModel().selectedItemProperty().addListener(e -> studentSelected());
 		
@@ -306,5 +306,19 @@ public class MainController {
     	tutoring.createAssignments();
     	if (selected != null) updateProfileView();
     	updateTable();
+    }
+    
+    @FXML
+    public String toStringAssignmentsCol(Student student) {
+    	String res;
+    	
+    	if (student.isTutee() && !student.getAssignments(tutoring).isEmpty()) {
+    		Student tutor = (Student) student.getAssignments(tutoring).toArray()[0];
+    		res = tutor.getForename() + " " + tutor.getName();
+    	} else {
+    		res = ""+student.getAssignments(tutoring).size();
+    	}
+    	
+    	return res;
     }
 }
