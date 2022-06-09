@@ -94,11 +94,11 @@ public class Example {
 			System.out.println(tutoring.toStringTutors());
 		}
 		
-		String path = System.getProperty("user.dir") + File.separator + "res" + File.separator;
-		File save = new File(path + "tutoring_save.json");
+		String filename = "tutoring_save.json";
+		File save = new File(filename);
 		try {
 			TutoringSave.save(tutoring, save);
-			System.out.println("Tutorat sauvegardé!");
+			System.out.println("Tutorat sauvegardé dans le fichier " + filename);
 		} catch (JSONException | IOException e) {
 			e.printStackTrace();
 		}
