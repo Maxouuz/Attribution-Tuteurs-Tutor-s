@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Classe de test pour la classe TutoringSave
- * @author nathan.hallez.etu
+ * @author Rémi VAUTIER, Nathan HALLEZ, Maxence STIEVENARD
  *
  */
 public class TutoringSaveTest {
