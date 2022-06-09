@@ -13,8 +13,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -65,6 +67,15 @@ public class MainController {
 	@FXML RadioButton normalNote;
 	@FXML RadioButton importantNote;
 	
+	@FXML Slider sliderMaxNote;
+	@FXML Slider sliderMinNote;
+	@FXML Slider sliderAbsencesMax;
+	
+	@FXML TextField fieldMaxAssignments;
+	@FXML TextField fieldMaxNote;
+	@FXML TextField fieldMinNote;
+	@FXML TextField fieldAbsencesMax;
+	
 	Student selected;
 	
 	Tutoring tutoring;
@@ -96,6 +107,49 @@ public class MainController {
 	    	} else {
 	    		tutoring.setAbsenceWidth(3);
 	    	}
+		}
+	}
+	
+	class UpdateTextField implements ChangeListener<Number> {
+		private TextField tfield;
+		private int round;
+		
+		public UpdateTextField(TextField tfield, int round) {
+			this.tfield = tfield;
+			this.round = round;
+		}
+		
+		public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+			double tfValue = newValue.doubleValue();
+			tfValue = Math.round(tfValue * Math.pow(10, round)) / Math.pow(10, round);
+			if (Double.valueOf(tfield.getText()) != tfValue) {
+				tfield.setText("" + tfValue);
+			}
+		}
+	}
+	
+	class UpdateSlider implements ChangeListener<String> {
+		private Slider slider;
+		private int round;
+		
+		public UpdateSlider(Slider slider, int round) {
+			this.slider = slider;
+			this.round = round;
+		}
+		
+		public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {	
+			try {
+				double tfValue = Double.valueOf(newValue);
+	
+				if (tfValue < slider.getMin()) {
+					tfValue = slider.getMin();
+				}
+				
+				tfValue = Math.round(tfValue * Math.pow(10, round)) / Math.pow(10, round);
+				if (slider.getValue() != tfValue) {
+					slider.setValue(tfValue);
+				}
+			} catch(NumberFormatException e) { System.out.println("invalide"); } // S'enclenche quand l'entrée ne peut pas être converti en nombre
 		}
 	}
 	
@@ -172,6 +226,19 @@ public class MainController {
 		
 		widthAbsences.selectedToggleProperty().addListener(new WidthAbsencesListener());
 		widthMoyenne.selectedToggleProperty().addListener(new WidthMoyenneListener());
+		
+		sliderMaxNote.valueProperty().addListener(new UpdateTextField(fieldMaxNote, 2));
+		sliderMinNote.valueProperty().addListener(new UpdateTextField(fieldMinNote, 2));
+		sliderAbsencesMax.valueProperty().addListener(new UpdateTextField(fieldAbsencesMax, 0));
+		
+		fieldMaxNote.textProperty().addListener(new UpdateSlider(sliderMaxNote, 2));
+		fieldMinNote.textProperty().addListener(new UpdateSlider(sliderMinNote, 2));
+		fieldAbsencesMax.textProperty().addListener(new UpdateSlider(sliderAbsencesMax, 0));
+		
+		fieldMaxAssignments.setText(""+tutoring.getMaxTuteesForTutor());
+		fieldMaxNote.setText("20");
+		fieldMinNote.setText("0");
+		fieldAbsencesMax.setText(""+tutoring.getAbsenceWidth());
     }
     
     @FXML
@@ -203,6 +270,11 @@ public class MainController {
     
     @FXML
     public void computeAssignments() throws ExceptionPromo {
+    	// TODO: Vérifier l'entrée de fieldMaxAssignments
+    	tutoring.setMaxTuteesForTutor(Integer.valueOf(fieldMaxAssignments.getText()));
+    	tutoring.setMoyenneMaxTutee(sliderMaxNote.getValue());
+    	tutoring.setMoyenneMinTutor(sliderMinNote.getValue());
+    	tutoring.setNbAbsencesMax((int) sliderAbsencesMax.getValue());
     	tutoring.createAssignments();
     	if (selected != null) updateProfileView();
     	updateTables();
