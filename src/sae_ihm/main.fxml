@@ -62,7 +62,7 @@
                         <Tab fx:id="tabTutees" text="Voir les tutorés" />
                     </tabs>
                   </TabPane>
-                  <TextField promptText="Rechercher un étudiant..." />
+                  <TextField fx:id="searchBar" promptText="Rechercher un étudiant..." />
                   <TableView fx:id="studentsTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="264.0" prefWidth="296.0" VBox.vgrow="ALWAYS">
                     <columns>
                       <TableColumn fx:id="forenameCol" prefWidth="75.0" text="Prénom" />

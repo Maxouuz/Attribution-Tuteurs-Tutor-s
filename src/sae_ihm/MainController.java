@@ -6,9 +6,11 @@ import java.util.Set;
 
 import org.json.JSONException;
 
+import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -79,6 +81,8 @@ public class MainController {
 	@FXML TextField fieldMaxNote;
 	@FXML TextField fieldMinNote;
 	@FXML TextField fieldAbsencesMax;
+	
+	@FXML TextField searchBar;
 	
 	Student selected;
 	
@@ -154,6 +158,26 @@ public class MainController {
 					slider.setValue(tfValue);
 				}
 			} catch(NumberFormatException e) { System.out.println("invalide"); } // S'enclenche quand l'entrée ne peut pas être converti en nombre
+		}
+	}
+	
+	class SearchBarListener implements ChangeListener<String> {
+		public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+			updateTable();
+			int i = 0;
+	    	while (i < studentsTable.getItems().size()) {
+	    		String entry = newValue.toLowerCase();
+	    		String forename = studentsTable.getItems().get(i).getForename().toLowerCase();
+	    		String name = studentsTable.getItems().get(i).getName().toLowerCase();
+	    		String forenameName = forename + " " + name;
+	    		String nameForename = name + " " + forename;
+	    		if (!forenameName.contains(entry) && !nameForename.contains(entry)) {
+	    			studentsTable.getItems().remove(i);
+	    		} else {
+	    			i++;
+	    		}
+	    	}
+	    	
 		}
 	}
 	
@@ -263,11 +287,14 @@ public class MainController {
 		fieldAbsencesMax.setText(""+tutoring.getAbsenceWidth());
 		
 		tabFilter.getSelectionModel().selectedItemProperty().addListener(e -> {
+			searchBar.setText("");
 			updateTable();
 		});
+		
+		searchBar.textProperty().addListener(new SearchBarListener());
     }
-    
-    @FXML
+
+	@FXML
     public void openTutoring() {
     	FileChooser fileChooser = new FileChooser();
     	File choice = fileChooser.showOpenDialog(studentsTable.getScene().getWindow());
