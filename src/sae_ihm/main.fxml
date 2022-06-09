@@ -135,12 +135,12 @@
                               </ImageView>
                               <VBox>
                                  <children>
-                                    <Label text="Prénom Nom">
+                                    <Label fx:id="labelName" text="Prénom Nom">
                                        <font>
                                           <Font size="15.0" />
                                        </font>
                                     </Label>
-                                    <Label text="prenom.nomID.etu@univ-lille.fr" />
+                                    <Label fx:id="labelMail" text="prenom.nomID.etu@univ-lille.fr" />
                                  </children>
                               </VBox>
                               <Region HBox.hgrow="ALWAYS" />
@@ -172,11 +172,11 @@
                                     <Label text="Moyenne:" />
                                     <Label text="Promotion:" GridPane.rowIndex="1" />
                                     <Label text="Absences:" GridPane.rowIndex="2" />
-                                    <Label text="0" GridPane.columnIndex="1" />
-                                    <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label fx:id="labelMoyenne" text="0" GridPane.columnIndex="1" />
+                                    <Label fx:id="labelPromo" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <Label text="Motivation:" GridPane.rowIndex="3" />
-                                    <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Label fx:id="labelAbsences" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <ChoiceBox fx:id="cbMotivation" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                     <Button mnemonicParsing="false" text="Supprimer l'étudiant" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4">
                                        <cursor>
                                           <Cursor fx:constant="OPEN_HAND" />
@@ -187,28 +187,29 @@
                                  </HBox.margin>
                               </GridPane>
                               <Separator orientation="VERTICAL" prefHeight="275.0" prefWidth="29.0" HBox.hgrow="ALWAYS" />
-                              <GridPane HBox.hgrow="ALWAYS">
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
+                              <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label text="Affectations:" GridPane.columnSpan="2" GridPane.valignment="TOP" />
-                                    <Button mnemonicParsing="false" text="Affecter à un autre étudiant" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                    <Label maxWidth="1.7976931348623157E308" text="Affectations:">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <GridPane fx:id="gridAssignments" VBox.vgrow="ALWAYS">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                    </GridPane>
+                                    <Button mnemonicParsing="false" text="Affecter à un autre étudiant">
                                        <cursor>
                                           <Cursor fx:constant="OPEN_HAND" />
                                        </cursor>
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" />
+                                       </VBox.margin>
                                     </Button>
-                                    <Label text="Aucune affectation" GridPane.columnSpan="2" GridPane.rowIndex="1" />
                                  </children>
-                              </GridPane>
+                              </VBox>
                            </children>
                         </HBox>
                      </children>
@@ -296,7 +297,7 @@
                               <TextField text="6" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                            </children>
                         </GridPane>
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="186.0" text="Calculer l'affectation" VBox.vgrow="ALWAYS">
+                        <Button alignment="CENTER" mnemonicParsing="false" onAction="#computeAssignments" prefHeight="40.0" prefWidth="186.0" text="Calculer l'affectation" VBox.vgrow="ALWAYS">
                            <cursor>
                               <Cursor fx:constant="OPEN_HAND" />
                            </cursor>

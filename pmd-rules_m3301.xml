@@ -227,7 +227,6 @@
 <rule ref="category/java/multithreading.xml/AvoidSynchronizedAtMethodLevel"/>
 <rule ref="category/java/multithreading.xml/DontCallThreadRun"/>
 <rule ref="category/java/multithreading.xml/UseNotifyAllInsteadOfNotify"/>
-<rule ref="category/java/performance.xml/AddEmptyString"/>
 <rule ref="category/java/performance.xml/AvoidArrayLoops"/>
 <rule ref="category/java/performance.xml/AvoidCalendarDateCreation"/>
 <rule ref="category/java/performance.xml/ConsecutiveAppendsShouldReuse"/>

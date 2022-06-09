@@ -24,6 +24,8 @@ public class TutoringApplication extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Affectation de tutorat");
+        stage.setMinWidth(360);
+        stage.setMinHeight(550);        
         stage.show();
 	}
 
