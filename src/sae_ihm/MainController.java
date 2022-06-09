@@ -12,8 +12,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -52,13 +55,47 @@ public class MainController {
 	
 	@FXML GridPane gridAssignments; 
 	
+	@FXML ToggleGroup widthAbsences;
+	@FXML RadioButton notImportantAbsences;
+	@FXML RadioButton normalAbsences;
+	@FXML RadioButton importantAbsences;
+	
+	@FXML ToggleGroup widthMoyenne;
+	@FXML RadioButton notImportantNote;
+	@FXML RadioButton normalNote;
+	@FXML RadioButton importantNote;
+	
 	Student selected;
 	
 	Tutoring tutoring;
 	
-	class motivationListener implements ChangeListener<Motivation> {
+	class MotivationListener implements ChangeListener<Motivation> {
 		public void changed(ObservableValue<? extends Motivation> observable, Motivation oldValue, Motivation newValue) {
-	    	selected.setMotivation(tutoring, cbMotivation.getSelectionModel().getSelectedItem());
+	    	selected.setMotivation(tutoring, newValue);
+		}
+	}
+	
+	class WidthAbsencesListener implements ChangeListener<Toggle> {
+		public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+	    	if (newValue == notImportantAbsences) {
+	    		tutoring.setAbsenceWidth(1);
+	    	} else if (newValue == normalAbsences) {
+	    		tutoring.setAbsenceWidth(2);
+	    	} else {
+	    		tutoring.setAbsenceWidth(3);
+	    	}
+		}
+	}
+	
+	class WidthMoyenneListener implements ChangeListener<Toggle> {
+		public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+			if (newValue == notImportantNote) {
+	    		tutoring.setAbsenceWidth(1);
+	    	} else if (newValue == normalNote) {
+	    		tutoring.setAbsenceWidth(2);
+	    	} else {
+	    		tutoring.setAbsenceWidth(3);
+	    	}
 		}
 	}
 	
@@ -131,7 +168,10 @@ public class MainController {
 		closeProfileView();
 		
 		cbMotivation.getItems().addAll(Motivation.values());
-		cbMotivation.getSelectionModel().selectedItemProperty().addListener(new motivationListener());
+		cbMotivation.getSelectionModel().selectedItemProperty().addListener(new MotivationListener());
+		
+		widthAbsences.selectedToggleProperty().addListener(new WidthAbsencesListener());
+		widthMoyenne.selectedToggleProperty().addListener(new WidthMoyenneListener());
     }
     
     @FXML

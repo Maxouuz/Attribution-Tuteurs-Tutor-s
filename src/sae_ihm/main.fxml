@@ -244,20 +244,20 @@
                            <children>
                               <Label text="Poids des absences:" GridPane.columnSpan="2" />
                               <Label text="Poids de la note:" GridPane.columnSpan="2" GridPane.rowIndex="2" />
-                              <RadioButton mnemonicParsing="false" text="Peu important" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                              <RadioButton fx:id="notImportantAbsences" mnemonicParsing="false" text="Peu important" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="widthAbsences" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton mnemonicParsing="false" selected="true" text="Normal" toggleGroup="$widthAbsences" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <RadioButton mnemonicParsing="false" text="Important" toggleGroup="$widthAbsences" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                              <RadioButton mnemonicParsing="false" text="Peu important" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                              <RadioButton fx:id="normalAbsences" mnemonicParsing="false" selected="true" text="Normal" toggleGroup="$widthAbsences" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <RadioButton fx:id="importantAbsences" mnemonicParsing="false" text="Important" toggleGroup="$widthAbsences" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                              <RadioButton fx:id="notImportantNote" mnemonicParsing="false" text="Peu important" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="widthMoyenne" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton mnemonicParsing="false" selected="true" text="Normal" toggleGroup="$widthMoyenne" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <RadioButton mnemonicParsing="false" text="Important" toggleGroup="$widthMoyenne" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                              <RadioButton fx:id="normalNote" mnemonicParsing="false" selected="true" text="Normal" toggleGroup="$widthMoyenne" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <RadioButton fx:id="importantNote" mnemonicParsing="false" text="Important" toggleGroup="$widthMoyenne" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
                            </children>
                         </GridPane>
                         <Separator prefWidth="200.0" VBox.vgrow="ALWAYS">
