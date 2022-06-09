@@ -14,13 +14,14 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -34,10 +35,13 @@ import sae_201_02.Tutoring;
 import sae_201_02.TutoringSave;
 
 public class MainController {
-	@FXML TableView<Student> allTable;
-	@FXML TableView tutorsTable;
-	@FXML TableView tuteesTable;
+	@FXML TableView<Student> studentsTable;
 	 
+	@FXML TabPane tabFilter;
+	@FXML Tab tabAll;
+	@FXML Tab tabTutors;
+	@FXML Tab tabTutees;
+	
 	@FXML TableColumn<Student, String> forenameCol;
 	@FXML TableColumn<Student, String> nameCol;
 	@FXML TableColumn<Student, Integer> promoCol;
@@ -163,18 +167,28 @@ public class MainController {
 		}
 	}
 	
-	public void updateTables() {
-		allTable.getItems().clear();
-		forenameCol.setCellValueFactory(new PropertyValueFactory<>("forename"));
-		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-		promoCol.setCellValueFactory(new PropertyValueFactory<>("promo"));
-		absencesCol.setCellValueFactory(new PropertyValueFactory<>("nbAbsences"));
-		assignmentsCol.setCellValueFactory(param -> new SimpleIntegerProperty(param.getValue().getAssignments(tutoring).size()).asObject());
-		allTable.getItems().addAll(tutoring.getTutees());
-		allTable.getItems().addAll(tutoring.getTutors());
+	public void updateTable() {
+		studentsTable.getItems().clear();
+		Tab tabSelected = tabFilter.getSelectionModel().getSelectedItem();
+		
+		if (tabSelected == tabTutees) {
+			studentsTable.getColumns().remove(promoCol);
+			studentsTable.getItems().addAll(tutoring.getTutees());
+		} else {
+			if (!studentsTable.getColumns().contains(promoCol)) studentsTable.getColumns().add(2, promoCol);
+			if (tabSelected == tabAll) {
+				Set<Student> students = tutoring.getTutors();
+				students.addAll(tutoring.getTutees());
+				studentsTable.getItems().addAll(students);
+			} else {
+				studentsTable.getItems().addAll(tutoring.getTutors());
+			}
+		}
 	}
 	
 	public void updateProfileView() {
+		if (profileView.getParent() == null) rightSide.getChildren().add(0, profileView);
+		
 		labelName.setText(selected.getForename() + " " + selected.getName());
     	labelMail.setText(selected.getLogin() + "@univ-lille.fr");
     	labelMoyenne.setText(""+selected.getMoyenne(tutoring.getSubject()));
@@ -209,17 +223,25 @@ public class MainController {
     	}
 	}
 	
-    public void initialize() throws ExceptionPromo {
+    public void initialize() throws ExceptionPromo {    	
 		try {
 			File testFilePath = new File(System.getProperty("user.dir") + File.separator + "res" + File.separator + "tutoring_save.json");
 			tutoring = TutoringSave.load(testFilePath);
-			updateTables();
+			updateTable();
 		} catch (IOException e) {
 			System.out.println("Fichier de test non trouvé");
 		} catch (JSONException | ExceptionPromo | ExceptionNotInTutoring | ExceptionTooManyAssignments e) {
 			e.printStackTrace();
 		}
 		closeProfileView();
+		
+		forenameCol.setCellValueFactory(new PropertyValueFactory<>("forename"));
+		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+		promoCol.setCellValueFactory(new PropertyValueFactory<>("promo"));
+		absencesCol.setCellValueFactory(new PropertyValueFactory<>("nbAbsences"));
+		assignmentsCol.setCellValueFactory(param -> new SimpleIntegerProperty(param.getValue().getAssignments(tutoring).size()).asObject());
+		
+		studentsTable.getSelectionModel().selectedItemProperty().addListener(e -> studentSelected());
 		
 		cbMotivation.getItems().addAll(Motivation.values());
 		cbMotivation.getSelectionModel().selectedItemProperty().addListener(new MotivationListener());
@@ -239,16 +261,20 @@ public class MainController {
 		fieldMaxNote.setText("20");
 		fieldMinNote.setText("0");
 		fieldAbsencesMax.setText(""+tutoring.getAbsenceWidth());
+		
+		tabFilter.getSelectionModel().selectedItemProperty().addListener(e -> {
+			updateTable();
+		});
     }
     
     @FXML
     public void openTutoring() {
     	FileChooser fileChooser = new FileChooser();
-    	File choice = fileChooser.showOpenDialog(allTable.getScene().getWindow());
+    	File choice = fileChooser.showOpenDialog(studentsTable.getScene().getWindow());
     	try {
     		Student.resetUsedINE();
 			tutoring = TutoringSave.load(choice);
-			updateTables();
+			updateTable();
 		} catch (JSONException | IOException | ExceptionPromo | ExceptionNotInTutoring
 				| ExceptionTooManyAssignments e) {
 			e.printStackTrace();
@@ -256,10 +282,12 @@ public class MainController {
     }
     
     @FXML
-    public void studentSelected(MouseEvent event) {
-    	selected = allTable.getSelectionModel().getSelectedItem();
-    	if (profileView.getParent() == null) rightSide.getChildren().add(0, profileView);
-    	updateProfileView();
+    public void studentSelected() {
+    	Student selection = studentsTable.getSelectionModel().getSelectedItem();
+    	if (selection != null) {
+    		selected = selection;
+    		updateProfileView();
+    	}
     }
     
     @FXML
@@ -277,6 +305,6 @@ public class MainController {
     	tutoring.setNbAbsencesMax((int) sliderAbsencesMax.getValue());
     	tutoring.createAssignments();
     	if (selected != null) updateProfileView();
-    	updateTables();
+    	updateTable();
     }
 }

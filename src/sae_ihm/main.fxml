@@ -53,72 +53,30 @@
       </MenuBar>
       <SplitPane dividerPositions="0.4757142857142857" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
          <items>
-            <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
-              <tabs>
-                <Tab text="Tous">
-                     <content>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <TextField promptText="Rechercher un étudiant..." />
-                              <TableView fx:id="allTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#studentSelected" prefHeight="264.0" prefWidth="296.0" VBox.vgrow="ALWAYS">
-                                <columns>
-                                  <TableColumn fx:id="forenameCol" prefWidth="75.0" text="Prénom" />
-                                  <TableColumn fx:id="nameCol" prefWidth="81.0" text="Nom" />
-                                    <TableColumn fx:id="promoCol" prefWidth="69.0" text="Année" />
-                                    <TableColumn fx:id="absencesCol" prefWidth="69.0" text="Abs" />
-                                    <TableColumn fx:id="assignmentsCol" prefWidth="69.0" text="Affectations" />
-                                </columns>
-                                 <columnResizePolicy>
-                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                 </columnResizePolicy>
-                              </TableView>
-                           </children>
-                        </VBox>
-                     </content>
-                </Tab>
-                  <Tab text="Voir les tuteurs">
-                     <content>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <TextField promptText="Rechercher un étudiant..." />
-                              <TableView fx:id="tutorsTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="264.0" prefWidth="296.0" VBox.vgrow="ALWAYS">
-                                 <columns>
-                                    <TableColumn prefWidth="75.0" text="Prénom" />
-                                    <TableColumn prefWidth="81.0" text="Nom" />
-                                    <TableColumn prefWidth="69.0" text="Année" />
-                                    <TableColumn prefWidth="69.0" text="Abs" />
-                                    <TableColumn prefWidth="69.0" text="Affectations" />
-                                 </columns>
-                                 <columnResizePolicy>
-                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                 </columnResizePolicy>
-                              </TableView>
-                           </children>
-                        </VBox>
-                     </content>
-                  </Tab>
-                  <Tab text="Voir les tutorés">
-                     <content>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <TextField promptText="Rechercher un étudiant..." />
-                              <TableView fx:id="tuteesTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="264.0" prefWidth="296.0" VBox.vgrow="ALWAYS">
-                                 <columns>
-                                    <TableColumn prefWidth="75.0" text="Prénom" />
-                                    <TableColumn prefWidth="81.0" text="Nom" />
-                                    <TableColumn prefWidth="69.0" text="Abs" />
-                                    <TableColumn prefWidth="69.0" text="Affectation" />
-                                 </columns>
-                                 <columnResizePolicy>
-                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                 </columnResizePolicy>
-                              </TableView>
-                           </children>
-                        </VBox>
-                     </content>
-                  </Tab>
-              </tabs>
-            </TabPane>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <TabPane fx:id="tabFilter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="NEVER">
+                    <tabs>
+                      <Tab fx:id="tabAll" text="Tous" />
+                        <Tab fx:id="tabTutors" text="Voir les tuteurs" />
+                        <Tab fx:id="tabTutees" text="Voir les tutorés" />
+                    </tabs>
+                  </TabPane>
+                  <TextField promptText="Rechercher un étudiant..." />
+                  <TableView fx:id="studentsTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="264.0" prefWidth="296.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                      <TableColumn fx:id="forenameCol" prefWidth="75.0" text="Prénom" />
+                      <TableColumn fx:id="nameCol" prefWidth="81.0" text="Nom" />
+                        <TableColumn fx:id="promoCol" prefWidth="69.0" text="Année" />
+                        <TableColumn fx:id="absencesCol" prefWidth="69.0" text="Abs" />
+                        <TableColumn fx:id="assignmentsCol" prefWidth="69.0" text="Affectations" />
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+               </children>
+            </VBox>
             <VBox fx:id="rightSide">
                <children>
                   <VBox fx:id="profileView" prefHeight="320.0" prefWidth="566.0">
