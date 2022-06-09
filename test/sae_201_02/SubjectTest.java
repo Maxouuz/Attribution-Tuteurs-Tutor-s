@@ -6,7 +6,7 @@ import org.junit.Test;
 
 /**
  * Classe de test sur la classe Subject
- * @author nathan.hallez.etu
+ * @author Rémi VAUTIER, Nathan HALLEZ, Maxence STIEVENARD
  */
 public class SubjectTest {
 	@Test
