@@ -196,9 +196,15 @@
                                     </Label>
                                     <GridPane fx:id="gridAssignments" VBox.vgrow="ALWAYS">
                                       <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" />
                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label text="X" GridPane.columnIndex="1" />
+                                       </children>
                                     </GridPane>
                                     <Button mnemonicParsing="false" text="Affecter à un autre étudiant">
                                        <cursor>
