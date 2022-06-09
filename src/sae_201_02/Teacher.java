@@ -14,7 +14,7 @@ public class Teacher extends Person {
 	/** Liste des matières que le professeur enseigne */
 	private final Set<Subject> subjectsTeached;
 	/** Hash du mot de passe du professeur pour se connecter au tutorat */
-	private final int password;
+	private final int PASSWORD;
 	
 	/**
 	 * Constructeur de la classe Teacher
@@ -25,7 +25,7 @@ public class Teacher extends Person {
 	public Teacher(String FORENAME, String NAME, Collection<? extends Subject> subjectsTeached, String password) {
 		super(Person.getNonUsedINE(), FORENAME, NAME);
 		this.subjectsTeached = new LinkedHashSet<>(subjectsTeached);
-		this.password = Objects.hash(password);
+		this.PASSWORD = Objects.hash(password);
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class Teacher extends Person {
 	 * @return
 	 */
 	public boolean checkPassword(String entry) {
-		return password == Objects.hash(entry);
+		return PASSWORD == Objects.hash(entry);
 	}
 }
 
