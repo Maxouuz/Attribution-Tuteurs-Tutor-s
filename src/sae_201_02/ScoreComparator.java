@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 /**
  * Comparateur pour la classe Student qui compare le score (poids des arêtes)
- * @author lezlon
+ * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  *
  */
 public class ScoreComparator implements Comparator<Student> {

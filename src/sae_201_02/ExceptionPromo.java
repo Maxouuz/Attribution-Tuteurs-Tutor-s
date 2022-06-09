@@ -2,7 +2,7 @@ package sae_201_02;
 
 /**
  * Exception pour la promo des étudiants
- * @author nathan.hallez.etu
+ * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  */
 public class ExceptionPromo extends Exception {
 	/** Exception sans message */

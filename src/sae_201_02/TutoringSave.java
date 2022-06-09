@@ -16,7 +16,7 @@ import org.json.JSONObject;
 
 /**
  * Classe statique qui permet d'enregistrer/de charger un tutorat
- * @author nathan.hallez.etu
+ * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  *
  */
 public class TutoringSave {

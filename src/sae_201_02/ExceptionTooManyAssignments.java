@@ -2,7 +2,7 @@ package sae_201_02;
 
 /**
  * Exception qui se déclenche lorsque qu'il y a trop d'affectations pour un tuteur
- * @author nathan.hallez.etu
+ * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  */
 public class ExceptionTooManyAssignments extends Exception {
 	/* Numéro UID généré automatiquement */

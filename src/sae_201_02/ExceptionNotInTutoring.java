@@ -2,7 +2,7 @@ package sae_201_02;
 
 /**
  * Exception qui se déclenche si un étudiant n'est pas inscrit dans le Tutorat
- * @author nathan.hallez.etu
+ * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  */
 public class ExceptionNotInTutoring extends Exception {
 	/* Numéro UID généré automatiquement */

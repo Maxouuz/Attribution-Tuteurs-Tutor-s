@@ -7,7 +7,7 @@ import org.json.JSONException;
 
 /**
  * Classe d'exemple pour le projet
- * @author nathan.hallez.etu
+ * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  *
  */
 public class Example {

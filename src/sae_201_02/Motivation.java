@@ -2,7 +2,7 @@ package sae_201_02;
 
 /**
  * Énumération du niveau de motivation d'un étudiant
- * @author nathan.hallez.etu
+ * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  */
 public enum Motivation {
 	NOT_MOTIVATED(-2), NEUTRAL(0), MOTIVATED(2);

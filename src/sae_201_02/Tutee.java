@@ -7,7 +7,7 @@ import java.util.Set;
 
 /**
  * Classe représentant un candidat pour être tutoré de première année
- * @author nathan.hallez.etu
+ * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  *
  */
 public class Tutee extends Student {

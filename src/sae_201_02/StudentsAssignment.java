@@ -11,7 +11,7 @@ import org.json.JSONString;
 /**
  * Méthode permettant d'associer les tutorés aux tuteurs.
  * On peut accéder aux affectations à partir du tuteur ou du tutoré
- * @author nathan.hallez.etu
+ * @author Maxence Stievenard, Nathan Hallez, Rémi Vautier
  *
  */
 public class StudentsAssignment implements JSONString {
