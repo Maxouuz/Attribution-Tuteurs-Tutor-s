@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Classe de test pour la classe Student
  * 
- * @author lezlon
+ * @author Rémi VAUTIER, Nathan HALLEZ, Maxence STIEVENARD
  *
  */
 class StudentTest {
