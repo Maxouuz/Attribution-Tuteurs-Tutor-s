@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Classe de test pour la classe Teacher
- * @author nathan.hallez.etu
+ * @author Rémi VAUTIER, Nathan HALLEZ, Maxence STIEVENARD
  */
 class TeacherTest {
 	/** Variable de test */
