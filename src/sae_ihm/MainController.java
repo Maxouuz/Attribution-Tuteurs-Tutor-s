@@ -371,6 +371,7 @@ public class MainController extends StudentsTable {
         ForcedAssignmentsController controller = loader.getController();
         controller.setSelected(selected);
         controller.setTutoring(tutoring);
+        controller.updateTable();
         
         Scene scene = new Scene(root);
         dialog.setScene(scene);

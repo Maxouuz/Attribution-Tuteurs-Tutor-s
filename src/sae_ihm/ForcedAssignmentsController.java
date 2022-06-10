@@ -34,7 +34,6 @@ public class ForcedAssignmentsController extends StudentsTable {
 	public void initialize() {
 		super.initialize();
 		
-		
 		forenameCol.setCellValueFactory(new PropertyValueFactory<>("forename"));
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 		promoCol.setCellValueFactory(new PropertyValueFactory<>("promo"));
@@ -65,7 +64,9 @@ public class ForcedAssignmentsController extends StudentsTable {
 	
 	@FXML
 	public void confirm() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
-		selected.forceAssignment(tutoring, studentsTable.getSelectionModel().getSelectedItem());
+		for (Student student: studentsTable.getSelectionModel().getSelectedItems()) {
+			selected.forceAssignment(tutoring, student);
+		}
 		
 	    Stage stage = (Stage) assignmentButton.getScene().getWindow();
 	    stage.close();
