@@ -3,8 +3,10 @@ package sae_ihm;
 import java.util.HashSet;
 import java.util.Set;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import sae_201_02.ExceptionNotInTutoring;
@@ -17,7 +19,7 @@ public class ForcedAssignmentsController extends StudentsTable {
 	
 	private Tutoring tutoring;
 	private Student selected;
-	
+		
 	@FXML Button assignmentButton;
 
 	public void setTutoring(Tutoring tutoring) {
@@ -31,6 +33,7 @@ public class ForcedAssignmentsController extends StudentsTable {
 
 	public void initialize() {
 		super.initialize();
+		
 		
 		forenameCol.setCellValueFactory(new PropertyValueFactory<>("forename"));
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));

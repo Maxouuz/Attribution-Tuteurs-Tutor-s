@@ -10,6 +10,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
@@ -32,21 +33,20 @@
    <children>
       <MenuBar>
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+          <Menu mnemonicParsing="false" text="Fichier">
             <items>
-                  <MenuItem fx:id="openMenu" mnemonicParsing="false" onAction="#openTutoring" text="Open" />
-                  <MenuItem mnemonicParsing="false" text="Save" />
-              <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem fx:id="openMenu1" mnemonicParsing="false" onAction="#openTutoring" text="Nouveau" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="openMenu" mnemonicParsing="false" onAction="#openTutoring" text="Ouvrir..." />
+                  <MenuItem mnemonicParsing="false" text="Sauvegarder" />
+              <MenuItem mnemonicParsing="false" text="Sauvegarder en tant que..." />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Quitter" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
+          <Menu mnemonicParsing="false" text="Edition">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" onAction="#addStudentMenu" text="Ajouter un étudiant" />
             </items>
           </Menu>
         </menus>

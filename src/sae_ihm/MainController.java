@@ -371,16 +371,45 @@ public class MainController extends StudentsTable {
         ForcedAssignmentsController controller = loader.getController();
         controller.setSelected(selected);
         controller.setTutoring(tutoring);
-        controller.updateTable();
         
         Scene scene = new Scene(root);
         dialog.setScene(scene);
-        dialog.setTitle("Affectation de tutorat");
+        dialog.setTitle("Créer une affectation forcée");
         dialog.setMinWidth(360);
         dialog.setMinHeight(550);        
         dialog.show();
         
         // Quand la fenêtre est fermée, on update la liste des affectations
         dialog.setOnHiding(e -> updateProfileView());
+    }
+    
+    @FXML
+    public void addStudentMenu() throws IOException {
+    	final Stage dialog = new Stage();
+    	dialog.initModality(Modality.APPLICATION_MODAL);
+    	
+    	FXMLLoader loader = new FXMLLoader();
+        URL fxmlFileUrl = getClass().getResource("addStudentMenu.fxml");
+        if (fxmlFileUrl == null) {
+        	System.out.println("Impossible de charger le fichier fxml");
+            return;
+        }
+        loader.setLocation(fxmlFileUrl);
+        
+        Parent root = loader.load();
+        
+        AddStudentController controller = loader.getController();
+        controller.setTutoring(tutoring);
+        
+        Scene scene = new Scene(root);
+        dialog.setScene(scene);
+        dialog.setTitle("Ajouter un étudiant");
+        dialog.setWidth(332);
+        dialog.setHeight(400);
+        dialog.setResizable(false);
+        dialog.show();
+        
+        // Quand la fenêtre est fermée, on update la liste des affectations
+        dialog.setOnHiding(e -> updateTable());
     }
 }
