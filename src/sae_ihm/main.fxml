@@ -164,7 +164,7 @@
                                           <Label text="X" GridPane.columnIndex="1" />
                                        </children>
                                     </GridPane>
-                                    <Button mnemonicParsing="false" text="Affecter à un autre étudiant">
+                                    <Button fx:id="forceAssignmentButton" mnemonicParsing="false" onAction="#forcedAssignmentMenu" text="Affecter à un autre étudiant">
                                        <cursor>
                                           <Cursor fx:constant="OPEN_HAND" />
                                        </cursor>

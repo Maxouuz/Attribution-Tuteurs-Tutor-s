@@ -2,16 +2,20 @@ package sae_ihm;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Set;
 
 import org.json.JSONException;
 
-import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -19,15 +23,16 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import sae_201_02.ExceptionNotInTutoring;
 import sae_201_02.ExceptionPromo;
 import sae_201_02.ExceptionTooManyAssignments;
@@ -36,9 +41,7 @@ import sae_201_02.Student;
 import sae_201_02.Tutoring;
 import sae_201_02.TutoringSave;
 
-public class MainController {
-	@FXML TableView<Student> studentsTable;
-	 
+public class MainController extends StudentsTable {	 
 	@FXML TabPane tabFilter;
 	@FXML Tab tabAll;
 	@FXML Tab tabTutors;
@@ -60,6 +63,7 @@ public class MainController {
 	@FXML Label labelPromo;
 	@FXML Label labelAbsences;
 	@FXML ChoiceBox<Motivation> cbMotivation;
+	@FXML Button forceAssignmentButton;
 	
 	@FXML GridPane gridAssignments; 
 	
@@ -81,9 +85,7 @@ public class MainController {
 	@FXML TextField fieldMaxNote;
 	@FXML TextField fieldMinNote;
 	@FXML TextField fieldAbsencesMax;
-	
-	@FXML TextField searchBar;
-	
+		
 	Student selected;
 	
 	Tutoring tutoring;
@@ -161,23 +163,30 @@ public class MainController {
 		}
 	}
 	
-	class SearchBarListener implements ChangeListener<String> {
-		public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-			updateTable();
-			int i = 0;
-	    	while (i < studentsTable.getItems().size()) {
-	    		String entry = newValue.toLowerCase();
-	    		String forename = studentsTable.getItems().get(i).getForename().toLowerCase();
-	    		String name = studentsTable.getItems().get(i).getName().toLowerCase();
-	    		String forenameName = forename + " " + name;
-	    		String nameForename = name + " " + forename;
-	    		if (!forenameName.contains(entry) && !nameForename.contains(entry)) {
-	    			studentsTable.getItems().remove(i);
-	    		} else {
-	    			i++;
-	    		}
-	    	}
-	    	
+	class CancelAssignment implements EventHandler<MouseEvent> {
+		
+		private Label assignedName;
+		private Student assigned;
+		
+		public CancelAssignment(Label assignedName, Student assigned) {
+			this.assignedName = assignedName;
+			this.assigned = assigned;
+		}
+
+		@Override
+		public void handle(MouseEvent arg0) {
+			if (selected.getForcedAssignments(tutoring).contains(assigned)) {
+				selected.removeForcedAssignment(tutoring, assigned);
+			} else if (!selected.getStudentsToNotAssign(tutoring).contains(assigned)) {
+				try {
+						selected.doNotAssign(tutoring, assigned);
+					} catch (ExceptionNotInTutoring | ExceptionPromo e1) {
+						e1.printStackTrace();
+					}
+			} else {
+				selected.removeStudentToNotAssign(tutoring, assigned);
+			}
+			updateLabelAssignedStudent(assignedName, assigned);
 		}
 	}
 	
@@ -186,6 +195,9 @@ public class MainController {
 		if (selected.getStudentsToNotAssign(tutoring).contains(student)) {
 			label.setText(label.getText() + " (annulée)");
 			label.setTextFill(Color.RED);
+		} else if (selected.getForcedAssignments(tutoring).contains(student)) {
+			label.setText(label.getText() + " (forcée)");
+			label.setTextFill(Color.GREEN);
 		} else {
 			label.setTextFill(Color.BLACK);
 		}
@@ -231,23 +243,21 @@ public class MainController {
     		Label doNotAssign = new Label("X");
     		gridAssignments.add(assignedName, 0, rowCount);
     		gridAssignments.add(doNotAssign, 1, rowCount);
-    		doNotAssign.setOnMouseClicked(e -> {
-    			if (!selected.getStudentsToNotAssign(tutoring).contains(assigned)) {
-	    			try {
-						selected.doNotAssign(tutoring, assigned);
-					} catch (ExceptionNotInTutoring | ExceptionPromo e1) {
-						e1.printStackTrace();
-					}
-    			} else {
-    				selected.removeStudentToNotAssign(tutoring, assigned);
-    			}
-    			updateLabelAssignedStudent(assignedName, assigned);
-    		});
+    		doNotAssign.setOnMouseClicked(new CancelAssignment(assignedName, assigned));
     		rowCount++;
+    	}
+    	
+    	// On grise le bouton pour affecter à un autre étudiant si on ne peut pas faire cette action
+    	if (selected.canAddMoreForcedAssignment(tutoring)) {
+    		forceAssignmentButton.setDisable(false);
+    	} else {
+    		forceAssignmentButton.setDisable(true);
     	}
 	}
 	
-    public void initialize() throws ExceptionPromo {    	
+    public void initialize() {
+    	super.initialize();
+    	
 		try {
 			File testFilePath = new File(System.getProperty("user.dir") + File.separator + "res" + File.separator + "tutoring_save.json");
 			tutoring = TutoringSave.load(testFilePath);
@@ -259,10 +269,6 @@ public class MainController {
 		}
 		closeProfileView();
 		
-		forenameCol.setCellValueFactory(new PropertyValueFactory<>("forename"));
-		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-		promoCol.setCellValueFactory(new PropertyValueFactory<>("promo"));
-		absencesCol.setCellValueFactory(new PropertyValueFactory<>("nbAbsences"));
 		assignmentsCol.setCellValueFactory(student -> new SimpleStringProperty(toStringAssignmentsCol(student.getValue())));
 		
 		studentsTable.getSelectionModel().selectedItemProperty().addListener(e -> studentSelected());
@@ -290,8 +296,6 @@ public class MainController {
 			searchBar.setText("");
 			updateTable();
 		});
-		
-		searchBar.textProperty().addListener(new SearchBarListener());
     }
 
 	@FXML
@@ -347,5 +351,36 @@ public class MainController {
     	}
     	
     	return res;
+    }
+    
+    @FXML
+    public void forcedAssignmentMenu() throws IOException {
+    	final Stage dialog = new Stage();
+    	dialog.initModality(Modality.APPLICATION_MODAL);
+    	
+    	FXMLLoader loader = new FXMLLoader();
+        URL fxmlFileUrl = getClass().getResource("forceAssignmentMenu.fxml");
+        if (fxmlFileUrl == null) {
+                System.out.println("Impossible de charger le fichier fxml");
+                return;
+        }
+        loader.setLocation(fxmlFileUrl);
+        
+        Parent root = loader.load();
+        
+        ForcedAssignmentsController controller = loader.getController();
+        controller.setSelected(selected);
+        controller.setTutoring(tutoring);
+        controller.updateTable();
+        
+        Scene scene = new Scene(root);
+        dialog.setScene(scene);
+        dialog.setTitle("Affectation de tutorat");
+        dialog.setMinWidth(360);
+        dialog.setMinHeight(550);        
+        dialog.show();
+        
+        // Quand la fenêtre est fermée, on update la liste des affectations
+        dialog.setOnHiding(e -> updateProfileView());
     }
 }

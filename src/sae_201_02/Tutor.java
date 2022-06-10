@@ -95,6 +95,7 @@ public class Tutor extends Student {
 			forcedAssignment.put(tutoring, new HashSet<>());
 		}
 		
+		addAssignment(tutoring, (Tutee) other);
 		forcedAssignment.get(tutoring).add((Tutee) other);
 	}
 	

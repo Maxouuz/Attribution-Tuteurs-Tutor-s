@@ -88,6 +88,7 @@ public class Tutee extends Student {
 
 	@Override
 	protected void forceAssignmentOneWay(Tutoring tutoring, Student other) {
+		addAssignment(tutoring, (Tutor) other);
 		forcedAssignment.put(tutoring, (Tutor) other);
 	}
 	
