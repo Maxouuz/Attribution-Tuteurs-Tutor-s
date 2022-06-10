@@ -3,6 +3,7 @@ package sae_ihm;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.Set;
 
 import org.json.JSONException;
@@ -15,7 +16,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -259,7 +263,7 @@ public class MainController extends StudentsTable {
     	super.initialize();
     	
 		try {
-			File testFilePath = new File(System.getProperty("user.dir") + File.separator + "res" + File.separator + "tutoring_save.json");
+			File testFilePath = new File(System.getProperty("user.dir") + File.separator + "res" + File.separator + "tutoring_save3.json");
 			tutoring = TutoringSave.load(testFilePath);
 			updateTable();
 		} catch (IOException e) {
@@ -412,5 +416,20 @@ public class MainController extends StudentsTable {
         
         // Quand la fenêtre est fermée, on update la liste des affectations
         dialog.setOnHiding(e -> updateTable());
+    }
+    
+    @FXML
+    public void deleteStudent() {
+    	Alert alert = new Alert(AlertType.CONFIRMATION);
+    	alert.setTitle("Supprimer un étudiant");
+    	alert.setHeaderText("Êtes-vous sûr de vouloir supprimer l'étudiant?");
+    	
+    	Optional<ButtonType> result = alert.showAndWait();
+    	 
+    	if ((result.isPresent()) && (result.get() == ButtonType.OK)) {
+    		tutoring.removeStudent(selected);
+    		closeProfileView();
+    		updateTable();
+    	}
     }
 }

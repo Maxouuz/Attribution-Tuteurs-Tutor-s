@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashSet;
@@ -41,7 +42,10 @@ public class TutoringTest {
 		String line = reader.readLine();
 		Scanner student = new Scanner("");
 		
+		int i = 0;
 		while (line != null) {
+			i++;
+			System.out.println(i);
 			student = new Scanner(line);
 			student.useDelimiter(";");
 			Student tmp = Student.createStudent(student.next(), student.next(), student.nextInt(), student.nextInt(), Double.parseDouble(student.next()),
@@ -50,6 +54,9 @@ public class TutoringTest {
 			tmp.setMotivation(tutoring, Motivation.valueOf(student.next()));
 			line = reader.readLine();
 		}
+		
+		File file = new File(System.getProperty("user.dir") + File.separator + "res" + File.separator + "tutoring_save3.json");
+		TutoringSave.save(tutoring, file);
 		
 		student.close();
 		reader.close();
