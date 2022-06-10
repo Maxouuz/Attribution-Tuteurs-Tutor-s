@@ -35,13 +35,13 @@
         <menus>
           <Menu mnemonicParsing="false" text="Fichier">
             <items>
-                  <MenuItem fx:id="openMenu1" mnemonicParsing="false" onAction="#openTutoring" text="Nouveau" />
+                  <MenuItem fx:id="openMenu1" mnemonicParsing="false" onAction="#newFile" text="Nouveau" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="openMenu" mnemonicParsing="false" onAction="#openTutoring" text="Ouvrir..." />
-                  <MenuItem mnemonicParsing="false" text="Sauvegarder" />
-              <MenuItem mnemonicParsing="false" text="Sauvegarder en tant que..." />
+                  <MenuItem mnemonicParsing="false" onAction="#saveTutoring" text="Sauvegarder" />
+              <MenuItem mnemonicParsing="false" onAction="#saveAsTutoring" text="Sauvegarder en tant que..." />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Quitter" />
+                  <MenuItem mnemonicParsing="false" onAction="#quit" text="Quitter" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edition">

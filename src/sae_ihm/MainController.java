@@ -35,6 +35,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import sae_201_02.ExceptionNotInTutoring;
@@ -42,13 +43,13 @@ import sae_201_02.ExceptionPromo;
 import sae_201_02.ExceptionTooManyAssignments;
 import sae_201_02.Motivation;
 import sae_201_02.Student;
+import sae_201_02.Subject;
 import sae_201_02.Tutoring;
 import sae_201_02.TutoringSave;
 
 public class MainController extends StudentsTable {	 
 	@FXML TabPane tabFilter;
 	@FXML Tab tabAll;
-	@FXML Tab tabTutors;
 	@FXML Tab tabTutees;
 	
 	@FXML TableColumn<Student, String> forenameCol;
@@ -93,6 +94,8 @@ public class MainController extends StudentsTable {
 	Student selected;
 	
 	Tutoring tutoring;
+	
+	File openedFile;
 	
 	class MotivationListener implements ChangeListener<Motivation> {
 		public void changed(ObservableValue<? extends Motivation> observable, Motivation oldValue, Motivation newValue) {
@@ -265,6 +268,7 @@ public class MainController extends StudentsTable {
 		try {
 			File testFilePath = new File(System.getProperty("user.dir") + File.separator + "res" + File.separator + "tutoring_save2.json");
 			tutoring = TutoringSave.load(testFilePath);
+			openedFile = testFilePath;
 			updateTable();
 		} catch (IOException e) {
 			System.out.println("Fichier de test non trouvé");
@@ -307,12 +311,15 @@ public class MainController extends StudentsTable {
     	FileChooser fileChooser = new FileChooser();
     	File choice = fileChooser.showOpenDialog(studentsTable.getScene().getWindow());
     	try {
-    		Student.resetUsedINE();
-			tutoring = TutoringSave.load(choice);
-			updateTable();
+    		if (choice != null) {
+	    		Student.resetUsedINE();
+				tutoring = TutoringSave.load(choice);
+				openedFile = choice;
+				updateTable();
+    		}
 		} catch (JSONException | IOException | ExceptionPromo | ExceptionNotInTutoring
 				| ExceptionTooManyAssignments e) {
-			e.printStackTrace();
+			System.out.println("Erreur de format");
 		}
     }
     
@@ -431,5 +438,43 @@ public class MainController extends StudentsTable {
     		closeProfileView();
     		updateTable();
     	}
+    }
+    
+    @FXML
+    public void newFile() {
+    	Student.resetUsedINE();
+		tutoring = new Tutoring(Subject.R101);
+		openedFile = null;
+		updateTable();
+    }
+    
+    @FXML
+    public void saveTutoring() {
+    	if (openedFile == null) {
+    		saveAsTutoring();
+    	}
+    	try {
+			TutoringSave.save(tutoring, openedFile);
+		} catch (JSONException | IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    @FXML
+    public void saveAsTutoring() {
+    	FileChooser fileChooser = new FileChooser();
+    	File choice = fileChooser.showSaveDialog(studentsTable.getScene().getWindow());
+    	fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Format JSON", "json"));
+		
+    	if (choice != null) {
+			openedFile = choice;
+			saveTutoring();
+		}
+    }
+    
+    @FXML
+    public void quit() {
+    	Stage stage = (Stage) tabFilter.getScene().getWindow();
+    	stage.close();
     }
 }
