@@ -263,7 +263,7 @@ public class MainController extends StudentsTable {
     	super.initialize();
     	
 		try {
-			File testFilePath = new File(System.getProperty("user.dir") + File.separator + "res" + File.separator + "tutoring_save3.json");
+			File testFilePath = new File(System.getProperty("user.dir") + File.separator + "res" + File.separator + "tutoring_save2.json");
 			tutoring = TutoringSave.load(testFilePath);
 			updateTable();
 		} catch (IOException e) {
