@@ -24,6 +24,9 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
@@ -86,10 +89,10 @@ public class MainController extends StudentsTable {
 	@FXML Slider sliderMinNote;
 	@FXML Slider sliderAbsencesMax;
 	
-	@FXML TextField fieldMaxAssignments;
-	@FXML TextField fieldMaxNote;
-	@FXML TextField fieldMinNote;
-	@FXML TextField fieldAbsencesMax;
+	@FXML Spinner<Integer> spinnerMaxAssignments;
+	@FXML Spinner<Double> spinnerMaxNote;
+	@FXML Spinner<Double> spinnerMinNote;
+	@FXML Spinner<Integer> spinnerAbsencesMax;
 		
 	Student selected;
 	
@@ -127,23 +130,24 @@ public class MainController extends StudentsTable {
 		}
 	}
 	
-	class UpdateTextField implements ChangeListener<Number> {
-		private TextField tfield;
+	class UpdateSpinner implements ChangeListener<Number> {
+		private Spinner<? extends Number> spin;
 		private int round;
 		
-		public UpdateTextField(TextField tfield, int round) {
-			this.tfield = tfield;
+		public UpdateSpinner(Spinner<? extends Number> spin, int round) {
+			this.spin =spin;
 			this.round = round;
 		}
 		
 		public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-			double tfValue = newValue.doubleValue();
-			tfValue = Math.round(tfValue * Math.pow(10, round)) / Math.pow(10, round);
-			if (Double.valueOf(tfield.getText()) != tfValue) {
-				tfield.setText("" + tfValue);
+			double spinValue = newValue.doubleValue();
+			spinValue = Math.round(spinValue * Math.pow(10, round)) / Math.pow(10, round);
+			if (Double.valueOf((double) spin.getValue()) != spinValue) {
+				((Spinner <Number>) spin).getValueFactory().setValue(spinValue);
 			}
 		}
 	}
+	
 	
 	class UpdateSlider implements ChangeListener<String> {
 		private Slider slider;
@@ -287,18 +291,24 @@ public class MainController extends StudentsTable {
 		widthAbsences.selectedToggleProperty().addListener(new WidthAbsencesListener());
 		widthMoyenne.selectedToggleProperty().addListener(new WidthMoyenneListener());
 		
-		sliderMaxNote.valueProperty().addListener(new UpdateTextField(fieldMaxNote, 2));
-		sliderMinNote.valueProperty().addListener(new UpdateTextField(fieldMinNote, 2));
-		sliderAbsencesMax.valueProperty().addListener(new UpdateTextField(fieldAbsencesMax, 0));
+		sliderMaxNote.valueProperty().addListener(new UpdateSpinner(spinnerMaxNote, 2));
+		sliderMinNote.valueProperty().addListener(new UpdateSpinner(spinnerMinNote, 2));
+		sliderAbsencesMax.valueProperty().addListener(new UpdateSpinner(spinnerAbsencesMax, 0));
 		
-		fieldMaxNote.textProperty().addListener(new UpdateSlider(sliderMaxNote, 2));
-		fieldMinNote.textProperty().addListener(new UpdateSlider(sliderMinNote, 2));
-		fieldAbsencesMax.textProperty().addListener(new UpdateSlider(sliderAbsencesMax, 0));
+		spinnerMaxAssignments.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, tutoring.maxTuteesForTutor));
+		spinnerAbsencesMax.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
+		spinnerMaxNote.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 20.0));
+		spinnerMinNote.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 20.0));
 		
-		fieldMaxAssignments.setText(""+tutoring.getMaxTuteesForTutor());
-		fieldMaxNote.setText("20");
-		fieldMinNote.setText("0");
-		fieldAbsencesMax.setText(""+tutoring.getAbsenceWidth());
+		
+		spinnerMaxNote.accessibleTextProperty().addListener(new UpdateSlider(sliderMaxNote, 2));
+		spinnerMinNote.accessibleTextProperty().addListener(new UpdateSlider(sliderMinNote, 2));
+		spinnerAbsencesMax.accessibleTextProperty().addListener(new UpdateSlider(sliderAbsencesMax, 0));
+		
+		spinnerMaxAssignments.getValueFactory().setValue(tutoring.getMaxTuteesForTutor());
+		spinnerMaxNote.getValueFactory().setValue(20.0);
+		spinnerMinNote.getValueFactory().setValue(0.0);
+		spinnerAbsencesMax.getValueFactory().setValue((int) tutoring.getAbsenceWidth());
 		
 		tabFilter.getSelectionModel().selectedItemProperty().addListener(e -> {
 			searchBar.setText("");
@@ -341,7 +351,7 @@ public class MainController extends StudentsTable {
     @FXML
     public void computeAssignments() throws ExceptionPromo {
     	// TODO: Vérifier l'entrée de fieldMaxAssignments
-    	tutoring.setMaxTuteesForTutor(Integer.valueOf(fieldMaxAssignments.getText()));
+    	tutoring.setMaxTuteesForTutor(Integer.valueOf((int) spinnerMaxAssignments.getValue()));
     	tutoring.setMoyenneMaxTutee(sliderMaxNote.getValue());
     	tutoring.setMoyenneMinTutor(sliderMinNote.getValue());
     	tutoring.setNbAbsencesMax((int) sliderAbsencesMax.getValue());

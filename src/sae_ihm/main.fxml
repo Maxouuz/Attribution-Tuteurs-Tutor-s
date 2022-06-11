@@ -12,6 +12,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -226,8 +227,8 @@
                         <GridPane minHeight="100.0" VBox.vgrow="ALWAYS">
                            <columnConstraints>
                               <ColumnConstraints fillWidth="false" maxWidth="-Infinity" minWidth="-Infinity" />
-                              <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
-                              <ColumnConstraints hgrow="ALWAYS" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
+                              <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="228.0" prefWidth="246.0" />
+                              <ColumnConstraints hgrow="ALWAYS" maxWidth="97.0" minWidth="60.0" prefWidth="79.0" />
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -237,7 +238,7 @@
                            </rowConstraints>
                            <children>
                               <Label text="Nb affectations maximum par tuteur:" GridPane.columnSpan="2" />
-                              <TextField fx:id="fieldMaxAssignments" text="2" GridPane.columnIndex="2" />
+                              <Spinner fx:id="spinnerMaxAssignments" editable="true" GridPane.columnIndex="2" />
                               <Label text="Note maximale pour les tutorés:" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
@@ -253,12 +254,12 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <Slider fx:id="sliderMaxNote" max="20.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Slider fx:id="sliderMaxNote" max="20.0" prefHeight="16.0" prefWidth="173.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Slider fx:id="sliderMinNote" max="20.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Slider fx:id="sliderAbsencesMax" max="50.0" min="1.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <TextField fx:id="fieldMaxNote" text="16.20" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                              <TextField fx:id="fieldMinNote" text="5.2" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                              <TextField fx:id="fieldAbsencesMax" text="6" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                              <Spinner fx:id="spinnerMaxNote" editable="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                              <Spinner fx:id="spinnerMinNote" editable="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                              <Spinner fx:id="spinnerAbsencesMax" editable="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                            </children>
                         </GridPane>
                         <Button alignment="CENTER" mnemonicParsing="false" onAction="#computeAssignments" prefHeight="40.0" prefWidth="186.0" text="Calculer l'affectation" VBox.vgrow="ALWAYS">
