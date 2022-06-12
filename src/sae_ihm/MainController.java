@@ -12,10 +12,11 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -50,7 +51,6 @@ import sae_201_02.ExceptionNotInTutoring;
 import sae_201_02.ExceptionPromo;
 import sae_201_02.ExceptionTooManyAssignments;
 import sae_201_02.Motivation;
-import sae_201_02.Person;
 import sae_201_02.Student;
 import sae_201_02.Subject;
 import sae_201_02.Tutoring;
@@ -99,15 +99,21 @@ public class MainController extends StudentsTable {
 	@FXML Spinner<Double> spinnerMaxNote;
 	@FXML Spinner<Double> spinnerMinNote;
 	@FXML Spinner<Integer> spinnerAbsencesMax;
+	
+	@FXML Label btnCloseProfile;
 		
 	Student selected;
 	
 	Tutoring tutoring;
 	
+	boolean fileHasChanged = false;
+	
 	File openedFile;
 	
 	class MotivationListener implements ChangeListener<Motivation> {
 		public void changed(ObservableValue<? extends Motivation> observable, Motivation oldValue, Motivation newValue) {
+			if (selected.getMotivation(tutoring) != newValue)
+				fileHasChanged = true;
 	    	selected.setMotivation(tutoring, newValue);
 		}
 	}
@@ -121,6 +127,7 @@ public class MainController extends StudentsTable {
 	    	} else {
 	    		tutoring.setAbsenceWidth(3);
 	    	}
+	    	fileHasChanged = true;
 		}
 	}
 	
@@ -133,6 +140,7 @@ public class MainController extends StudentsTable {
 	    	} else {
 	    		tutoring.setAbsenceWidth(3);
 	    	}
+			fileHasChanged = true;
 		}
 	}
 	
@@ -153,6 +161,7 @@ public class MainController extends StudentsTable {
 					spin.getValueFactory().setValue(newValue.intValue());
 				}
 			}
+			fileHasChanged = true;
 		}
 	}
 	
@@ -199,6 +208,7 @@ public class MainController extends StudentsTable {
 				selected.removeStudentToNotAssign(tutoring, assigned);
 			}
 			updateLabelAssignedStudent(assignedName, assigned);
+			fileHasChanged = true;
 		}
 	}
 	
@@ -241,14 +251,13 @@ public class MainController extends StudentsTable {
     	labelMail.setText(selected.getLogin() + "@univ-lille.fr");
     	labelMoyenne.setText(""+selected.getMoyenne(tutoring.getSubject()));
     	labelPromo.setText(""+selected.getPromo());
-    	
     	spinnerAbsences.getValueFactory().setValue(selected.getNbAbsences());
     	spinnerAbsences.valueProperty().addListener(e -> {
 			selected.setNbAbsences(spinnerAbsences.getValue());
 			updateTable();
 		});
+
     	cbMotivation.setValue(selected.getMotivation(tutoring));
-    	
     	gridAssignments.getChildren().clear();
     	int rowCount = 0;
     	Set<Student> assignments = selected.getAssignments(tutoring);
@@ -260,6 +269,12 @@ public class MainController extends StudentsTable {
     		Label doNotAssign = new Label("X");
     		gridAssignments.add(assignedName, 0, rowCount);
     		gridAssignments.add(doNotAssign, 1, rowCount);
+    		changeCursorOnHover(assignedName);
+    		changeCursorOnHover(doNotAssign);
+    		assignedName.setOnMouseClicked(e -> {
+    			selected = assigned;
+        		updateProfileView();
+    		});
     		doNotAssign.setOnMouseClicked(new CancelAssignment(assignedName, assigned));
     		rowCount++;
     	}
@@ -272,6 +287,12 @@ public class MainController extends StudentsTable {
     	}
 	}
 	
+	public void changeCursorOnHover(Node node) {
+		node.setOnMouseEntered(e -> node.getScene().setCursor(Cursor.HAND));
+		node.setOnMouseExited(e -> node.getScene().setCursor(Cursor.DEFAULT));
+	}
+	
+	@FXML
     public void initialize() {
     	super.initialize();
     	
@@ -297,6 +318,10 @@ public class MainController extends StudentsTable {
 		widthAbsences.selectedToggleProperty().addListener(new WidthAbsencesListener());
 		widthMoyenne.selectedToggleProperty().addListener(new WidthMoyenneListener());
 			
+		sliderMaxNote.valueProperty().addListener(new UpdateSpinner(spinnerMaxNote, 2));
+		sliderMinNote.valueProperty().addListener(new UpdateSpinner(spinnerMinNote, 2));
+		sliderAbsencesMax.valueProperty().addListener(new UpdateSpinner(spinnerAbsencesMax, 0));
+		
 		spinnerMaxNote.valueProperty().addListener(new UpdateSlider(sliderMaxNote));
 		spinnerMinNote.valueProperty().addListener(new UpdateSlider(sliderMinNote));
 		spinnerAbsencesMax.valueProperty().addListener(new UpdateSlider(sliderAbsencesMax));
@@ -348,11 +373,15 @@ public class MainController extends StudentsTable {
 		            return row;
 		    }
 		});
+		fileHasChanged = false;
+		
+		changeCursorOnHover(btnCloseProfile);
     }
 
 	@FXML
     public void openTutoring() {
     	FileChooser fileChooser = new FileChooser();
+    	fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichier JSON", "*.json"));
     	File choice = fileChooser.showOpenDialog(studentsTable.getScene().getWindow());
     	try {
     		if (choice != null) {
@@ -360,10 +389,15 @@ public class MainController extends StudentsTable {
 				tutoring = TutoringSave.load(choice);
 				openedFile = choice;
 				updateTable();
+				fileHasChanged = false;
     		}
 		} catch (JSONException | IOException | ExceptionPromo | ExceptionNotInTutoring
 				| ExceptionTooManyAssignments e) {
-			System.out.println("Erreur de format");
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Erreur");
+			alert.setHeaderText("Impossible d'ouvrir le fichier");
+			alert.setContentText(e.getMessage());
+			alert.showAndWait();
 		}
     }
     
@@ -435,7 +469,10 @@ public class MainController extends StudentsTable {
         dialog.show();
         
         // Quand la fenêtre est fermée, on update la liste des affectations
-        dialog.setOnHiding(e -> updateProfileView());
+        dialog.setOnHiding(e -> {
+        	updateProfileView();
+        	fileHasChanged = true;
+        });
     }
     
     @FXML
@@ -465,7 +502,10 @@ public class MainController extends StudentsTable {
         dialog.show();
         
         // Quand la fenêtre est fermée, on update la liste des affectations
-        dialog.setOnHiding(e -> updateTable());
+        dialog.setOnHiding(e -> {
+        	updateTable();
+        	fileHasChanged = true;
+        });
     }
     
     @FXML
@@ -480,11 +520,14 @@ public class MainController extends StudentsTable {
     		tutoring.removeStudent(selected);
     		closeProfileView();
     		updateTable();
+    		fileHasChanged = true;
     	}
     }
     
     @FXML
     public void newFile() throws IOException {
+    	if (!confirmBeforeClosing()) return;
+    	
     	final Stage dialog = new Stage();
     	dialog.initModality(Modality.APPLICATION_MODAL);
     	
@@ -515,6 +558,7 @@ public class MainController extends StudentsTable {
 	    		tutoring = new Tutoring(choice);
 	    		openedFile = null;
 	    		updateTable();
+	    		fileHasChanged = false;
         	}
         });
     }
@@ -526,6 +570,7 @@ public class MainController extends StudentsTable {
     	}
     	try {
 			TutoringSave.save(tutoring, openedFile);
+			fileHasChanged = false;
 		} catch (JSONException | IOException e) {
 			e.printStackTrace();
 		}
@@ -535,7 +580,7 @@ public class MainController extends StudentsTable {
     public void saveAsTutoring() {
     	FileChooser fileChooser = new FileChooser();
     	File choice = fileChooser.showSaveDialog(studentsTable.getScene().getWindow());
-    	fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Format JSON", "json"));
+    	fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Fichier JSON", "*.json"));
 		
     	if (choice != null) {
 			openedFile = choice;
@@ -545,7 +590,38 @@ public class MainController extends StudentsTable {
     
     @FXML
     public void quit() {
-    	Stage stage = (Stage) tabFilter.getScene().getWindow();
-    	stage.close();
+    	if (confirmBeforeClosing()) {
+	    	Stage stage = (Stage) tabFilter.getScene().getWindow();
+	    	stage.close();
+    	}
+    }
+    
+    @FXML
+    public boolean confirmBeforeClosing() {
+    	if (!fileHasChanged) {
+    		return true;
+    	}
+    	
+    	Alert alert = new Alert(AlertType.CONFIRMATION);
+    	alert.setTitle("Sauvegarder le document?");
+    	alert.setHeaderText("Sauvegarder les changements avant de quitter?");
+    	
+    	ButtonType buttonYes = new ButtonType("Sauvegarder");
+    	ButtonType buttonNo = new ButtonType("Ne pas sauvegarder");
+    	
+    	alert.getButtonTypes().removeAll(ButtonType.OK);
+    	alert.getButtonTypes().addAll(buttonYes, buttonNo);
+    	
+    	Optional<ButtonType> result = alert.showAndWait();
+    	
+    	boolean res = false;
+    	
+    	if (result.isPresent()) {
+    		if (result.get() == buttonYes) {
+    			saveTutoring();
+    		}
+    		res = (result.get() == buttonNo) || (result.get() == buttonYes);
+    	}
+    	return res;
     }
 }

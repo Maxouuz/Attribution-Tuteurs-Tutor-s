@@ -156,7 +156,7 @@ public abstract class Student extends Person {
 	 * @param absence
 	 */
 	public void setNbAbsences(int nbAbsences) {
-		if (nbAbsences <= 0)
+		if (nbAbsences < 0)
 			throw new IllegalArgumentException("Le nombre d'absences doit être un nombre positif!");
 		this.nbAbsences = nbAbsences;
 	}

@@ -103,7 +103,7 @@
                                  </children>
                               </VBox>
                               <Region HBox.hgrow="ALWAYS" />
-                              <Label alignment="CENTER" onMouseClicked="#closeProfileView" text="x">
+                              <Label fx:id="btnCloseProfile" alignment="CENTER" onMouseClicked="#closeProfileView" text="x">
                                  <font>
                                     <Font size="24.0" />
                                  </font>
@@ -135,7 +135,7 @@
                                     <Label fx:id="labelPromo" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <Label text="Motivation:" GridPane.rowIndex="3" />
                                     <ChoiceBox fx:id="cbMotivation" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <Button alignment="TOP_LEFT" mnemonicParsing="false" onAction="#deleteStudent" text="Supprimer l'étudiant" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                                    <Button alignment="TOP_LEFT" mnemonicParsing="false" onAction="#deleteStudent" text="Supprimer l'étudiant" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
                                        <cursor>
                                           <Cursor fx:constant="OPEN_HAND" />
                                        </cursor></Button>
@@ -170,7 +170,7 @@
                                           <Cursor fx:constant="OPEN_HAND" />
                                        </cursor>
                                        <VBox.margin>
-                                          <Insets bottom="10.0" />
+                                          <Insets />
                                        </VBox.margin>
                                     </Button>
                                  </children>
@@ -227,8 +227,8 @@
                         <GridPane minHeight="100.0" VBox.vgrow="ALWAYS">
                            <columnConstraints>
                               <ColumnConstraints fillWidth="false" maxWidth="-Infinity" minWidth="-Infinity" />
-                              <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="228.0" prefWidth="246.0" />
-                              <ColumnConstraints hgrow="ALWAYS" maxWidth="97.0" minWidth="60.0" prefWidth="79.0" />
+                              <ColumnConstraints hgrow="ALWAYS" />
+                              <ColumnConstraints hgrow="ALWAYS" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -254,7 +254,7 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <Slider fx:id="sliderMaxNote" max="20.0" prefHeight="16.0" prefWidth="173.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Slider fx:id="sliderMaxNote" max="20.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Slider fx:id="sliderMinNote" max="20.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Slider fx:id="sliderAbsencesMax" max="50.0" min="1.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <Spinner fx:id="spinnerMaxNote" editable="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />

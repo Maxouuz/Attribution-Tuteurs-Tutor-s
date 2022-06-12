@@ -55,7 +55,7 @@ public class ForcedAssignmentsController extends StudentsTable {
 	}
 	
 	@FXML
-	public void confirm() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {
+	public void confirm() throws ExceptionPromo, ExceptionNotInTutoring, ExceptionTooManyAssignments {		
 		for (Student student: studentsTable.getSelectionModel().getSelectedItems()) {
 			selected.forceAssignment(tutoring, student);
 		}
