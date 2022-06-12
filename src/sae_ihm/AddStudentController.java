@@ -35,7 +35,7 @@ public class AddStudentController {
 		spinnerINE.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, Student.getNonUsedINE()));
 		spinnerPromo.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 3));
 		spinnerAbsences.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
-		spinnerMoyenne.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 20));
+		spinnerMoyenne.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 20));		
 	}
 	
 	@FXML

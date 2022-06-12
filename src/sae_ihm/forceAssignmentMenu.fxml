@@ -12,7 +12,6 @@
       <TextField fx:id="searchBar" promptText="Rechercher un étudiant..." />
       <TableView fx:id="studentsTable" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="selectionCol" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
           <TableColumn fx:id="forenameCol" prefWidth="146.0" text="Prénom" />
           <TableColumn fx:id="nameCol" prefWidth="75.0" text="Nom" />
             <TableColumn fx:id="promoCol" prefWidth="75.0" text="Année" />

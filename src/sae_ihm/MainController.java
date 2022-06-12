@@ -8,9 +8,11 @@ import java.util.Set;
 
 import org.json.JSONException;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,16 +23,18 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
@@ -41,10 +45,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import sae_201_02.ExceptionNotInTutoring;
 import sae_201_02.ExceptionPromo;
 import sae_201_02.ExceptionTooManyAssignments;
 import sae_201_02.Motivation;
+import sae_201_02.Person;
 import sae_201_02.Student;
 import sae_201_02.Subject;
 import sae_201_02.Tutoring;
@@ -69,7 +75,7 @@ public class MainController extends StudentsTable {
 	
 	@FXML Label labelMoyenne;
 	@FXML Label labelPromo;
-	@FXML Label labelAbsences;
+	@FXML Spinner<Integer> spinnerAbsences;
 	@FXML ChoiceBox<Motivation> cbMotivation;
 	@FXML Button forceAssignmentButton;
 	
@@ -131,42 +137,37 @@ public class MainController extends StudentsTable {
 	}
 	
 	class UpdateSpinner implements ChangeListener<Number> {
-		private Spinner<? extends Number> spin;
+		private Spinner<Number> spin;
 		private int round;
 		
 		public UpdateSpinner(Spinner<? extends Number> spin, int round) {
-			this.spin =spin;
+			this.spin = (Spinner<Number>) spin;
 			this.round = round;
 		}
 		
 		public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-			double spinValue = newValue.doubleValue();
-			spinValue = Math.round(spinValue * Math.pow(10, round)) / Math.pow(10, round);
-			if (Double.valueOf((double) spin.getValue()) != spinValue) {
-				((Spinner <Number>) spin).getValueFactory().setValue(spinValue);
+			if (spin.getValue() != newValue) {
+				if (spin.getValue() instanceof Double) {
+					spin.getValueFactory().setValue(newValue.doubleValue());
+				} else {
+					spin.getValueFactory().setValue(newValue.intValue());
+				}
 			}
 		}
 	}
 	
 	
-	class UpdateSlider implements ChangeListener<String> {
+	class UpdateSlider implements ChangeListener<Number> {
 		private Slider slider;
-		private int round;
 		
-		public UpdateSlider(Slider slider, int round) {
+		public UpdateSlider(Slider slider) {
 			this.slider = slider;
-			this.round = round;
 		}
 		
-		public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {	
+		public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {	
 			try {
-				double tfValue = Double.valueOf(newValue);
-	
-				if (tfValue < slider.getMin()) {
-					tfValue = slider.getMin();
-				}
+				double tfValue = newValue.doubleValue();
 				
-				tfValue = Math.round(tfValue * Math.pow(10, round)) / Math.pow(10, round);
 				if (slider.getValue() != tfValue) {
 					slider.setValue(tfValue);
 				}
@@ -240,7 +241,12 @@ public class MainController extends StudentsTable {
     	labelMail.setText(selected.getLogin() + "@univ-lille.fr");
     	labelMoyenne.setText(""+selected.getMoyenne(tutoring.getSubject()));
     	labelPromo.setText(""+selected.getPromo());
-    	labelAbsences.setText(""+selected.getNbAbsences());
+    	
+    	spinnerAbsences.getValueFactory().setValue(selected.getNbAbsences());
+    	spinnerAbsences.valueProperty().addListener(e -> {
+			selected.setNbAbsences(spinnerAbsences.getValue());
+			updateTable();
+		});
     	cbMotivation.setValue(selected.getMotivation(tutoring));
     	
     	gridAssignments.getChildren().clear();
@@ -290,20 +296,26 @@ public class MainController extends StudentsTable {
 		
 		widthAbsences.selectedToggleProperty().addListener(new WidthAbsencesListener());
 		widthMoyenne.selectedToggleProperty().addListener(new WidthMoyenneListener());
+			
+		spinnerMaxNote.valueProperty().addListener(new UpdateSlider(sliderMaxNote));
+		spinnerMinNote.valueProperty().addListener(new UpdateSlider(sliderMinNote));
+		spinnerAbsencesMax.valueProperty().addListener(new UpdateSlider(sliderAbsencesMax));
 		
-		sliderMaxNote.valueProperty().addListener(new UpdateSpinner(spinnerMaxNote, 2));
-		sliderMinNote.valueProperty().addListener(new UpdateSpinner(spinnerMinNote, 2));
-		sliderAbsencesMax.valueProperty().addListener(new UpdateSpinner(spinnerAbsencesMax, 0));
+		spinnerAbsences.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
+		spinnerMaxAssignments.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, tutoring.maxTuteesForTutor));
+		spinnerMaxNote.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 20.0, 20));
+		spinnerMinNote.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 20.0, 0));
+		spinnerAbsencesMax.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 50));
 		
-		spinnerMaxAssignments.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, tutoring.maxTuteesForTutor));
-		spinnerAbsencesMax.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
-		spinnerMaxNote.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 20.0));
-		spinnerMinNote.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 20.0));
-		
-		
-		spinnerMaxNote.accessibleTextProperty().addListener(new UpdateSlider(sliderMaxNote, 2));
-		spinnerMinNote.accessibleTextProperty().addListener(new UpdateSlider(sliderMinNote, 2));
-		spinnerAbsencesMax.accessibleTextProperty().addListener(new UpdateSlider(sliderAbsencesMax, 0));
+		if (tutoring.getMoyenneMaxTutee() != null) {
+			spinnerMaxNote.getValueFactory().setValue(tutoring.getMoyenneMaxTutee());
+		}
+		if (tutoring.getMoyenneMinTutor() != null) {
+			spinnerMinNote.getValueFactory().setValue(tutoring.getMoyenneMinTutor());
+		}
+		if (tutoring.getNbAbsencesMax() != null) {
+			spinnerAbsencesMax.getValueFactory().setValue(tutoring.getNbAbsencesMax());
+		}
 		
 		spinnerMaxAssignments.getValueFactory().setValue(tutoring.getMaxTuteesForTutor());
 		spinnerMaxNote.getValueFactory().setValue(20.0);
@@ -314,6 +326,28 @@ public class MainController extends StudentsTable {
 			searchBar.setText("");
 			updateTable();
 		});
+		
+		studentsTable.setRowFactory(
+			    new Callback<TableView<Student>, TableRow<Student>>() {
+			        @Override
+			        public TableRow<Student> call(TableView<Student> tableView) {
+			            final TableRow<Student> row = new TableRow<>();
+			            final ContextMenu rowMenu = new ContextMenu();
+			            MenuItem editItem = new MenuItem("Edit");
+			            // editItem.setOnAction();
+			            MenuItem remove = new MenuItem("Supprimer l'étudiant");
+			            remove.setOnAction(e -> deleteStudent());
+			            
+			            rowMenu.getItems().addAll(editItem, remove);
+			            
+			            // only display context menu for non-empty rows:
+			            row.contextMenuProperty().bind(
+			              Bindings.when(row.emptyProperty())
+			              .then((ContextMenu) null)
+			              .otherwise(rowMenu));
+			            return row;
+			    }
+			});
     }
 
 	@FXML
@@ -350,7 +384,6 @@ public class MainController extends StudentsTable {
     
     @FXML
     public void computeAssignments() throws ExceptionPromo {
-    	// TODO: Vérifier l'entrée de fieldMaxAssignments
     	tutoring.setMaxTuteesForTutor(Integer.valueOf((int) spinnerMaxAssignments.getValue()));
     	tutoring.setMoyenneMaxTutee(sliderMaxNote.getValue());
     	tutoring.setMoyenneMinTutor(sliderMinNote.getValue());

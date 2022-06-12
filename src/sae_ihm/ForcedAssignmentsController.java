@@ -6,6 +6,7 @@ import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
@@ -30,16 +31,7 @@ public class ForcedAssignmentsController extends StudentsTable {
 		this.selected = selected;
 		assignmentButton.setText(assignmentButton.getText() + selected.getForename() + " " + selected.getName());
 	}
-
-	public void initialize() {
-		super.initialize();
-		
-		forenameCol.setCellValueFactory(new PropertyValueFactory<>("forename"));
-		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-		promoCol.setCellValueFactory(new PropertyValueFactory<>("promo"));
-		absencesCol.setCellValueFactory(new PropertyValueFactory<>("nbAbsences"));
-	}
-
+	
 	@Override
 	public void updateTable() {
 		studentsTable.getItems().clear();
