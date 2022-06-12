@@ -359,12 +359,18 @@ public class MainController extends StudentsTable {
 		        public TableRow<Student> call(TableView<Student> tableView) {
 		            final TableRow<Student> row = new TableRow<>();
 		            final ContextMenu rowMenu = new ContextMenu();
-		            MenuItem editItem = new MenuItem("Edit");
-		            // editItem.setOnAction();
+		            MenuItem assign = new MenuItem("Forcer une affectation");
+		            assign.setOnAction(e -> {
+						try {
+							forcedAssignmentMenu();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					});
 		            MenuItem remove = new MenuItem("Supprimer l'étudiant");
 		            remove.setOnAction(e -> deleteStudent());
 		            
-		            rowMenu.getItems().addAll(editItem, remove);
+		            rowMenu.getItems().addAll(assign, remove);
 		            
 		            // only display context menu for non-empty rows:
 		            row.contextMenuProperty().bind(

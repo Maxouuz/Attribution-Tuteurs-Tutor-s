@@ -1,12 +1,15 @@
 {
     "maxTuteesForTutor": 2,
-    "absenceWidth": 3,
+    "absenceWidth": 1,
     "subject": "R101",
+    "moyenneMaxTutee": 20,
+    "moyenneMinTutor": 0,
+    "nbAbsencesMax": 50,
     "moyenneWidth": 1,
     "students": [
         {
             "promo": 1,
-            "forcedAssignments": [],
+            "forcedAssignments": [560],
             "forename": "Agnès",
             "ine": 552,
             "motivation": "MOTIVATED",
@@ -501,6 +504,17 @@
             "studentsToNotAssign": []
         },
         {
+            "promo": 1,
+            "forcedAssignments": [],
+            "forename": "Nathan",
+            "ine": 620,
+            "motivation": "NEUTRAL",
+            "name": "Hallez",
+            "nbAbsences": 0,
+            "moyennes": {"R101": 0},
+            "studentsToNotAssign": []
+        },
+        {
             "promo": 3,
             "forcedAssignments": [],
             "forename": "Alex",
@@ -513,22 +527,6 @@
                 "R104": 2.53,
                 "R101": 11.9,
                 "R102": 18.68
-            },
-            "studentsToNotAssign": []
-        },
-        {
-            "promo": 3,
-            "forcedAssignments": [],
-            "forename": "Anouk",
-            "ine": 556,
-            "motivation": "NOT_MOTIVATED",
-            "name": "Brun",
-            "nbAbsences": 7,
-            "moyennes": {
-                "R105": 18.18,
-                "R104": 16.83,
-                "R101": 12,
-                "R102": 19.91
             },
             "studentsToNotAssign": []
         },
@@ -566,10 +564,10 @@
         },
         {
             "promo": 2,
-            "forcedAssignments": [],
+            "forcedAssignments": [552],
             "forename": "Charles",
             "ine": 560,
-            "motivation": "NEUTRAL",
+            "motivation": "NOT_MOTIVATED",
             "name": "Letellier",
             "nbAbsences": 7,
             "moyennes": {
