@@ -296,6 +296,7 @@ public class MainController extends StudentsTable {
     public void initialize() {
     	super.initialize();
     	
+    	tutoring = new Tutoring(Subject.R101);
 		try {
 			File testFilePath = new File(System.getProperty("user.dir") + File.separator + "res" + File.separator + "tutoring_save2.json");
 			tutoring = TutoringSave.load(testFilePath);

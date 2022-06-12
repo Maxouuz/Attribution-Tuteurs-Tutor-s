@@ -1,0 +1,140 @@
+{
+    "maxTuteesForTutor": 2,
+    "absenceWidth": 3,
+    "subject": "R101",
+    "moyenneWidth": 1,
+    "students": [
+        {
+            "promo": 1,
+            "forcedAssignments": [],
+            "forename": "Charles",
+            "ine": 5,
+            "motivation": "NEUTRAL",
+            "name": "Letellier",
+            "nbAbsences": 0,
+            "moyennes": {"R101": 8},
+            "studentsToNotAssign": []
+        },
+        {
+            "promo": 1,
+            "forcedAssignments": [],
+            "forename": "Daniel",
+            "ine": 6,
+            "motivation": "NOT_MOTIVATED",
+            "name": "Daniel",
+            "nbAbsences": 3,
+            "moyennes": {"R101": 9},
+            "studentsToNotAssign": []
+        },
+        {
+            "promo": 1,
+            "forcedAssignments": [],
+            "forename": "François",
+            "ine": 7,
+            "motivation": "MOTIVATED",
+            "name": "Bertin",
+            "nbAbsences": 9,
+            "moyennes": {"R101": 7},
+            "studentsToNotAssign": []
+        },
+        {
+            "promo": 1,
+            "forcedAssignments": [],
+            "forename": "Sabine",
+            "ine": 8,
+            "motivation": "NEUTRAL",
+            "name": "Leleu",
+            "nbAbsences": 1,
+            "moyennes": {"R101": 5.5},
+            "studentsToNotAssign": [2]
+        },
+        {
+            "promo": 1,
+            "forcedAssignments": [],
+            "forename": "Gabriel",
+            "ine": 9,
+            "motivation": "NOT_MOTIVATED",
+            "name": "Marin",
+            "nbAbsences": 0,
+            "moyennes": {"R101": 9},
+            "studentsToNotAssign": []
+        },
+        {
+            "promo": 1,
+            "forcedAssignments": [4],
+            "forename": "Juliette",
+            "ine": 10,
+            "motivation": "MOTIVATED",
+            "name": "Traore",
+            "nbAbsences": 30,
+            "moyennes": {"R101": 12},
+            "studentsToNotAssign": []
+        },
+        {
+            "promo": 1,
+            "forcedAssignments": [],
+            "forename": "Franck",
+            "ine": 11,
+            "motivation": "NEUTRAL",
+            "name": "Hebert",
+            "nbAbsences": 5,
+            "moyennes": {"R101": 2.5},
+            "studentsToNotAssign": []
+        },
+        {
+            "promo": 2,
+            "forcedAssignments": [],
+            "forename": "Sophie",
+            "ine": 0,
+            "motivation": "NEUTRAL",
+            "name": "Vallee",
+            "nbAbsences": 3,
+            "moyennes": {"R101": 15.5},
+            "studentsToNotAssign": []
+        },
+        {
+            "promo": 3,
+            "forcedAssignments": [],
+            "forename": "Nicolas",
+            "ine": 1,
+            "motivation": "NEUTRAL",
+            "name": "Roche",
+            "nbAbsences": 6,
+            "moyennes": {"R101": 16.5},
+            "studentsToNotAssign": []
+        },
+        {
+            "promo": 3,
+            "forcedAssignments": [],
+            "forename": "Maurice",
+            "ine": 2,
+            "motivation": "NEUTRAL",
+            "name": "Fernandez",
+            "nbAbsences": 4,
+            "moyennes": {"R101": 14.5},
+            "studentsToNotAssign": [8]
+        },
+        {
+            "promo": 2,
+            "forcedAssignments": [],
+            "forename": "William",
+            "ine": 3,
+            "motivation": "MOTIVATED",
+            "name": "Letellier",
+            "nbAbsences": 2,
+            "moyennes": {"R101": 18.5},
+            "studentsToNotAssign": []
+        },
+        {
+            "promo": 3,
+            "forcedAssignments": [10],
+            "forename": "Paul",
+            "ine": 4,
+            "motivation": "NEUTRAL",
+            "name": "Sanchez",
+            "nbAbsences": 0,
+            "moyennes": {"R101": 13.7},
+            "studentsToNotAssign": []
+        }
+    ]
+}
