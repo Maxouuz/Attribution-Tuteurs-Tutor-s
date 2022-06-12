@@ -328,26 +328,26 @@ public class MainController extends StudentsTable {
 		});
 		
 		studentsTable.setRowFactory(
-			    new Callback<TableView<Student>, TableRow<Student>>() {
-			        @Override
-			        public TableRow<Student> call(TableView<Student> tableView) {
-			            final TableRow<Student> row = new TableRow<>();
-			            final ContextMenu rowMenu = new ContextMenu();
-			            MenuItem editItem = new MenuItem("Edit");
-			            // editItem.setOnAction();
-			            MenuItem remove = new MenuItem("Supprimer l'étudiant");
-			            remove.setOnAction(e -> deleteStudent());
-			            
-			            rowMenu.getItems().addAll(editItem, remove);
-			            
-			            // only display context menu for non-empty rows:
-			            row.contextMenuProperty().bind(
-			              Bindings.when(row.emptyProperty())
-			              .then((ContextMenu) null)
-			              .otherwise(rowMenu));
-			            return row;
-			    }
-			});
+		    new Callback<TableView<Student>, TableRow<Student>>() {
+		        @Override
+		        public TableRow<Student> call(TableView<Student> tableView) {
+		            final TableRow<Student> row = new TableRow<>();
+		            final ContextMenu rowMenu = new ContextMenu();
+		            MenuItem editItem = new MenuItem("Edit");
+		            // editItem.setOnAction();
+		            MenuItem remove = new MenuItem("Supprimer l'étudiant");
+		            remove.setOnAction(e -> deleteStudent());
+		            
+		            rowMenu.getItems().addAll(editItem, remove);
+		            
+		            // only display context menu for non-empty rows:
+		            row.contextMenuProperty().bind(
+		              Bindings.when(row.emptyProperty())
+		              .then((ContextMenu) null)
+		              .otherwise(rowMenu));
+		            return row;
+		    }
+		});
     }
 
 	@FXML
@@ -484,11 +484,39 @@ public class MainController extends StudentsTable {
     }
     
     @FXML
-    public void newFile() {
-    	Student.resetUsedINE();
-		tutoring = new Tutoring(Subject.R101);
-		openedFile = null;
-		updateTable();
+    public void newFile() throws IOException {
+    	final Stage dialog = new Stage();
+    	dialog.initModality(Modality.APPLICATION_MODAL);
+    	
+    	FXMLLoader loader = new FXMLLoader();
+        URL fxmlFileUrl = getClass().getResource("chooseSubject.fxml");
+        if (fxmlFileUrl == null) {
+        	System.out.println("Impossible de charger le fichier fxml");
+            return;
+        }
+        loader.setLocation(fxmlFileUrl);
+        
+        Parent root = loader.load();
+        
+        ChooseSubjectController controller = loader.getController();
+        
+        Scene scene = new Scene(root);
+        dialog.setScene(scene);
+        dialog.setTitle("Créer un nouveau tutorat");
+        dialog.setWidth(241);
+        dialog.setHeight(140);
+        dialog.setResizable(false);
+        dialog.show();
+        
+        dialog.setOnHiding(e -> {
+        	Subject choice = controller.getSubject();
+        	if (choice != null) {
+	        	Student.resetUsedINE();
+	    		tutoring = new Tutoring(choice);
+	    		openedFile = null;
+	    		updateTable();
+        	}
+        });
     }
     
     @FXML
